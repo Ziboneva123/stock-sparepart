@@ -12,7 +12,7 @@ content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
 
@@ -3687,7 +3687,7 @@ function startSearchQrScanner(){
 
     openModal("searchScanModal");
 
-    setTimeout(function(){
+    setTimeout(async function(){
 
         if(searchQrScannerRunning){
             return;
@@ -3700,94 +3700,195 @@ function startSearchQrScanner(){
                     Scanner QR belum termuat.
                 </strong>
                 <br><br>
-                Refresh halaman lalu coba lagi.
+                Periksa koneksi internet lalu refresh halaman.
             `;
 
             return;
         }
 
-        searchQrScanner =
-            new Html5Qrcode("searchQrReader");
+        try{
 
-        searchQrScanner.start(
-            {
-                facingMode:{
-                    ideal:"environment"
-                }
-            },
-            {
-                fps:10,
-                qrbox:{
-                    width:250,
-                    height:250
-                }
-            },
-            function(decodedText){
+            searchQrScanner =
+                new Html5Qrcode("searchQrReader");
 
-                if(searchQrScanHandled){
-                    return;
-                }
+            /*
+             * Minta daftar kamera.
+             * Ini lebih kompatibel pada Android
+             * dibanding langsung memakai facingMode.
+             */
+            const cameras =
+                await Html5Qrcode.getCameras();
 
-                searchQrScanHandled=true;
+            if(!cameras || cameras.length === 0){
 
-                const code =
-                    String(decodedText).trim();
-
-                $("search").value=code;
-
-                renderTable();
-
-                closeSearchQrModal();
-
-                const found =
-                    items.some(function(item){
-
-                        return String(item.code).trim() === code;
-
-                    });
-
-                showMessage(
-                    found
-                    ? "QR terbaca: " + code
-                    : "QR terbaca, tetapi kode " + code +
-                      " tidak ditemukan.",
-                    found ? "ok" : "error"
+                throw new Error(
+                    "Kamera tidak ditemukan."
                 );
 
-            },
-            function(){
-                /* scan progress ignored */
             }
-        )
-        .then(function(){
 
-            searchQrScannerRunning=true;
+            /*
+             * Pilih kamera belakang jika tersedia.
+             */
+            let cameraId =
+                cameras[0].id;
+
+            const backCamera =
+                cameras.find(
+                    function(camera){
+
+                        return /back|rear|environment/i
+                            .test(
+                                camera.label || ""
+                            );
+
+                    }
+                );
+
+            if(backCamera){
+
+                cameraId =
+                    backCamera.id;
+
+            }
+            else if(cameras.length > 1){
+
+                /*
+                 * Pada beberapa HP label kamera
+                 * kosong. Kamera terakhir biasanya
+                 * kamera belakang.
+                 */
+                cameraId =
+                    cameras[cameras.length - 1].id;
+
+            }
+
+            await searchQrScanner.start(
+                cameraId,
+
+                {
+                    fps:10,
+
+                    qrbox:{
+                        width:250,
+                        height:250
+                    },
+
+                    aspectRatio:1.0
+                },
+
+                function(decodedText){
+
+                    if(searchQrScanHandled){
+                        return;
+                    }
+
+                    searchQrScanHandled=true;
+
+                    const code =
+                        String(
+                            decodedText
+                        ).trim();
+
+                    /*
+                     * Hasil scan masuk ke pencarian.
+                     */
+                    $("search").value =
+                        code;
+
+                    /*
+                     * Tabel langsung difilter.
+                     */
+                    renderTable();
+
+                    closeSearchQrModal();
+
+                    const found =
+                        items.some(
+                            function(item){
+
+                                return String(
+                                    item.code
+                                ).trim()
+                                ===
+                                code;
+
+                            }
+                        );
+
+                    if(found){
+
+                        showMessage(
+                            "QR terbaca: " + code
+                        );
+
+                    }
+                    else{
+
+                        showMessage(
+                            "QR terbaca, tetapi kode " +
+                            code +
+                            " tidak ditemukan.",
+                            "error"
+                        );
+
+                    }
+
+                },
+
+                function(){
+
+                    /*
+                     * Progress scan tidak ditampilkan.
+                     */
+
+                }
+            );
+
+            searchQrScannerRunning =
+                true;
 
             $("searchScanMessage").textContent =
                 "Arahkan kamera ke QR Code sparepart.";
 
-        })
-        .catch(function(error){
+        }
+        catch(error){
 
             console.error(
                 "SEARCH QR CAMERA ERROR:",
                 error
             );
 
+            let message =
+                "Kamera tidak dapat dibuka.";
+
+            if(
+                error &&
+                error.message
+            ){
+
+                message =
+                    error.message;
+
+            }
+
             $("searchScanMessage").innerHTML = `
                 <strong style="color:#b91c1c;">
                     Kamera tidak dapat dibuka.
                 </strong>
                 <br><br>
-                Izinkan akses kamera dan pastikan website
-                dibuka menggunakan HTTPS.
+                ${escapeHtml(message)}
+                <br><br>
+                Jika muncul permintaan izin kamera,
+                pilih <strong>Izinkan</strong>.
             `;
 
-        });
+        }
 
     },300);
 
 }
+
 
 
 /* =====================================================
