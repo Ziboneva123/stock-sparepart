@@ -12,7 +12,10 @@ content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+window.__ZIP_READY__ = !!window.JSZip;
+</script>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
@@ -4729,9 +4732,11 @@ async function downloadAllQR(){
         return;
     }
 
-    if(typeof JSZip === "undefined"){
+    const ZipLib = window.__ZIP_READY__ ? window.JSZip : window.JSZip;
+
+    if(!ZipLib){
         showMessage(
-            "Library ZIP belum termuat. Refresh halaman.",
+            "Komponen ZIP belum siap. Pastikan internet aktif lalu refresh halaman.",
             "error"
         );
         return;
@@ -4752,7 +4757,7 @@ async function downloadAllQR(){
 
     try{
 
-        const zip = new JSZip();
+        const zip = new ZipLib();
 
         setQrZipProgress(
             "Menyiapkan " + items.length + " QR Code..."
