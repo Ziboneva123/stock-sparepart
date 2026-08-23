@@ -4,953 +4,3025 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1f2937">
-<title>Stock Sparepart - Inventory</title>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<title>Stock Sparepart</title>
 
 <style>
-*{box-sizing:border-box}
-:root{
-  --dark:#1f2937;
-  --dark2:#374151;
-  --blue:#2563eb;
-  --green:#15803d;
-  --red:#dc2626;
-  --orange:#d97706;
-  --bg:#f4f6f8;
-  --card:#fff;
-  --text:#222;
-  --muted:#6b7280;
-  --border:#e5e7eb;
-}
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-button,input{font:inherit}
-button{cursor:pointer}
-header{
-  background:var(--dark);
-  color:white;
-  padding:28px 70px 28px 20px;
-  text-align:center;
-  position:relative;
-}
-header h1{margin:0;font-size:34px}
-header p{margin:10px 0 0;color:#d1d5db;font-size:20px}
-.menu-btn{
-  position:absolute;right:18px;top:20px;
-  border:0;background:transparent;color:white;
-  font-size:34px;line-height:1;padding:8px;
-}
-.container{max-width:1400px;margin:auto;padding:28px 4% 10px}
-.dashboard{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:16px;margin-bottom:22px;
-}
-.stat{
-  background:white;border-radius:16px;padding:20px;
-  box-shadow:0 4px 15px #00000010;
-}
-.stat-label{color:var(--muted);font-size:15px}
-.stat-value{font-size:30px;font-weight:bold;margin-top:8px}
-.stat-low .stat-value{color:var(--red)}
-.stat-ok .stat-value{color:var(--green)}
-.search-box{
-  background:white;padding:18px;border-radius:18px;
-  box-shadow:0 4px 15px #00000010;margin-bottom:22px;
-}
-#search{
-  width:100%;padding:17px 18px;border:1px solid #ccc;
-  border-radius:13px;font-size:19px;outline:none;
-}
-#search:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb22}
-.table-box{
-  background:white;border-radius:18px;overflow:auto;
-  box-shadow:0 4px 15px #00000010;
-}
-table{width:100%;border-collapse:collapse;min-width:950px}
-th{
-  background:var(--dark2);color:white;padding:16px;
-  text-align:left;font-size:16px;white-space:nowrap;
-}
-td{padding:15px;border-bottom:1px solid var(--border);font-size:16px}
-tr:last-child td{border-bottom:0}
-tr:hover td{background:#f8fafc}
-.status-ok{color:var(--green);font-weight:bold}
-.status-low{color:var(--red);font-weight:bold}
-.action-cell{white-space:nowrap}
-.small-btn{
-  border:0;border-radius:8px;padding:8px 10px;margin:2px;
-  color:white;font-size:13px;
-}
-.btn-in{background:#15803d}
-.btn-out{background:#d97706}
-.btn-edit{background:#2563eb}
-.btn-delete{background:#dc2626}
-.footer{text-align:center;color:#777;font-size:18px;padding:38px 10px 45px}
-
-.overlay{
-  display:none;position:fixed;inset:0;background:#0008;z-index:90
-}
-.overlay.show{display:block}
-.sidebar{
-  position:fixed;top:0;right:-350px;width:330px;max-width:88%;
-  height:100%;background:white;z-index:100;
-  box-shadow:-6px 0 25px #0005;transition:.25s;padding:24px;
-  overflow:auto;
-}
-.sidebar.open{right:0}
-.sidebar h2{margin:5px 0 22px;color:var(--dark)}
-.close-btn{
-  float:right;border:0;background:none;font-size:32px;color:#555
-}
-.menu-item{
-  width:100%;text-align:left;padding:16px 8px;
-  border:0;border-bottom:1px solid var(--border);
-  background:white;font-size:18px;color:#222;
-}
-.menu-item:hover{background:#f3f4f6}
-
-.modal{
-  display:none;position:fixed;inset:0;background:#0008;z-index:200;
-  align-items:center;justify-content:center;padding:18px;
-}
-.modal.show{display:flex}
-.modal-card{
-  background:white;width:100%;max-width:560px;
-  max-height:92vh;overflow:auto;border-radius:18px;padding:24px;
-  box-shadow:0 10px 40px #0005;
-}
-.modal-card.wide{max-width:850px}
-.modal-card h2{margin:0 0 20px;color:var(--dark)}
-.form-group{margin-bottom:14px}
-.form-group label{display:block;margin-bottom:6px;font-weight:bold}
-.form-group input,.form-group select{
-  width:100%;padding:13px;border:1px solid #ccc;
-  border-radius:10px;background:white;
-}
-.btn-row{display:flex;gap:10px;margin-top:20px}
-.btn{
-  flex:1;padding:13px;border:0;border-radius:10px;font-weight:bold
-}
-.btn-primary{background:var(--blue);color:white}
-.btn-success{background:var(--green);color:white}
-.btn-warning{background:var(--orange);color:white}
-.btn-danger{background:var(--red);color:white}
-.btn-cancel{background:#e5e7eb;color:#222}
-.message{text-align:center;padding:10px;font-size:15px}
-.error{color:var(--red)}
-.success{color:var(--green)}
-.info{color:var(--blue)}
-.hidden{display:none!important}
-
-.history-table{width:100%;border-collapse:collapse;min-width:700px}
-.history-table th,.history-table td{padding:11px;border-bottom:1px solid var(--border)}
-.badge{
-  display:inline-block;padding:5px 9px;border-radius:999px;
-  font-size:12px;font-weight:bold
-}
-.badge-in{background:#dcfce7;color:#166534}
-.badge-out{background:#ffedd5;color:#9a3412}
-.empty{text-align:center;color:var(--muted);padding:30px}
-
-.confirm-text{
-  background:#f9fafb;padding:14px;border-radius:10px;
-  margin:10px 0;line-height:1.6
+* {
+    box-sizing: border-box;
 }
 
-@media(max-width:850px){
-  .dashboard{grid-template-columns:repeat(2,1fr)}
-  header h1{font-size:28px}
-  header p{font-size:17px}
-  .container{padding:20px 14px}
+html {
+    font-family: Arial, Helvetica, sans-serif;
 }
-@media(max-width:520px){
-  .dashboard{grid-template-columns:repeat(2,1fr);gap:10px}
-  .stat{padding:14px}
-  .stat-value{font-size:24px}
-  header{padding:24px 58px 24px 12px}
-  header h1{font-size:25px}
-  header p{font-size:15px}
-  .menu-btn{right:10px}
-  .footer{font-size:16px}
+
+body {
+    margin: 0;
+    background: #f4f6f8;
+    color: #222;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+header {
+    background: #1f2937;
+    color: white;
+    padding: 28px 20px 30px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+header p {
+    margin: 8px 0 0;
+    color: #d1d5db;
+    font-size: 20px;
+}
+
+/* =========================
+   MENU BUTTON
+   ========================= */
+
+.menu-button {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 1001;
+
+    width: 50px;
+    height: 50px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: white;
+    color: #111827;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,.20);
+
+    cursor: pointer;
+}
+
+/* =========================
+   MAIN
+   ========================= */
+
+.container {
+    width: 94%;
+    max-width: 1400px;
+
+    margin: 28px auto 50px;
+}
+
+/* =========================
+   SEARCH
+   ========================= */
+
+.search-box {
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,.08);
+
+    margin-bottom: 22px;
+}
+
+.search-box input {
+    width: 100%;
+
+    padding: 17px 18px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 13px;
+
+    font-size: 19px;
+
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: #64748b;
+
+    box-shadow:
+        0 0 0 3px rgba(100,116,139,.15);
+}
+
+/* =========================
+   DASHBOARD
+   ========================= */
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+}
+
+.stat {
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,.06);
+}
+
+.stat-title {
+    color: #64748b;
+
+    font-size: 15px;
+}
+
+.stat-value {
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin-top: 7px;
+}
+
+/* =========================
+   TABLE
+   ========================= */
+
+.table-wrap {
+    background: white;
+
+    border-radius: 18px;
+
+    overflow: auto;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,.08);
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 920px;
+}
+
+th {
+    background: #374151;
+
+    color: white;
+
+    padding: 17px 14px;
+
+    text-align: left;
+
+    font-size: 17px;
+
+    white-space: nowrap;
+}
+
+td {
+    padding: 15px 14px;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
+    font-size: 16px;
+}
+
+tr:last-child td {
+    border-bottom: 0;
+}
+
+/* =========================
+   STATUS
+   ========================= */
+
+.status-ok {
+    color: #15803d;
+
+    font-weight: bold;
+}
+
+.status-low {
+    color: #d97706;
+
+    font-weight: bold;
+}
+
+.status-empty {
+    color: #dc2626;
+
+    font-weight: bold;
+}
+
+/* =========================
+   ACTION BUTTON
+   ========================= */
+
+.actions {
+    display: flex;
+
+    gap: 7px;
+
+    flex-wrap: wrap;
+}
+
+button {
+    border: 0;
+
+    border-radius: 9px;
+
+    padding: 10px 13px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+button:disabled {
+    opacity: .5;
+
+    cursor: not-allowed;
+}
+
+.btn-in {
+    background: #15803d;
+
+    color: white;
+}
+
+.btn-out {
+    background: #dc2626;
+
+    color: white;
+}
+
+.btn-edit {
+    background: #475569;
+
+    color: white;
+}
+
+.btn-delete {
+    background: #991b1b;
+
+    color: white;
+}
+
+.btn-primary {
+    background: #2563eb;
+
+    color: white;
+}
+
+.btn-light {
+    background: #e5e7eb;
+
+    color: #111827;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+
+footer {
+    text-align: center;
+
+    color: #6b7280;
+
+    padding:
+        25px
+        10px
+        40px;
+
+    font-size: 17px;
+}
+
+/* =========================
+   SIDE MENU
+   ========================= */
+
+.drawer {
+    position: fixed;
+
+    top: 0;
+
+    right: -380px;
+
+    width: 360px;
+
+    max-width: 88vw;
+
+    height: 100vh;
+
+    background: white;
+
+    z-index: 1000;
+
+    box-shadow:
+        -8px 0 30px rgba(0,0,0,.20);
+
+    transition:
+        right .25s ease;
+
+    padding: 28px 20px;
+
+    overflow: auto;
+}
+
+.drawer.open {
+    right: 0;
+}
+
+.drawer h2 {
+    margin:
+        0
+        0
+        20px;
+
+    color: #1f2937;
+}
+
+.menu-item {
+    display: block;
+
+    width: 100%;
+
+    text-align: left;
+
+    background: white;
+
+    color: #1f2937;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
+    border-radius: 0;
+
+    padding: 17px 10px;
+
+    font-size: 17px;
+}
+
+.menu-item:hover {
+    background: #f3f4f6;
+}
+
+.overlay {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,.45);
+
+    z-index: 999;
+}
+
+.overlay.show {
+    display: block;
+}
+
+/* =========================
+   MODAL
+   ========================= */
+
+.modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1100;
+
+    background:
+        rgba(0,0,0,.5);
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 18px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-card {
+    width:
+        min(560px,100%);
+
+    max-height: 92vh;
+
+    overflow: auto;
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 24px;
+}
+
+.modal-card h2 {
+    margin-top: 0;
+
+    color: #1f2937;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+
+    padding: 13px;
+
+    border:
+        1px solid #cbd5e1;
+
+    border-radius: 9px;
+
+    font-size: 16px;
+
+    background: white;
+}
+
+.modal-actions {
+    display: flex;
+
+    gap: 10px;
+
+    justify-content: flex-end;
+
+    margin-top: 20px;
+}
+
+/* =========================
+   MESSAGE
+   ========================= */
+
+.message {
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 22px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 2000;
+
+    min-width: 260px;
+
+    max-width: 90%;
+
+    padding: 13px 18px;
+
+    border-radius: 10px;
+
+    color: white;
+
+    text-align: center;
+
+    display: none;
+}
+
+.message.show {
+    display: block;
+}
+
+.message.ok {
+    background: #15803d;
+}
+
+.message.error {
+    background: #b91c1c;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media(max-width:800px) {
+
+    header {
+        padding-top: 24px;
+    }
+
+    header h1 {
+        font-size: 28px;
+    }
+
+    header p {
+        font-size: 17px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: 94%;
+    }
+
+    .search-box input {
+        font-size: 17px;
+    }
 }
 </style>
 </head>
 
 <body>
 
+<!-- =========================
+     HEADER
+     ========================= -->
+
 <header>
-  <h1>STOCK SPAREPART</h1>
-  <p>Database Sparepart & Inventory</p>
-  <button class="menu-btn" onclick="openMenu()" aria-label="Menu">â˜°</button>
+
+    <h1>
+        STOCK SPAREPART
+    </h1>
+
+    <p>
+        Database Sparepart &amp; Inventory
+    </p>
+
 </header>
 
-<div class="container">
 
-  <div class="dashboard">
-    <div class="stat">
-      <div class="stat-label">Total Sparepart</div>
-      <div class="stat-value" id="totalItems">0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Total Stock</div>
-      <div class="stat-value" id="totalQty">0</div>
-    </div>
-    <div class="stat stat-ok">
-      <div class="stat-label">Status OK</div>
-      <div class="stat-value" id="okItems">0</div>
-    </div>
-    <div class="stat stat-low">
-      <div class="stat-label">Stock Minimum</div>
-      <div class="stat-value" id="lowItems">0</div>
-    </div>
-  </div>
+<!-- =========================
+     MENU BUTTON
+     ========================= -->
 
-  <div class="search-box">
-    <input id="search" type="text" placeholder="ðŸ”Ž Cari kode, nama atau lokasi sparepart...">
-  </div>
+<button
+    class="menu-button"
+    id="menuButton"
+    type="button">
 
-  <div class="table-box">
-    <table id="stockTable">
-      <thead>
-        <tr>
-          <th>Kode</th>
-          <th>Nama Sparepart</th>
-          <th>Lokasi</th>
-          <th>Stock</th>
-          <th>Min. Stock</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="stockBody">
-        <tr><td colspan="7" class="empty">Memuat data...</td></tr>
-      </tbody>
-    </table>
-  </div>
+    MENU
+
+</button>
+
+
+<!-- =========================
+     SIDE MENU
+     ========================= -->
+
+<div
+    class="overlay"
+    id="overlay">
+</div>
+
+
+<aside
+    class="drawer"
+    id="drawer">
+
+    <h2>
+        MENU
+    </h2>
+
+
+    <button
+        class="menu-item"
+        data-action="data">
+
+        Data Sparepart
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        data-action="add">
+
+        Tambah Sparepart
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        data-action="in">
+
+        Barang Masuk
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        data-action="out">
+
+        Barang Keluar
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        data-action="history">
+
+        History Transaksi
+
+    </button>
+
+</aside>
+
+
+<!-- =========================
+     MAIN
+     ========================= -->
+
+<main class="container">
+
+
+    <!-- SEARCH -->
+
+    <section class="search-box">
+
+        <input
+            id="search"
+            type="search"
+            placeholder="Cari kode atau nama sparepart...">
+
+    </section>
+
+
+    <!-- DASHBOARD -->
+
+    <section class="stats">
+
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Total Sparepart
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalItems">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Status OK
+            </div>
+
+            <div
+                class="stat-value"
+                id="okItems">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Perlu Restock
+            </div>
+
+            <div
+                class="stat-value"
+                id="lowItems">
+
+                0
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- TABLE -->
+
+    <section class="table-wrap">
+
+
+        <table id="stockTable">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Kode
+                    </th>
+
+                    <th>
+                        Nama Sparepart
+                    </th>
+
+                    <th>
+                        Lokasi
+                    </th>
+
+                    <th>
+                        Stock
+                    </th>
+
+                    <th>
+                        Min. Stock
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="stockBody">
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty">
+
+                        Memuat data...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+
+        </table>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+     ========================= -->
+
+<footer>
+
+    Created by : Nugroho Kunto Aji
+
+</footer>
+
+
+<!-- =========================
+     MODAL TAMBAH / EDIT
+     ========================= -->
+
+<div
+    class="modal"
+    id="itemModal">
+
+
+    <div class="modal-card">
+
+
+        <h2 id="itemModalTitle">
+
+            Tambah Sparepart
+
+        </h2>
+
+
+        <div class="form-group">
+
+            <label>
+                Kode Sparepart
+            </label>
+
+            <input
+                id="itemCode"
+                type="text"
+                placeholder="Contoh: BRG002">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Sparepart
+            </label>
+
+            <input
+                id="itemName"
+                type="text"
+                placeholder="Contoh: Sensor">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Lokasi
+            </label>
+
+            <input
+                id="itemLocation"
+                type="text"
+                placeholder="Contoh: Rak 2">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Stock
+            </label>
+
+            <input
+                id="itemQty"
+                type="number"
+                min="0"
+                value="0">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Minimum Stock
+            </label>
+
+            <input
+                id="itemMinQty"
+                type="number"
+                min="0"
+                value="0">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Operator
+            </label>
+
+            <input
+                id="itemOperator"
+                type="text"
+                placeholder="Nama operator">
+
+        </div>
+
+
+        <div class="modal-actions">
+
+
+            <button
+                class="btn-light"
+                type="button"
+                onclick="closeModal('itemModal')">
+
+                Batal
+
+            </button>
+
+
+            <button
+                class="btn-primary"
+                id="saveItemButton"
+                type="button">
+
+                Simpan
+
+            </button>
+
+
+        </div>
+
+
+    </div>
 
 </div>
 
-<div class="footer">Created by : Nugroho Kunto Aji</div>
 
-<!-- SIDEBAR -->
-<div id="overlay" class="overlay" onclick="closeMenu()"></div>
+<!-- =========================
+     MODAL TRANSAKSI
+     ========================= -->
 
-<div id="sidebar" class="sidebar">
-  <button class="close-btn" onclick="closeMenu()">Ã—</button>
-  <h2>â˜° MENU</h2>
+<div
+    class="modal"
+    id="transactionModal">
 
-  <button class="menu-item" onclick="closeMenu()">ðŸ“¦ Data Sparepart</button>
-  <button class="menu-item" onclick="openAddModal()">âž• Tambah Sparepart</button>
-  <button class="menu-item" onclick="openTransactionModal('masuk')">ðŸ“¥ Barang Masuk</button>
-  <button class="menu-item" onclick="openTransactionModal('keluar')">ðŸ“¤ Barang Keluar</button>
-  <button class="menu-item" onclick="openHistoryModal()">ðŸ“œ History Transaksi</button>
+
+    <div class="modal-card">
+
+
+        <h2 id="transactionTitle">
+
+            Barang Masuk
+
+        </h2>
+
+
+        <div class="form-group">
+
+            <label>
+                Kode Sparepart
+            </label>
+
+            <select
+                id="transactionCode">
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Jumlah
+            </label>
+
+            <input
+                id="transactionQty"
+                type="number"
+                min="1"
+                value="1">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Operator
+            </label>
+
+            <input
+                id="transactionOperator"
+                type="text"
+                placeholder="Nama operator">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Keterangan
+            </label>
+
+            <input
+                id="transactionNote"
+                type="text"
+                placeholder="Contoh: pembelian / pemakaian">
+
+        </div>
+
+
+        <div class="modal-actions">
+
+
+            <button
+                class="btn-light"
+                type="button"
+                onclick="closeModal('transactionModal')">
+
+                Batal
+
+            </button>
+
+
+            <button
+                class="btn-primary"
+                id="saveTransactionButton"
+                type="button">
+
+                Simpan Transaksi
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
 </div>
 
-<!-- ADD / EDIT -->
-<div id="itemModal" class="modal">
-  <div class="modal-card">
-    <h2 id="itemModalTitle">âž• Tambah Sparepart</h2>
 
-    <div class="form-group">
-      <label>Kode Sparepart</label>
-      <input id="itemCode" placeholder="Contoh: BRG002">
+<!-- =========================
+     MODAL HISTORY
+     ========================= -->
+
+<div
+    class="modal"
+    id="historyModal">
+
+
+    <div class="modal-card">
+
+
+        <h2>
+            History Transaksi
+        </h2>
+
+
+        <div class="form-group">
+
+            <label>
+                Sparepart
+            </label>
+
+            <select
+                id="historyCode">
+
+            </select>
+
+        </div>
+
+
+        <div id="historyContent">
+
+            Pilih sparepart.
+
+        </div>
+
+
+        <div class="modal-actions">
+
+
+            <button
+                class="btn-light"
+                type="button"
+                onclick="closeModal('historyModal')">
+
+                Tutup
+
+            </button>
+
+
+        </div>
+
+
     </div>
 
-    <div class="form-group">
-      <label>Nama Sparepart</label>
-      <input id="itemName" placeholder="Contoh: Sensor LM393">
-    </div>
-
-    <div class="form-group">
-      <label>Lokasi</label>
-      <input id="itemLocation" placeholder="Contoh: Rak 2">
-    </div>
-
-    <div class="form-group">
-      <label>Stock</label>
-      <input id="itemQty" type="number" min="0" value="0">
-    </div>
-
-    <div class="form-group">
-      <label>Minimum Stock</label>
-      <input id="itemMinQty" type="number" min="0" value="0">
-    </div>
-
-    <div id="itemMessage" class="message"></div>
-
-    <div class="btn-row">
-      <button class="btn btn-cancel" onclick="closeItemModal()">Batal</button>
-      <button class="btn btn-primary" id="itemSaveBtn" onclick="saveItem()">Simpan</button>
-    </div>
-  </div>
 </div>
 
-<!-- TRANSACTION -->
-<div id="transactionModal" class="modal">
-  <div class="modal-card">
-    <h2 id="transactionTitle">ðŸ“¥ Barang Masuk</h2>
 
-    <div class="form-group">
-      <label>Kode Sparepart</label>
-      <select id="transactionCode"></select>
-    </div>
+<!-- =========================
+     MESSAGE
+     ========================= -->
 
-    <div id="transactionInfo" class="confirm-text"></div>
+<div
+    class="message"
+    id="message">
 
-    <div class="form-group">
-      <label>Jumlah</label>
-      <input id="transactionQty" type="number" min="1" value="1">
-    </div>
-
-    <div class="form-group">
-      <label>Operator</label>
-      <input id="transactionOperator" placeholder="Nama operator">
-    </div>
-
-    <div class="form-group">
-      <label>Keterangan</label>
-      <input id="transactionNote" placeholder="Contoh: pembelian / pemakaian">
-    </div>
-
-    <div id="transactionMessage" class="message"></div>
-
-    <div class="btn-row">
-      <button class="btn btn-cancel" onclick="closeTransactionModal()">Batal</button>
-      <button class="btn btn-success" id="transactionSaveBtn" onclick="saveTransaction()">Simpan</button>
-    </div>
-  </div>
 </div>
 
-<!-- HISTORY -->
-<div id="historyModal" class="modal">
-  <div class="modal-card wide">
-    <h2>ðŸ“œ History Transaksi</h2>
 
-    <div class="form-group">
-      <label>Filter Kode</label>
-      <select id="historyCodeFilter" onchange="loadHistory()">
-        <option value="">Semua Sparepart</option>
-      </select>
-    </div>
+<!-- =========================
+     FIREBASE
+     ========================= -->
 
-    <div id="historyMessage" class="message"></div>
+<script type="module">
 
-    <div style="overflow:auto">
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Tanggal / Jam</th>
-            <th>Kode</th>
-            <th>Transaksi</th>
-            <th>Qty</th>
-            <th>Sebelum</th>
-            <th>Sesudah</th>
-            <th>Operator</th>
-            <th>Keterangan</th>
-          </tr>
-        </thead>
-        <tbody id="historyBody"></tbody>
-      </table>
-    </div>
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
-    <div class="btn-row">
-      <button class="btn btn-cancel" onclick="closeHistoryModal()">Tutup</button>
-    </div>
-  </div>
-</div>
 
-<!-- DELETE -->
-<div id="deleteModal" class="modal">
-  <div class="modal-card">
-    <h2>ðŸ—‘ï¸ Hapus Sparepart</h2>
-    <div id="deleteText" class="confirm-text"></div>
-    <div id="deleteMessage" class="message"></div>
-    <div class="btn-row">
-      <button class="btn btn-cancel" onclick="closeDeleteModal()">Batal</button>
-      <button class="btn btn-danger" onclick="confirmDelete()">Hapus</button>
-    </div>
-  </div>
-</div>
+import {
 
-<script>
-/* =========================================================
+    getFirestore,
+
+    collection,
+
+    getDocs,
+
+    getDoc,
+
+    doc,
+
+    setDoc,
+
+    deleteDoc,
+
+    updateDoc,
+
+    addDoc,
+
+    query,
+
+    orderBy,
+
+    serverTimestamp,
+
+    runTransaction
+
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+
+/* =========================
    FIREBASE CONFIG
-   ========================================================= */
+   ========================= */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyB4ea4a-Q2wNWagzatBWx6DuEgmyLKTjOs",
-  authDomain: "stock-sparepart-a66cf.firebaseapp.com",
-  projectId: "stock-sparepart-a66cf",
-  storageBucket: "stock-sparepart-a66cf.firebasestorage.app",
-  messagingSenderId: "1064348530987",
-  appId: "1:1064348530987:web:299b60f0db04e5a904ed6e",
-  measurementId: "G-RNF9ZEXF6X"
+
+    apiKey:
+        "AIzaSyB4ea4a-Q2wNWagzatBWx6DuEgmyLKTjOs",
+
+    authDomain:
+        "stock-sparepart-a66cf.firebaseapp.com",
+
+    projectId:
+        "stock-sparepart-a66cf",
+
+    storageBucket:
+        "stock-sparepart-a66cf.firebasestorage.app",
+
+    messagingSenderId:
+        "1064348530987",
+
+    appId:
+        "1:1064348530987:web:299b60f0db04e5a904ed6e",
+
+    measurementId:
+        "G-RNF9ZEXF6X"
+
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
-let spareparts = [];
-let editingCode = null;
-let deletingCode = null;
-let transactionType = "masuk";
+const app =
+    initializeApp(firebaseConfig);
 
-/* =========================================================
-   MENU
-   ========================================================= */
-function openMenu(){
-  document.getElementById("sidebar").classList.add("open");
-  document.getElementById("overlay").classList.add("show");
+
+const db =
+    getFirestore(app);
+
+
+const stockRef =
+    collection(db, "spareparts");
+
+
+let items = [];
+
+let transactionMode =
+    "in";
+
+let editingCode =
+    null;
+
+
+/* =========================
+   HELPER
+   ========================= */
+
+const $ = id =>
+    document.getElementById(id);
+
+
+function showMessage(
+    text,
+    type = "ok"
+){
+
+    const el =
+        $("message");
+
+
+    el.textContent =
+        text;
+
+
+    el.className =
+        "message show " + type;
+
+
+    setTimeout(
+        () => {
+
+            el.className =
+                "message";
+
+        },
+        3000
+    );
+
 }
-function closeMenu(){
-  document.getElementById("sidebar").classList.remove("open");
-  document.getElementById("overlay").classList.remove("show");
+
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
 }
 
-/* =========================================================
-   LOAD SPAREPART
-   ========================================================= */
-function loadSpareparts(){
-  db.collection("spareparts").onSnapshot(snapshot => {
-    spareparts = [];
 
-    snapshot.forEach(doc => {
-      spareparts.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
+/* =========================
+   STATUS
+   ========================= */
 
-    spareparts.sort((a,b) => a.id.localeCompare(b.id));
+function statusOf(
+    item
+){
 
-    renderTable();
-    updateDashboard();
-    updateSelects();
-  }, error => {
-    document.getElementById("stockBody").innerHTML =
-      '<tr><td colspan="7" class="empty error">Gagal mengambil data Firebase.<br>' +
-      escapeHtml(error.message) + '</td></tr>';
-  });
+    const qty =
+        Number(
+            item.qty || 0
+        );
+
+
+    const min =
+        Number(
+            item.minqty || 0
+        );
+
+
+    if(
+        qty <= 0
+    ){
+
+        return {
+
+            text:
+                "HABIS",
+
+            cls:
+                "status-empty"
+
+        };
+
+    }
+
+
+    if(
+        qty <= min
+    ){
+
+        return {
+
+            text:
+                "LOW",
+
+            cls:
+                "status-low"
+
+        };
+
+    }
+
+
+    return {
+
+        text:
+            "OK",
+
+        cls:
+            "status-ok"
+
+    };
+
 }
 
-function getQty(item){
-  return Number(item.qty || 0);
-}
-function getMin(item){
-  return Number(item.minqty || 0);
-}
-function getStatus(item){
-  return getQty(item) <= getMin(item) ? "LOW" : "OK";
-}
+
+/* =========================
+   RENDER TABLE
+   ========================= */
 
 function renderTable(){
-  const keyword = document.getElementById("search").value.toLowerCase().trim();
 
-  const list = spareparts.filter(item => {
-    const text = [
-      item.id,
-      item.name,
-      item.lokasi
-    ].join(" ").toLowerCase();
-    return text.includes(keyword);
-  });
+    const keyword =
+        $("search")
+        .value
+        .trim()
+        .toLowerCase();
 
-  const body = document.getElementById("stockBody");
 
-  if(!list.length){
-    body.innerHTML = '<tr><td colspan="7" class="empty">Data tidak ditemukan.</td></tr>';
-    return;
-  }
+    const filtered =
+        items.filter(
+            item =>
 
-  body.innerHTML = list.map(item => {
-    const qty = getQty(item);
-    const min = getMin(item);
-    const status = getStatus(item);
-    const cls = status === "OK" ? "status-ok" : "status-low";
+                String(
+                    item.code
+                )
+                .toLowerCase()
+                .includes(keyword)
 
-    return `
-      <tr>
-        <td><b>${escapeHtml(item.id)}</b></td>
-        <td>${escapeHtml(item.name || "-")}</td>
-        <td>${escapeHtml(item.lokasi || "-")}</td>
-        <td><b>${qty}</b></td>
-        <td>${min}</td>
-        <td class="${cls}">${status}</td>
-        <td class="action-cell">
-          <button class="small-btn btn-in" onclick="openTransactionModal('masuk','${safeJs(item.id)}')">Masuk</button>
-          <button class="small-btn btn-out" onclick="openTransactionModal('keluar','${safeJs(item.id)}')">Keluar</button>
-          <button class="small-btn btn-edit" onclick="openEditModal('${safeJs(item.id)}')">Edit</button>
-          <button class="small-btn btn-delete" onclick="openDeleteModal('${safeJs(item.id)}')">Hapus</button>
-        </td>
-      </tr>
-    `;
-  }).join("");
-}
+                ||
 
-document.getElementById("search").addEventListener("input", renderTable);
+                String(
+                    item.name
+                )
+                .toLowerCase()
+                .includes(keyword)
 
-/* =========================================================
-   DASHBOARD
-   ========================================================= */
-function updateDashboard(){
-  let totalQty = 0;
-  let ok = 0;
-  let low = 0;
+                ||
 
-  spareparts.forEach(item => {
-    totalQty += getQty(item);
-    if(getStatus(item) === "OK") ok++;
-    else low++;
-  });
+                String(
+                    item.lokasi
+                )
+                .toLowerCase()
+                .includes(keyword)
+        );
 
-  document.getElementById("totalItems").textContent = spareparts.length;
-  document.getElementById("totalQty").textContent = totalQty;
-  document.getElementById("okItems").textContent = ok;
-  document.getElementById("lowItems").textContent = low;
-}
 
-/* =========================================================
-   SELECTS
-   ========================================================= */
-function updateSelects(){
-  const trans = document.getElementById("transactionCode");
-  const hist = document.getElementById("historyCodeFilter");
+    $("totalItems")
+        .textContent =
+        items.length;
 
-  const currentTrans = trans.value;
-  const currentHist = hist.value;
 
-  trans.innerHTML = "";
-  hist.innerHTML = '<option value="">Semua Sparepart</option>';
+    $("okItems")
+        .textContent =
+        items.filter(
+            x =>
+                statusOf(x).text
+                ===
+                "OK"
+        ).length;
 
-  spareparts.forEach(item => {
-    const opt1 = document.createElement("option");
-    opt1.value = item.id;
-    opt1.textContent = item.id + " - " + (item.name || "");
-    trans.appendChild(opt1);
 
-    const opt2 = document.createElement("option");
-    opt2.value = item.id;
-    opt2.textContent = item.id + " - " + (item.name || "");
-    hist.appendChild(opt2);
-  });
+    $("lowItems")
+        .textContent =
+        items.filter(
+            x =>
+                statusOf(x).text
+                !==
+                "OK"
+        ).length;
 
-  if(spareparts.some(x => x.id === currentTrans)) trans.value = currentTrans;
-  if(spareparts.some(x => x.id === currentHist)) hist.value = currentHist;
 
-  updateTransactionInfo();
-}
+    const body =
+        $("stockBody");
 
-document.getElementById("transactionCode").addEventListener("change", updateTransactionInfo);
 
-function updateTransactionInfo(){
-  const code = document.getElementById("transactionCode").value;
-  const item = spareparts.find(x => x.id === code);
-  const box = document.getElementById("transactionInfo");
+    if(
+        filtered.length === 0
+    ){
 
-  if(!item){
-    box.innerHTML = "Belum ada sparepart.";
-    return;
-  }
+        body.innerHTML = `
 
-  const qty = getQty(item);
-  const min = getMin(item);
-  const typeText = transactionType === "masuk" ? "Barang masuk" : "Barang keluar";
+            <tr>
 
-  box.innerHTML =
-    "<b>" + escapeHtml(item.id) + " - " + escapeHtml(item.name || "") + "</b><br>" +
-    "Lokasi: " + escapeHtml(item.lokasi || "-") + "<br>" +
-    "Stock saat ini: <b>" + qty + "</b><br>" +
-    "Minimum stock: " + min + "<br>" +
-    "Transaksi: <b>" + typeText + "</b>";
-}
+                <td
+                    colspan="7"
+                    class="empty">
 
-/* =========================================================
-   ADD / EDIT
-   ========================================================= */
-function resetItemForm(){
-  document.getElementById("itemCode").value = "";
-  document.getElementById("itemName").value = "";
-  document.getElementById("itemLocation").value = "";
-  document.getElementById("itemQty").value = "0";
-  document.getElementById("itemMinQty").value = "0";
-  document.getElementById("itemMessage").innerHTML = "";
-}
+                    Data sparepart tidak ditemukan.
 
-function openAddModal(){
-  closeMenu();
-  editingCode = null;
-  resetItemForm();
-  document.getElementById("itemModalTitle").textContent = "âž• Tambah Sparepart";
-  document.getElementById("itemCode").disabled = false;
-  document.getElementById("itemSaveBtn").textContent = "Simpan";
-  document.getElementById("itemModal").classList.add("show");
-}
+                </td>
 
-function openEditModal(code){
-  const item = spareparts.find(x => x.id === code);
-  if(!item) return;
+            </tr>
 
-  editingCode = code;
+        `;
 
-  document.getElementById("itemModalTitle").textContent = "âœï¸ Edit Sparepart";
-  document.getElementById("itemCode").value = code;
-  document.getElementById("itemCode").disabled = true;
-  document.getElementById("itemName").value = item.name || "";
-  document.getElementById("itemLocation").value = item.lokasi || "";
-  document.getElementById("itemQty").value = getQty(item);
-  document.getElementById("itemMinQty").value = getMin(item);
-  document.getElementById("itemSaveBtn").textContent = "Update";
-  document.getElementById("itemMessage").innerHTML = "";
-
-  document.getElementById("itemModal").classList.add("show");
-}
-
-function closeItemModal(){
-  document.getElementById("itemModal").classList.remove("show");
-  document.getElementById("itemCode").disabled = false;
-}
-
-async function saveItem(){
-  const code = document.getElementById("itemCode").value.trim().toUpperCase();
-  const name = document.getElementById("itemName").value.trim();
-  const lokasi = document.getElementById("itemLocation").value.trim();
-  const qty = Number(document.getElementById("itemQty").value);
-  const minqty = Number(document.getElementById("itemMinQty").value);
-  const msg = document.getElementById("itemMessage");
-
-  if(!code || !name || !lokasi){
-    msg.innerHTML = '<span class="error">Kode, nama dan lokasi wajib diisi.</span>';
-    return;
-  }
-
-  if(!Number.isFinite(qty) || !Number.isFinite(minqty) || qty < 0 || minqty < 0){
-    msg.innerHTML = '<span class="error">Stock dan minimum stock harus 0 atau lebih.</span>';
-    return;
-  }
-
-  try{
-    const ref = db.collection("spareparts").doc(code);
-
-    if(editingCode === null){
-      const snap = await ref.get();
-      if(snap.exists){
-        msg.innerHTML = '<span class="error">Kode sparepart sudah ada.</span>';
         return;
-      }
 
-      await ref.set({
-        name:name,
-        lokasi:lokasi,
-        qty:qty,
-        minqty:minqty,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-    }else{
-      await ref.update({
-        name:name,
-        lokasi:lokasi,
-        qty:qty,
-        minqty:minqty,
-        updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
     }
 
-    msg.innerHTML = '<span class="success">Data berhasil disimpan.</span>';
-    setTimeout(closeItemModal,600);
 
-  }catch(error){
-    msg.innerHTML = '<span class="error">Gagal menyimpan:<br>' +
-      escapeHtml(error.message) + '</span>';
-  }
+    body.innerHTML =
+        filtered.map(
+            item => {
+
+                const status =
+                    statusOf(item);
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+
+                                ${escapeHtml(
+                                    item.code
+                                )}
+
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHtml(
+                                item.name
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHtml(
+                                item.lokasi
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${Number(
+                                item.qty || 0
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${Number(
+                                item.minqty || 0
+                            )}
+
+                        </td>
+
+
+                        <td
+                            class="${status.cls}">
+
+                            ${status.text}
+
+                        </td>
+
+
+                        <td>
+
+                            <div
+                                class="actions">
+
+
+                                <button
+                                    class="btn-in"
+                                    data-in="${escapeHtml(item.code)}">
+
+                                    Masuk
+
+                                </button>
+
+
+                                <button
+                                    class="btn-out"
+                                    data-out="${escapeHtml(item.code)}">
+
+                                    Keluar
+
+                                </button>
+
+
+                                <button
+                                    class="btn-edit"
+                                    data-edit="${escapeHtml(item.code)}">
+
+                                    Edit
+
+                                </button>
+
+
+                                <button
+                                    class="btn-delete"
+                                    data-delete="${escapeHtml(item.code)}">
+
+                                    Hapus
+
+                                </button>
+
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        )
+        .join("");
+
+
+    body
+        .querySelectorAll(
+            "[data-in]"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () =>
+                        openTransaction(
+                            "in",
+                            button.dataset.in
+                        );
+
+            }
+        );
+
+
+    body
+        .querySelectorAll(
+            "[data-out]"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () =>
+                        openTransaction(
+                            "out",
+                            button.dataset.out
+                        );
+
+            }
+        );
+
+
+    body
+        .querySelectorAll(
+            "[data-edit]"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () =>
+                        openEdit(
+                            button.dataset.edit
+                        );
+
+            }
+        );
+
+
+    body
+        .querySelectorAll(
+            "[data-delete]"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () =>
+                        deleteItem(
+                            button.dataset.delete
+                        );
+
+            }
+        );
+
 }
 
-/* =========================================================
-   TRANSACTION: BARANG MASUK / KELUAR
-   ========================================================= */
-function openTransactionModal(type, code){
-  closeMenu();
-  transactionType = type;
 
-  document.getElementById("transactionTitle").textContent =
-    type === "masuk" ? "ðŸ“¥ Barang Masuk" : "ðŸ“¤ Barang Keluar";
+/* =========================
+   LOAD FIREBASE
+   ========================= */
 
-  document.getElementById("transactionQty").value = "1";
-  document.getElementById("transactionOperator").value =
-    localStorage.getItem("inventoryOperator") || "";
-  document.getElementById("transactionNote").value = "";
-  document.getElementById("transactionMessage").innerHTML = "";
+async function loadItems(){
 
-  if(code){
-    document.getElementById("transactionCode").value = code;
-  }else if(spareparts.length){
-    document.getElementById("transactionCode").value = spareparts[0].id;
-  }
+    try{
 
-  updateTransactionInfo();
-  document.getElementById("transactionModal").classList.add("show");
+        const snap =
+            await getDocs(
+                stockRef
+            );
+
+
+        items =
+            snap.docs
+            .map(
+                d => ({
+
+                    code:
+                        d.id,
+
+                    ...d.data()
+
+                })
+            )
+            .sort(
+                (a,b) =>
+                    a.code.localeCompare(
+                        b.code
+                    )
+            );
+
+
+        renderTable();
+
+        updateSelects();
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        $("stockBody")
+            .innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty"
+                        style="color:#b91c1c">
+
+                        Gagal mengambil data Firebase:
+
+                        <br><br>
+
+                        ${escapeHtml(
+                            error.message
+                        )}
+
+                    </td>
+
+                </tr>
+
+            `;
+
+    }
+
 }
 
-function closeTransactionModal(){
-  document.getElementById("transactionModal").classList.remove("show");
+
+/* =========================
+   SELECT
+   ========================= */
+
+function updateSelects(){
+
+    const options =
+        items
+        .map(
+            item => `
+
+                <option
+                    value="${escapeHtml(item.code)}">
+
+                    ${escapeHtml(item.code)}
+                    -
+                    ${escapeHtml(item.name)}
+
+                </option>
+
+            `
+        )
+        .join("");
+
+
+    $("transactionCode")
+        .innerHTML =
+        options;
+
+
+    $("historyCode")
+        .innerHTML =
+        options;
+
 }
 
-async function saveTransaction(){
-  const code = document.getElementById("transactionCode").value;
-  const amount = Number(document.getElementById("transactionQty").value);
-  const operator = document.getElementById("transactionOperator").value.trim() || "Tidak diisi";
-  const note = document.getElementById("transactionNote").value.trim();
-  const msg = document.getElementById("transactionMessage");
 
-  if(!code){
-    msg.innerHTML = '<span class="error">Pilih sparepart.</span>';
-    return;
-  }
-  if(!Number.isFinite(amount) || amount <= 0 || !Number.isInteger(amount)){
-    msg.innerHTML = '<span class="error">Jumlah harus bilangan bulat lebih dari 0.</span>';
-    return;
-  }
+/* =========================
+   MENU
+   ========================= */
 
-  localStorage.setItem("inventoryOperator", operator);
+function openDrawer(){
 
-  const ref = db.collection("spareparts").doc(code);
+    $("drawer")
+        .classList
+        .add("open");
 
-  try{
-    await db.runTransaction(async transaction => {
-      const snap = await transaction.get(ref);
 
-      if(!snap.exists){
-        throw new Error("Sparepart tidak ditemukan.");
-      }
+    $("overlay")
+        .classList
+        .add("show");
 
-      const data = snap.data();
-      const before = Number(data.qty || 0);
-      const minqty = Number(data.minqty || 0);
+}
 
-      let after;
 
-      if(transactionType === "masuk"){
-        after = before + amount;
-      }else{
-        if(amount > before){
-          throw new Error("Stock tidak mencukupi. Stock saat ini: " + before);
+function closeDrawer(){
+
+    $("drawer")
+        .classList
+        .remove("open");
+
+
+    $("overlay")
+        .classList
+        .remove("show");
+
+}
+
+
+$("menuButton")
+    .onclick =
+    openDrawer;
+
+
+$("overlay")
+    .onclick =
+    closeDrawer;
+
+
+document
+    .querySelectorAll(
+        ".menu-item"
+    )
+    .forEach(
+        button => {
+
+            button.onclick =
+                () => {
+
+                    const action =
+                        button.dataset.action;
+
+
+                    closeDrawer();
+
+
+                    if(
+                        action === "data"
+                    ){
+
+                        window.scrollTo({
+
+                            top:0,
+
+                            behavior:
+                                "smooth"
+
+                        });
+
+                    }
+
+
+                    if(
+                        action === "add"
+                    ){
+
+                        openAdd();
+
+                    }
+
+
+                    if(
+                        action === "in"
+                    ){
+
+                        openTransaction(
+                            "in"
+                        );
+
+                    }
+
+
+                    if(
+                        action === "out"
+                    ){
+
+                        openTransaction(
+                            "out"
+                        );
+
+                    }
+
+
+                    if(
+                        action === "history"
+                    ){
+
+                        openHistory();
+
+                    }
+
+                };
+
         }
-        after = before - amount;
-      }
+    );
 
-      transaction.update(ref,{
-        qty:after,
-        updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-      });
 
-      const historyRef = ref.collection("history").doc();
+/* =========================
+   SEARCH
+   ========================= */
 
-      transaction.set(historyRef,{
-        action:transactionType,
-        code:code,
-        name:data.name || "",
-        lokasi:data.lokasi || "",
-        qty:amount,
-        stockbefore:before,
-        stockafter:after,
-        minqty:minqty,
-        operator:operator,
-        note:note,
-        timestamp:firebase.firestore.FieldValue.serverTimestamp()
-      });
-    });
+$("search")
+    .addEventListener(
+        "input",
+        renderTable
+    );
 
-    msg.innerHTML = '<span class="success">Transaksi berhasil disimpan.</span>';
-    setTimeout(closeTransactionModal,700);
 
-  }catch(error){
-    msg.innerHTML = '<span class="error">' +
-      escapeHtml(error.message) + '</span>';
-  }
+/* =========================
+   ADD
+   ========================= */
+
+function openAdd(){
+
+    editingCode =
+        null;
+
+
+    $("itemModalTitle")
+        .textContent =
+        "Tambah Sparepart";
+
+
+    $("itemCode")
+        .disabled =
+        false;
+
+
+    $("itemCode")
+        .value =
+        "";
+
+
+    $("itemName")
+        .value =
+        "";
+
+
+    $("itemLocation")
+        .value =
+        "";
+
+
+    $("itemQty")
+        .value =
+        0;
+
+
+    $("itemMinQty")
+        .value =
+        0;
+
+
+    $("itemOperator")
+        .value =
+        "";
+
+
+    $("itemModal")
+        .classList
+        .add("show");
+
 }
 
-/* =========================================================
-   HISTORY
-   ========================================================= */
-function openHistoryModal(){
-  closeMenu();
-  document.getElementById("historyMessage").innerHTML = "";
-  document.getElementById("historyModal").classList.add("show");
-  loadHistory();
+
+/* =========================
+   EDIT
+   ========================= */
+
+function openEdit(
+    code
+){
+
+    const item =
+        items.find(
+            x =>
+                x.code === code
+        );
+
+
+    if(!item)
+        return;
+
+
+    editingCode =
+        code;
+
+
+    $("itemModalTitle")
+        .textContent =
+        "Edit Sparepart";
+
+
+    $("itemCode")
+        .disabled =
+        true;
+
+
+    $("itemCode")
+        .value =
+        item.code;
+
+
+    $("itemName")
+        .value =
+        item.name || "";
+
+
+    $("itemLocation")
+        .value =
+        item.lokasi || "";
+
+
+    $("itemQty")
+        .value =
+        Number(
+            item.qty || 0
+        );
+
+
+    $("itemMinQty")
+        .value =
+        Number(
+            item.minqty || 0
+        );
+
+
+    $("itemOperator")
+        .value =
+        "";
+
+
+    $("itemModal")
+        .classList
+        .add("show");
+
 }
 
-function closeHistoryModal(){
-  document.getElementById("historyModal").classList.remove("show");
-}
 
-async function loadHistory(){
-  const code = document.getElementById("historyCodeFilter").value;
-  const body = document.getElementById("historyBody");
-  const msg = document.getElementById("historyMessage");
+/* =========================
+   SAVE ITEM
+   ========================= */
 
-  body.innerHTML = '<tr><td colspan="8" class="empty">Memuat history...</td></tr>';
+$("saveItemButton")
+    .onclick =
+    async () => {
 
-  try{
-    let all = [];
+        const code =
+            $("itemCode")
+            .value
+            .trim()
+            .toUpperCase();
 
-    if(code){
-      const snap = await db.collection("spareparts").doc(code)
-        .collection("history")
-        .orderBy("timestamp","desc")
-        .limit(100)
-        .get();
 
-      snap.forEach(doc => all.push(doc.data()));
-    }else{
-      // Firestore does not provide a simple collection-group orderBy
-      // that works reliably with all existing documents without an index.
-      // We read each sparepart's history and sort locally.
-      const promises = spareparts.map(async item => {
-        const snap = await db.collection("spareparts").doc(item.id)
-          .collection("history")
-          .orderBy("timestamp","desc")
-          .limit(100)
-          .get();
+        const name =
+            $("itemName")
+            .value
+            .trim();
 
-        const arr = [];
-        snap.forEach(doc => arr.push(doc.data()));
-        return arr;
-      });
 
-      const results = await Promise.all(promises);
-      results.forEach(arr => all.push(...arr));
+        const lokasi =
+            $("itemLocation")
+            .value
+            .trim();
 
-      all.sort((a,b) => timestampMillis(b.timestamp) - timestampMillis(a.timestamp));
-      all = all.slice(0,200);
-    }
 
-    if(!all.length){
-      body.innerHTML = '<tr><td colspan="8" class="empty">Belum ada transaksi.</td></tr>';
-      return;
-    }
+        const qty =
+            Number(
+                $("itemQty")
+                .value
+            );
 
-    body.innerHTML = all.map(h => {
-      const incoming = h.action === "masuk";
-      const badge = incoming
-        ? '<span class="badge badge-in">MASUK</span>'
-        : '<span class="badge badge-out">KELUAR</span>';
 
-      return `
-        <tr>
-          <td>${formatTimestamp(h.timestamp)}</td>
-          <td><b>${escapeHtml(h.code || "-")}</b></td>
-          <td>${badge}</td>
-          <td>${Number(h.qty || 0)}</td>
-          <td>${Number(h.stockbefore || 0)}</td>
-          <td>${Number(h.stockafter || 0)}</td>
-          <td>${escapeHtml(h.operator || "-")}</td>
-          <td>${escapeHtml(h.note || "-")}</td>
-        </tr>
-      `;
-    }).join("");
+        const minqty =
+            Number(
+                $("itemMinQty")
+                .value
+            );
 
-  }catch(error){
-    body.innerHTML = '<tr><td colspan="8" class="empty error">' +
-      escapeHtml(error.message) + '</td></tr>';
-    msg.innerHTML =
-      '<span class="error">Jika muncul error index, tunggu beberapa saat lalu coba lagi.</span>';
-  }
-}
 
-/* =========================================================
+        const operator =
+            $("itemOperator")
+            .value
+            .trim()
+            ||
+            "Operator";
+
+
+        if(
+            !code ||
+            !name ||
+            !lokasi
+        ){
+
+            showMessage(
+                "Kode, nama dan lokasi wajib diisi.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            qty < 0 ||
+            minqty < 0
+        ){
+
+            showMessage(
+                "Stock tidak boleh negatif.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        try{
+
+            const ref =
+                doc(
+                    db,
+                    "spareparts",
+                    editingCode || code
+                );
+
+
+            if(
+                !editingCode
+            ){
+
+                const exists =
+                    await getDoc(
+                        ref
+                    );
+
+
+                if(
+                    exists.exists()
+                ){
+
+                    showMessage(
+                        "Kode sparepart sudah ada.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                await setDoc(
+                    ref,
+                    {
+
+                        name:
+                            name,
+
+                        lokasi:
+                            lokasi,
+
+                        qty:
+                            qty,
+
+                        minqty:
+                            minqty,
+
+                        updatedAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                await addDoc(
+
+                    collection(
+                        ref,
+                        "history"
+                    ),
+
+                    {
+
+                        action:
+                            "tambah",
+
+                        qty:
+                            qty,
+
+                        stockbefore:
+                            0,
+
+                        stockafter:
+                            qty,
+
+                        operator:
+                            operator,
+
+                        timestamp:
+                            serverTimestamp(),
+
+                        note:
+                            "Sparepart baru"
+
+                    }
+
+                );
+
+
+                showMessage(
+                    "Sparepart berhasil ditambahkan."
+                );
+
+            }
+
+
+            else{
+
+                await updateDoc(
+
+                    ref,
+
+                    {
+
+                        name:
+                            name,
+
+                        lokasi:
+                            lokasi,
+
+                        qty:
+                            qty,
+
+                        minqty:
+                            minqty,
+
+                        updatedAt:
+                            serverTimestamp()
+
+                    }
+
+                );
+
+
+                showMessage(
+                    "Data sparepart berhasil diperbarui."
+                );
+
+            }
+
+
+            closeModal(
+                "itemModal"
+            );
+
+
+            await loadItems();
+
+
+        }
+
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            showMessage(
+                "Gagal menyimpan: "
+                +
+                error.message,
+                "error"
+            );
+
+        }
+
+    };
+
+
+/* =========================
    DELETE
-   ========================================================= */
-function openDeleteModal(code){
-  const item = spareparts.find(x => x.id === code);
-  if(!item) return;
+   ========================= */
 
-  deletingCode = code;
+async function deleteItem(
+    code
+){
 
-  document.getElementById("deleteText").innerHTML =
-    "Yakin ingin menghapus?<br><br>" +
-    "<b>Kode:</b> " + escapeHtml(item.id) + "<br>" +
-    "<b>Nama:</b> " + escapeHtml(item.name || "-") + "<br>" +
-    "<b>Stock:</b> " + getQty(item);
+    const item =
+        items.find(
+            x =>
+                x.code === code
+        );
 
-  document.getElementById("deleteMessage").innerHTML = "";
-  document.getElementById("deleteModal").classList.add("show");
-}
 
-function closeDeleteModal(){
-  deletingCode = null;
-  document.getElementById("deleteModal").classList.remove("show");
-}
+    if(!item)
+        return;
 
-async function confirmDelete(){
-  if(!deletingCode) return;
 
-  const msg = document.getElementById("deleteMessage");
+    const yes =
+        confirm(
 
-  try{
-    await db.collection("spareparts").doc(deletingCode).delete();
+            "Hapus sparepart " +
+            code +
+            " - " +
+            item.name +
+            "?"
 
-    msg.innerHTML = '<span class="success">Sparepart berhasil dihapus.</span>';
-    setTimeout(closeDeleteModal,600);
+        );
 
-  }catch(error){
-    msg.innerHTML = '<span class="error">Gagal menghapus:<br>' +
-      escapeHtml(error.message) + '</span>';
-  }
-}
 
-/* =========================================================
-   UTILITIES
-   ========================================================= */
-function escapeHtml(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
+    if(!yes)
+        return;
 
-/* Safe because codes are additionally escaped before HTML insertion. */
-function safeJs(value){
-  return String(value)
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'");
-}
 
-function timestampMillis(ts){
-  if(!ts) return 0;
-  if(typeof ts.toMillis === "function") return ts.toMillis();
-  if(ts.seconds) return ts.seconds * 1000;
-  return 0;
-}
+    try{
 
-function formatTimestamp(ts){
-  if(!ts) return "-";
-  const d = typeof ts.toDate === "function" ? ts.toDate() : new Date(timestampMillis(ts));
-  return d.toLocaleString("id-ID",{
-    day:"2-digit",month:"2-digit",year:"numeric",
-    hour:"2-digit",minute:"2-digit",second:"2-digit"
-  });
-}
+        const ref =
+            doc(
+                db,
+                "spareparts",
+                code
+            );
 
-/* Close modal when clicking outside card */
-document.querySelectorAll(".modal").forEach(modal => {
-  modal.addEventListener("click", e => {
-    if(e.target === modal){
-      modal.classList.remove("show");
+
+        const history =
+            await getDocs(
+
+                collection(
+                    ref,
+                    "history"
+                )
+
+            );
+
+
+        for(
+            const h of history.docs
+        ){
+
+            await deleteDoc(
+                h.ref
+            );
+
+        }
+
+
+        await deleteDoc(
+            ref
+        );
+
+
+        showMessage(
+            "Sparepart berhasil dihapus."
+        );
+
+
+        await loadItems();
+
+
     }
-  });
-});
 
-/* START */
-loadSpareparts();
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        showMessage(
+            "Gagal menghapus: "
+            +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   TRANSACTION
+   ========================= */
+
+function openTransaction(
+    mode,
+    selectedCode = null
+){
+
+    if(
+        items.length === 0
+    ){
+
+        showMessage(
+            "Belum ada sparepart.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    transactionMode =
+        mode;
+
+
+    $("transactionTitle")
+        .textContent =
+
+        mode === "in"
+
+        ?
+
+        "Barang Masuk"
+
+        :
+
+        "Barang Keluar";
+
+
+    updateSelects();
+
+
+    if(
+        selectedCode
+    ){
+
+        $("transactionCode")
+            .value =
+            selectedCode;
+
+    }
+
+
+    $("transactionQty")
+        .value =
+        1;
+
+
+    $("transactionOperator")
+        .value =
+        "";
+
+
+    $("transactionNote")
+        .value =
+        "";
+
+
+    $("transactionModal")
+        .classList
+        .add("show");
+
+}
+
+
+/* =========================
+   SAVE TRANSACTION
+   ========================= */
+
+$("saveTransactionButton")
+    .onclick =
+    async () => {
+
+        const code =
+            $("transactionCode")
+            .value;
+
+
+        const qty =
+            Number(
+                $("transactionQty")
+                .value
+            );
+
+
+        const operator =
+            $("transactionOperator")
+            .value
+            .trim()
+            ||
+            "Operator";
+
+
+        const note =
+            $("transactionNote")
+            .value
+            .trim();
+
+
+        if(
+            !code ||
+            qty <= 0
+        ){
+
+            showMessage(
+                "Jumlah transaksi harus lebih dari 0.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const ref =
+            doc(
+                db,
+                "spareparts",
+                code
+            );
+
+
+        try{
+
+            await runTransaction(
+
+                db,
+
+                async transaction => {
+
+                    const snap =
+                        await transaction.get(
+                            ref
+                        );
+
+
+                    if(
+                        !snap.exists()
+                    ){
+
+                        throw new Error(
+                            "Sparepart tidak ditemukan."
+                        );
+
+                    }
+
+
+                    const data =
+                        snap.data();
+
+
+                    const before =
+                        Number(
+                            data.qty || 0
+                        );
+
+
+                    const after =
+
+                        transactionMode === "in"
+
+                        ?
+
+                        before + qty
+
+                        :
+
+                        before - qty;
+
+
+                    if(
+                        after < 0
+                    ){
+
+                        throw new Error(
+
+                            "Stock tidak mencukupi. " +
+                            "Stock sekarang: " +
+                            before
+
+                        );
+
+                    }
+
+
+                    transaction.update(
+
+                        ref,
+
+                        {
+
+                            qty:
+                                after,
+
+                            updatedAt:
+                                serverTimestamp()
+
+                        }
+
+                    );
+
+
+                    const historyRef =
+                        doc(
+                            collection(
+                                ref,
+                                "history"
+                            )
+                        );
+
+
+                    transaction.set(
+
+                        historyRef,
+
+                        {
+
+                            action:
+
+                                transactionMode
+                                === "in"
+
+                                ?
+
+                                "masuk"
+
+                                :
+
+                                "keluar",
+
+
+                            qty:
+                                qty,
+
+
+                            stockbefore:
+                                before,
+
+
+                            stockafter:
+                                after,
+
+
+                            operator:
+                                operator,
+
+
+                            note:
+                                note,
+
+
+                            timestamp:
+                                serverTimestamp()
+
+                        }
+
+                    );
+
+                }
+
+            );
+
+
+            closeModal(
+                "transactionModal"
+            );
+
+
+            showMessage(
+
+                transactionMode === "in"
+
+                ?
+
+                "Barang masuk berhasil disimpan."
+
+                :
+
+                "Barang keluar berhasil disimpan."
+
+            );
+
+
+            await loadItems();
+
+
+        }
+
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            showMessage(
+
+                "Transaksi gagal: "
+                +
+                error.message,
+
+                "error"
+
+            );
+
+        }
+
+    };
+
+
+/* =========================
+   HISTORY
+   ========================= */
+
+async function openHistory(){
+
+    if(
+        items.length === 0
+    ){
+
+        showMessage(
+            "Belum ada sparepart.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    updateSelects();
+
+
+    $("historyContent")
+        .innerHTML =
+        "Memuat history...";
+
+
+    $("historyModal")
+        .classList
+        .add("show");
+
+
+    await loadHistory(
+        $("historyCode")
+        .value
+    );
+
+}
+
+
+$("historyCode")
+    .onchange =
+    () =>
+        loadHistory(
+            $("historyCode")
+            .value
+        );
+
+
+async function loadHistory(
+    code
+){
+
+    if(
+        !code
+    )
+        return;
+
+
+    try{
+
+        const ref =
+            collection(
+                db,
+                "spareparts",
+                code,
+                "history"
+            );
+
+
+        const q =
+            query(
+                ref,
+                orderBy(
+                    "timestamp",
+                    "desc"
+                )
+            );
+
+
+        const snap =
+            await getDocs(
+                q
+            );
+
+
+        if(
+            snap.empty
+        ){
+
+            $("historyContent")
+                .innerHTML =
+                "<p>Belum ada transaksi.</p>";
+
+            return;
+
+        }
+
+
+        $("historyContent")
+            .innerHTML = `
+
+                <div
+                    class="table-wrap">
+
+                    <table
+                        style="min-width:700px">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Waktu
+                                </th>
+
+                                <th>
+                                    Aksi
+                                </th>
+
+                                <th>
+                                    Qty
+                                </th>
+
+                                <th>
+                                    Sebelum
+                                </th>
+
+                                <th>
+                                    Sesudah
+                                </th>
+
+                                <th>
+                                    Operator
+                                </th>
+
+                                <th>
+                                    Keterangan
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            ${
+
+                                snap.docs
+                                .map(
+                                    d => {
+
+                                        const x =
+                                            d.data();
+
+
+                                        const date =
+
+                                            x.timestamp?.toDate
+
+                                            ?
+
+                                            x.timestamp
+                                            .toDate()
+                                            .toLocaleString(
+                                                "id-ID"
+                                            )
+
+                                            :
+
+                                            "-";
+
+
+                                        return `
+
+                                            <tr>
+
+                                                <td>
+                                                    ${escapeHtml(date)}
+                                                </td>
+
+                                                <td>
+                                                    ${escapeHtml(
+                                                        x.action
+                                                    )}
+                                                </td>
+
+                                                <td>
+                                                    ${Number(
+                                                        x.qty || 0
+                                                    )}
+                                                </td>
+
+                                                <td>
+                                                    ${Number(
+                                                        x.stockbefore || 0
+                                                    )}
+                                                </td>
+
+                                                <td>
+                                                    ${Number(
+                                                        x.stockafter || 0
+                                                    )}
+                                                </td>
+
+                                                <td>
+                                                    ${escapeHtml(
+                                                        x.operator || "-"
+                                                    )}
+                                                </td>
+
+                                                <td>
+                                                    ${escapeHtml(
+                                                        x.note || "-"
+                                                    )}
+                                                </td>
+
+                                            </tr>
+
+                                        `;
+
+                                    }
+                                )
+                                .join("")
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            `;
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        $("historyContent")
+            .innerHTML =
+
+            '<p style="color:#b91c1c">' +
+
+            "Gagal mengambil history: " +
+
+            escapeHtml(
+                error.message
+            ) +
+
+            "</p>";
+
+    }
+
+}
+
+
+/* =========================
+   CLOSE MODAL
+   ========================= */
+
+window.closeModal =
+function(id){
+
+    $(id)
+        .classList
+        .remove("show");
+
+};
+
+
+document
+    .querySelectorAll(
+        ".modal"
+    )
+    .forEach(
+        modal => {
+
+            modal.addEventListener(
+
+                "click",
+
+                event => {
+
+                    if(
+                        event.target ===
+                        modal
+                    ){
+
+                        modal.classList
+                            .remove(
+                                "show"
+                            );
+
+                    }
+
+                }
+
+            );
+
+        }
+    );
+
+
+/* =========================
+   START
+   ========================= */
+
+loadItems();
+
 </script>
 
 </body>
