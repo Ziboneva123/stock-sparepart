@@ -4331,6 +4331,13 @@ document
                 }
 
 
+                if(menu === "downloadAllQR"){
+
+                    downloadAllQR();
+
+                }
+
+
                 if(menu === "in"){
 
                     openTransaction("in");
@@ -4622,7 +4629,7 @@ async function createAllQrCanvas(code){
 
 async function downloadAllQR(){
 
-    if(!items || items.length===0){
+    if(typeof items === "undefined" || items.length===0){
 
         showMessage(
             "Tidak ada data sparepart.",
@@ -4658,7 +4665,24 @@ async function downloadAllQR(){
     const progress =
         document.getElementById("qrPdfProgress");
 
+    if(!progress){
+
+        showMessage(
+            "Komponen PDF belum siap. Silakan refresh halaman.",
+            "error"
+        );
+
+        return;
+
+    }
+
     progress.classList.add("show");
+
+    setQrPdfProgress(
+        "Menyiapkan " +
+        items.length +
+        " QR Code..."
+    );
 
     try{
 
@@ -4865,38 +4889,6 @@ async function downloadAllQR(){
 
 }
 
-
-/* =========================================================
-   MENU - DOWNLOAD SEMUA QR
-========================================================= */
-
-document
-.querySelectorAll(".menu-item")
-.forEach(function(button){
-
-    if(
-        button.dataset.menu ===
-        "downloadAllQR"
-    ){
-
-        button.addEventListener(
-            "click",
-            function(){
-
-                $("drawer")
-                    .classList.remove("open");
-
-                $("overlay")
-                    .classList.remove("show");
-
-                downloadAllQR();
-
-            }
-        );
-
-    }
-
-});
 
 
 </script>
