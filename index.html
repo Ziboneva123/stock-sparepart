@@ -12,7 +12,7 @@ content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
@@ -729,7 +729,7 @@ footer{
 }
 
 
-.qr-pdf-progress{
+.qr-zip-progress{
     position:fixed;
     inset:0;
     z-index:3000;
@@ -739,8 +739,8 @@ footer{
     background:rgba(0,0,0,.5);
     padding:20px;
 }
-.qr-pdf-progress.show{display:flex;}
-.qr-pdf-progress-card{
+.qr-zip-progress.show{display:flex;}
+.qr-zip-progress-card{
     width:min(420px,100%);
     background:white;
     border-radius:16px;
@@ -748,12 +748,12 @@ footer{
     text-align:center;
     box-shadow:0 15px 45px rgba(0,0,0,.25);
 }
-.qr-pdf-progress-title{
+.qr-zip-progress-title{
     font-size:20px;
     font-weight:bold;
     color:#1f2937;
 }
-.qr-pdf-progress-text{
+.qr-zip-progress-text{
     margin-top:10px;
     color:#64748b;
 }
@@ -887,7 +887,7 @@ footer{
         class="menu-item"
         data-menu="downloadAllQR">
 
-        Download Semua QR
+        Download Semua QR (ZIP)
 
     </button>
 
@@ -4156,10 +4156,10 @@ function printQr(){
     win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
     <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
-<div class="qr-pdf-progress" id="qrPdfProgress">
-    <div class="qr-pdf-progress-card">
-        <div class="qr-pdf-progress-title">Membuat PDF QR Code</div>
-        <div class="qr-pdf-progress-text" id="qrPdfProgressText">
+<div class="qr-zip-progress" id="qrZipProgress">
+    <div class="qr-zip-progress-card">
+        <div class="qr-zip-progress-title">Membuat ZIP QR Code</div>
+        <div class="qr-zip-progress-text" id="qrZipProgressText">
             Menyiapkan data...
         </div>
     </div>
@@ -4598,28 +4598,47 @@ loadItems();
 
 
 /* =========================================================
-   DOWNLOAD SEMUA QR - PDF A4
+   DOWNLOAD SEMUA QR - ZIP
 ========================================================= */
 
-function qrPdfSleep(ms){
+function qrZipSleep(ms){
     return new Promise(function(resolve){
         setTimeout(resolve,ms);
     });
 }
 
-function setQrPdfProgress(text){
-    const el = document.getElementById("qrPdfProgressText");
+function setQrZipProgress(text){
+    const el = document.getElementById("qrZipProgressText");
     if(el) el.textContent = text;
 }
 
-async function createAllQrCanvas(code){
+function sanitizeFileName(value){
+    return String(value || "")
+        .replace(/[\\/:*?"<>|]/g, "_")
+        .replace(/\s+/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "");
+}
+
+async function createQrPngBlob(item){
 
     const box = document.getElementById("allQrGenerator");
 
     box.innerHTML = "";
+    box.style.width = "360px";
+    box.style.height = "360px";
+    box.style.background = "#ffffff";
 
-    new QRCode(box,{
-        text:String(code),
+    const qrBox = document.createElement("div");
+    qrBox.style.width = "320px";
+    qrBox.style.height = "320px";
+    qrBox.style.margin = "0 auto";
+    qrBox.style.background = "#ffffff";
+
+    box.appendChild(qrBox);
+
+    new QRCode(qrBox,{
+        text:String(item.code),
         width:320,
         height:320,
         colorDark:"#000000",
@@ -4627,330 +4646,211 @@ async function createAllQrCanvas(code){
         correctLevel:QRCode.CorrectLevel.H
     });
 
-    await qrPdfSleep(100);
+    await qrZipSleep(150);
 
-    const canvas = box.querySelector("canvas");
+    const qrCanvas = qrBox.querySelector("canvas");
 
-    if(canvas){
-        return canvas;
+    if(!qrCanvas){
+        throw new Error("QR Code gagal dibuat untuk " + item.code);
     }
 
-    const img = box.querySelector("img");
+    // File PNG berisi QR + informasi sparepart.
+    // Isi QR tetap KODE supaya scanner yang sudah ada tetap kompatibel.
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = 760;
+    finalCanvas.height = 930;
 
-    if(img){
+    const ctx = finalCanvas.getContext("2d");
 
-        const canvas2 = document.createElement("canvas");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0,0,finalCanvas.width,finalCanvas.height);
 
-        canvas2.width = 320;
-        canvas2.height = 320;
+    ctx.drawImage(qrCanvas,100,30,560,560);
 
-        const ctx = canvas2.getContext("2d");
+    ctx.fillStyle = "#111827";
+    ctx.textAlign = "center";
+    ctx.font = "bold 42px Arial";
+    ctx.fillText(String(item.code || ""),380,660);
 
-        await new Promise(function(resolve){
+    ctx.font = "bold 30px Arial";
 
-            if(img.complete){
+    const name = String(item.name || "");
+    const nameLines = [];
+    let current = "";
 
-                ctx.drawImage(
-                    img,
-                    0,
-                    0,
-                    320,
-                    320
-                );
+    for(const word of name.split(/\s+/)){
+        const test = current ? current + " " + word : word;
 
-                resolve();
-
-            }
-            else{
-
-                img.onload=function(){
-
-                    ctx.drawImage(
-                        img,
-                        0,
-                        0,
-                        320,
-                        320
-                    );
-
-                    resolve();
-
-                };
-
-            }
-
-        });
-
-        return canvas2;
+        if(ctx.measureText(test).width > 650 && current){
+            nameLines.push(current);
+            current = word;
+        }else{
+            current = test;
+        }
     }
 
-    throw new Error("QR Code gagal dibuat.");
+    if(current) nameLines.push(current);
+
+    nameLines.slice(0,2).forEach(function(line,index){
+        ctx.fillText(line,380,720 + index*38);
+    });
+
+    ctx.font = "24px Arial";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText(
+        "Lokasi: " + String(item.lokasi || "-"),
+        380,
+        820
+    );
+
+    return await new Promise(function(resolve,reject){
+        finalCanvas.toBlob(function(blob){
+            if(blob){
+                resolve(blob);
+            }else{
+                reject(new Error("Gagal membuat file PNG."));
+            }
+        },"image/png");
+    });
 }
-
 
 async function downloadAllQR(){
 
-    if(typeof items === "undefined" || items.length===0){
-
-        showMessage(
-            "Tidak ada data sparepart.",
-            "error"
-        );
-
+    if(!items || items.length === 0){
+        showMessage("Tidak ada data sparepart.","error");
         return;
     }
 
-    if(typeof QRCode==="undefined"){
-
+    if(typeof QRCode === "undefined"){
         showMessage(
             "Library QR Code belum termuat. Refresh halaman.",
             "error"
         );
-
         return;
     }
 
-    if(
-        !window.jspdf ||
-        !window.jspdf.jsPDF
-    ){
-
+    if(typeof JSZip === "undefined"){
         showMessage(
-            "Library PDF belum termuat. Refresh halaman.",
+            "Library ZIP belum termuat. Refresh halaman.",
             "error"
         );
-
         return;
     }
 
     const progress =
-        document.getElementById("qrPdfProgress");
+        document.getElementById("qrZipProgress");
 
     if(!progress){
-
         showMessage(
-            "Komponen PDF belum siap. Silakan refresh halaman.",
+            "Komponen ZIP belum siap. Silakan refresh halaman.",
             "error"
         );
-
         return;
-
     }
 
     progress.classList.add("show");
 
-    setQrPdfProgress(
-        "Menyiapkan " +
-        items.length +
-        " QR Code..."
-    );
-
     try{
 
-        const jsPDF =
-            window.jspdf.jsPDF;
+        const zip = new JSZip();
 
-        const pdf =
-            new jsPDF({
-                orientation:"portrait",
-                unit:"mm",
-                format:"a4"
-            });
+        setQrZipProgress(
+            "Menyiapkan " + items.length + " QR Code..."
+        );
 
-        const pageWidth=210;
-        const pageHeight=297;
+        for(let i=0;i<items.length;i++){
 
-        const margin=8;
-        const columns=3;
-        const rows=4;
-        const gap=3;
+            const item = items[i];
 
-        const cellWidth =
-            (
-                pageWidth -
-                margin*2 -
-                gap*(columns-1)
-            ) / columns;
-
-        const cellHeight =
-            (
-                pageHeight -
-                margin*2 -
-                gap*(rows-1)
-            ) / rows;
-
-        const qrSize=43;
-
-        for(
-            let i=0;
-            i<items.length;
-            i++
-        ){
-
-            const item=items[i];
-
-            setQrPdfProgress(
+            setQrZipProgress(
                 "Membuat QR " +
                 (i+1) +
                 " dari " +
-                items.length
+                items.length +
+                "..."
             );
 
-            const canvas =
-                await createAllQrCanvas(
-                    item.code
-                );
+            const blob =
+                await createQrPngBlob(item);
 
-            if(
-                i>0 &&
-                i%(columns*rows)===0
-            ){
+            const safeCode =
+                sanitizeFileName(item.code) ||
+                ("QR_" + (i+1));
 
-                pdf.addPage();
+            const safeName =
+                sanitizeFileName(item.name);
 
-            }
+            const fileName =
+                safeName
+                ? safeCode + "_" + safeName + ".png"
+                : safeCode + ".png";
 
-            const pos =
-                i%(columns*rows);
-
-            const col =
-                pos%columns;
-
-            const row =
-                Math.floor(pos/columns);
-
-            const x =
-                margin +
-                col*(cellWidth+gap);
-
-            const y =
-                margin +
-                row*(cellHeight+gap);
-
-            pdf.setDrawColor(
-                210,214,220
-            );
-
-            pdf.setLineWidth(.3);
-
-            pdf.roundedRect(
-                x,
-                y,
-                cellWidth,
-                cellHeight,
-                2,
-                2
-            );
-
-            const qrX =
-                x+(cellWidth-qrSize)/2;
-
-            pdf.addImage(
-                canvas.toDataURL("image/png"),
-                "PNG",
-                qrX,
-                y+5,
-                qrSize,
-                qrSize
-            );
-
-            pdf.setTextColor(
-                20,30,45
-            );
-
-            pdf.setFont(
-                "helvetica",
-                "bold"
-            );
-
-            pdf.setFontSize(12);
-
-            pdf.text(
-                String(item.code),
-                x+cellWidth/2,
-                y+53,
-                {align:"center"}
-            );
-
-            pdf.setFont(
-                "helvetica",
-                "normal"
-            );
-
-            pdf.setFontSize(8);
-
-            const nameLines =
-                pdf.splitTextToSize(
-                    String(item.name||""),
-                    cellWidth-8
-                );
-
-            pdf.text(
-                nameLines.slice(0,2),
-                x+4,
-                y+59
-            );
-
-            if(item.lokasi){
-
-                pdf.setFontSize(7);
-
-                pdf.setTextColor(
-                    100,116,139
-                );
-
-                const lokasiLines =
-                    pdf.splitTextToSize(
-                        "Lokasi: "+String(item.lokasi),
-                        cellWidth-8
-                    );
-
-                pdf.text(
-                    lokasiLines.slice(0,2),
-                    x+4,
-                    y+68
-                );
-
-            }
-
+            zip.file(fileName,blob);
         }
 
-        setQrPdfProgress(
-            "Menyimpan PDF..."
+        setQrZipProgress(
+            "Mengompres " + items.length + " QR Code..."
         );
 
-        pdf.save(
-            "QR_Code_Semua_Sparepart.pdf"
-        );
+        const zipBlob =
+            await zip.generateAsync(
+                {
+                    type:"blob",
+                    compression:"DEFLATE",
+                    compressionOptions:{
+                        level:6
+                    }
+                },
+                function(metadata){
+                    setQrZipProgress(
+                        "Mengompres ZIP: " +
+                        Math.round(metadata.percent) +
+                        "%"
+                    );
+                }
+            );
+
+        const url =
+            URL.createObjectURL(zipBlob);
+
+        const a =
+            document.createElement("a");
+
+        a.href = url;
+        a.download = "QR_Code_Semua_Sparepart.zip";
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        setTimeout(function(){
+            URL.revokeObjectURL(url);
+        },1000);
 
         progress.classList.remove("show");
 
         showMessage(
             items.length +
-            " QR Code berhasil dibuat."
+            " QR Code berhasil dimasukkan ke ZIP."
         );
 
     }
     catch(error){
 
         console.error(
-            "DOWNLOAD ALL QR ERROR:",
+            "DOWNLOAD ALL QR ZIP ERROR:",
             error
         );
 
         progress.classList.remove("show");
 
         showMessage(
-            "Gagal membuat PDF: "+
+            "Gagal membuat ZIP: " +
             error.message,
             "error"
         );
-
     }
-
 }
-
-
 
 </script>
 
