@@ -1550,14 +1550,6 @@ from
 const PASSWORD =
     "mtcgoahead";
 
-/* =====================================================
-   PASSWORD HAPUS BARANG
-   Bisa diganti kapan saja di sini.
-===================================================== */
-
-const DELETE_PASSWORD =
-    "mtcgoahead";
-
 
 const loginScreen =
     document.getElementById(
@@ -2602,46 +2594,82 @@ async function saveItem(){
 }
 
 
+
+/* =====================================================
+   PASSWORD KHUSUS HAPUS BARANG
+===================================================== */
+
+const DELETE_PASSWORD =
+    "mtcgoahead";
+
+
+function askDeletePassword(code){
+
+    const password =
+        prompt(
+            "PASSWORD HAPUS BARANG\n\n" +
+            "Kode : " + code +
+            "\n\nMasukkan password:"
+        );
+
+    if(password === null){
+
+        return false;
+
+    }
+
+    if(
+        password.trim() !==
+        DELETE_PASSWORD
+    ){
+
+        showMessage(
+            "Password salah. Barang tidak dihapus.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
 /* =====================================================
    DELETE
 ===================================================== */
 
 async function deleteItem(code){
 
-    /* ================================================
-       PASSWORD HAPUS
-    ================================================ */
+    /*
+     * Password wajib dimasukkan terlebih dahulu.
+     */
 
-    const password =
-        prompt(
-            "Masukkan password untuk menghapus barang:\n\n" +
-            "Kode : " + code
-        );
-
-    /* Batal */
-    if(password === null){
-        return;
-    }
-
-    /* Password salah */
-    if(password !== DELETE_PASSWORD){
-
-        showMessage(
-            "Password hapus salah. Barang tidak dihapus.",
-            "error"
-        );
+    if(
+        !askDeletePassword(code)
+    ){
 
         return;
+
     }
 
-    /* Konfirmasi terakhir */
+
+    /*
+     * Setelah password benar,
+     * baru tampilkan konfirmasi terakhir.
+     */
+
     if(
         !confirm(
             "Apakah Anda yakin ingin menghapus?\n\n" +
             "Kode : " + code
         )
     ){
+
         return;
+
     }
 
 
@@ -2681,6 +2709,7 @@ async function deleteItem(code){
             const safeId =
                 firestoreKey(code);
 
+
             const ref =
                 doc(
                     db,
@@ -2688,8 +2717,10 @@ async function deleteItem(code){
                     safeId
                 );
 
+
             const check =
                 await getDoc(ref);
+
 
             if(!check.exists()){
 
@@ -2702,6 +2733,7 @@ async function deleteItem(code){
 
             }
 
+
             await deleteDoc(ref);
 
         }
@@ -2710,6 +2742,7 @@ async function deleteItem(code){
         showMessage(
             "Sparepart berhasil dihapus."
         );
+
 
         await loadItems();
 
