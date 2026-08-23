@@ -57,7 +57,7 @@ header p{
 
 
 /* =========================================================
-   MENU BUTTON
+   MENU
 ========================================================= */
 
 .menu-button{
@@ -81,11 +81,6 @@ header p{
 
     cursor:pointer;
 }
-
-
-/* =========================================================
-   DRAWER
-========================================================= */
 
 .drawer{
     position:fixed;
@@ -297,19 +292,16 @@ td{
 
 .status-ok{
     color:#15803d;
-
     font-weight:bold;
 }
 
 .status-low{
     color:#d97706;
-
     font-weight:bold;
 }
 
 .status-empty{
     color:#dc2626;
-
     font-weight:bold;
 }
 
@@ -356,6 +348,7 @@ button{
 
 .btn-delete{
     background:#991b1b;
+
 }
 
 .btn-primary{
@@ -495,31 +488,67 @@ button{
 
 
 /* =========================================================
-   AVAILABLE STOCK
+   STOCK TERSEDIA
 ========================================================= */
 
 .available-stock{
-    background:#f1f5f9;
 
-    border:1px solid #cbd5e1;
+    background:#eff6ff;
 
-    border-radius:10px;
+    border:2px solid #bfdbfe;
 
-    padding:13px;
+    border-radius:12px;
+
+    padding:15px;
 
     margin-bottom:15px;
+
+    text-align:center;
 
     font-size:17px;
 
     font-weight:bold;
 
-    color:#334155;
+    color:#1e3a8a;
+
+    cursor:pointer;
+
+    user-select:none;
+
+    transition:.2s;
+
 }
 
-.available-stock span{
-    font-size:24px;
+.available-stock:hover{
+
+    background:#dbeafe;
+
+}
+
+.available-stock:active{
+
+    transform:scale(.98);
+
+}
+
+.stock-hint{
+
+    display:block;
+
+    font-size:16px;
+
+}
+
+.stock-number{
+
+    display:block;
+
+    margin-top:5px;
+
+    font-size:28px;
 
     color:#2563eb;
+
 }
 
 
@@ -528,6 +557,7 @@ button{
 ========================================================= */
 
 .import-info{
+
     background:#f8fafc;
 
     border:1px solid #e2e8f0;
@@ -539,18 +569,23 @@ button{
     margin-bottom:15px;
 
     line-height:1.6;
+
 }
 
 .excel-preview{
+
     overflow:auto;
 
     max-height:400px;
 
     margin-top:15px;
+
 }
 
 .excel-preview table{
+
     min-width:700px;
+
 }
 
 
@@ -559,6 +594,7 @@ button{
 ========================================================= */
 
 .message{
+
     position:fixed;
 
     left:50%;
@@ -582,18 +618,25 @@ button{
     text-align:center;
 
     font-size:16px;
+
 }
 
 .message.show{
+
     display:block;
+
 }
 
 .message.ok{
+
     background:#15803d;
+
 }
 
 .message.error{
+
     background:#b91c1c;
+
 }
 
 
@@ -602,6 +645,7 @@ button{
 ========================================================= */
 
 footer{
+
     text-align:center;
 
     color:#6b7280;
@@ -609,6 +653,7 @@ footer{
     padding:25px;
 
     font-size:16px;
+
 }
 
 
@@ -619,8 +664,10 @@ footer{
 @media(max-width:900px){
 
     .stats{
+
         grid-template-columns:
             repeat(2,1fr);
+
     }
 
 }
@@ -628,27 +675,43 @@ footer{
 @media(max-width:700px){
 
     header{
-        padding:35px 70px 28px 20px;
+
+        padding:
+            35px
+            70px
+            28px
+            20px;
+
     }
 
     header h1{
+
         font-size:28px;
+
     }
 
     header p{
+
         font-size:16px;
+
     }
 
     .stats{
+
         grid-template-columns:1fr;
+
     }
 
     .drawer{
+
         width:320px;
+
     }
 
     .container{
+
         width:94%;
+
     }
 
 }
@@ -660,10 +723,6 @@ footer{
 
 <body>
 
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
 
 <header>
 
@@ -677,10 +736,6 @@ footer{
 
 </header>
 
-
-<!-- =========================================================
-     MENU
-========================================================= -->
 
 <button
     class="menu-button"
@@ -771,14 +826,8 @@ footer{
 </aside>
 
 
-<!-- =========================================================
-     MAIN
-========================================================= -->
-
 <main class="container">
 
-
-    <!-- SEARCH -->
 
     <section class="search-box">
 
@@ -790,7 +839,9 @@ footer{
     </section>
 
 
-    <!-- DASHBOARD -->
+    <!-- =====================================================
+         DASHBOARD
+    ====================================================== -->
 
     <section class="stats">
 
@@ -882,7 +933,9 @@ footer{
     </section>
 
 
-    <!-- TABLE -->
+    <!-- =====================================================
+         TABLE
+    ====================================================== -->
 
     <section class="table-wrap">
 
@@ -958,7 +1011,7 @@ footer{
 
 
 <!-- =========================================================
-     ADD / EDIT MODAL
+     ADD / EDIT
 ========================================================= -->
 
 <div
@@ -1069,7 +1122,7 @@ footer{
 
 
 <!-- =========================================================
-     TRANSACTION MODAL
+     TRANSACTION
 ========================================================= -->
 
 <div
@@ -1096,16 +1149,28 @@ footer{
         </div>
 
 
-        <!-- STOCK TERSEDIA -->
+        <!-- STOCK -->
 
         <div
             class="available-stock"
             id="availableStock">
 
-            Stock tersedia:
+            <span
+                class="stock-hint"
+                id="stockHint">
 
-            <span id="availableStockValue">
+                👆 Ketuk untuk melihat stock
+
+            </span>
+
+
+            <span
+                class="stock-number"
+                id="availableStockValue"
+                style="display:none;">
+
                 0
+
             </span>
 
         </div>
@@ -1179,7 +1244,7 @@ footer{
 
 
 <!-- =========================================================
-     IMPORT EXCEL
+     IMPORT
 ========================================================= -->
 
 <div
@@ -1317,10 +1382,6 @@ footer{
 </div>
 
 
-<!-- =========================================================
-     MESSAGE
-========================================================= -->
-
 <div
     class="message"
     id="message">
@@ -1361,10 +1422,6 @@ import {
 
     addDoc,
 
-    query,
-
-    where,
-
     serverTimestamp,
 
     runTransaction
@@ -1375,7 +1432,7 @@ from
 
 
 /* =========================================================
-   FIREBASE CONFIG
+   CONFIG
 ========================================================= */
 
 const firebaseConfig = {
@@ -1462,11 +1519,14 @@ function showMessage(
     const el =
         $("message");
 
+
     el.textContent =
         text;
 
+
     el.className =
         "message show " + type;
+
 
     setTimeout(
         function(){
@@ -1486,33 +1546,14 @@ function escapeHtml(value){
     return String(
         value ?? ""
     )
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
-
-/* =========================================================
-   FIRESTORE KEY
-========================================================= */
 
 function firestoreKey(code){
 
@@ -1533,6 +1574,7 @@ function getStatus(item){
         Number(
             item.qty || 0
         );
+
 
     const min =
         Number(
@@ -1578,7 +1620,7 @@ function getStatus(item){
 
 
 /* =========================================================
-   LOAD DATA
+   LOAD ITEMS
 ========================================================= */
 
 async function loadItems(){
@@ -1686,7 +1728,7 @@ async function loadItems(){
 
 
 /* =========================================================
-   RENDER TABLE
+   RENDER
 ========================================================= */
 
 function renderTable(){
@@ -1725,8 +1767,6 @@ function renderTable(){
             }
         );
 
-
-    /* DASHBOARD */
 
     const total =
         items.length;
@@ -1797,9 +1837,9 @@ function renderTable(){
         restock;
 
 
-    /* TABLE */
-
-    if(filtered.length === 0){
+    if(
+        filtered.length === 0
+    ){
 
         $("stockBody").innerHTML = `
 
@@ -1871,7 +1911,6 @@ function renderTable(){
 
                             <div class="actions">
 
-
                                 <button
                                     class="btn btn-in"
                                     data-action="in"
@@ -1911,7 +1950,6 @@ function renderTable(){
 
                                 </button>
 
-
                             </div>
 
                         </td>
@@ -1927,7 +1965,7 @@ function renderTable(){
 
 
 /* =========================================================
-   UPDATE SELECT
+   SELECT
 ========================================================= */
 
 function updateSelects(){
@@ -1968,53 +2006,177 @@ function updateSelects(){
         options;
 
 
-    updateAvailableStock();
+    resetStockDisplay();
 
 }
 
 
 /* =========================================================
-   UPDATE AVAILABLE STOCK
+   RESET STOCK DISPLAY
 ========================================================= */
 
-function updateAvailableStock(){
+function resetStockDisplay(){
+
+    $("stockHint")
+        .style
+        .display =
+        "block";
+
+
+    $("availableStockValue")
+        .style
+        .display =
+        "none";
+
+
+    $("availableStockValue")
+        .textContent =
+        "0";
+
+}
+
+
+/* =========================================================
+   SHOW STOCK
+========================================================= */
+
+async function showAvailableStock(){
 
     const code =
-        $("transactionCode").value;
+        $("transactionCode")
+        .value;
 
 
-    const item =
-        items.find(
-            function(x){
+    if(!code){
 
-                return String(x.code)
-                    ===
-                    String(code);
-
-            }
+        showMessage(
+            "Pilih sparepart terlebih dahulu.",
+            "error"
         );
-
-
-    if(!item){
-
-        $("availableStockValue")
-            .textContent =
-            "0";
 
         return;
 
     }
 
 
-    $("availableStockValue")
-        .textContent =
-        item.qty;
+    try{
+
+        const item =
+            items.find(
+                function(x){
+
+                    return String(x.code)
+                        ===
+                        String(code);
+
+                }
+            );
+
+
+        if(!item){
+
+            showMessage(
+                "Sparepart tidak ditemukan.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /*
+           Ambil data terbaru langsung
+           dari Firebase.
+        */
+
+        const itemRef =
+            doc(
+                db,
+                "spareparts",
+                item.firestoreId
+            );
+
+
+        const snapshot =
+            await getDoc(
+                itemRef
+            );
+
+
+        if(!snapshot.exists()){
+
+            showMessage(
+                "Data tidak ditemukan di Firebase.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const data =
+            snapshot.data();
+
+
+        const currentQty =
+            Number(
+                data.qty || 0
+            );
+
+
+        /*
+           Update data lokal
+        */
+
+        item.qty =
+            currentQty;
+
+
+        /*
+           Tampilkan stock
+        */
+
+        $("stockHint")
+            .style
+            .display =
+            "none";
+
+
+        $("availableStockValue")
+            .style
+            .display =
+            "block";
+
+
+        $("availableStockValue")
+            .textContent =
+            currentQty;
+
+
+    }
+    catch(error){
+
+        console.error(
+            "STOCK ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "Gagal mengambil stock: " +
+            error.message,
+            "error"
+        );
+
+    }
 
 }
 
 
 /* =========================================================
-   OPEN / CLOSE MODAL
+   MODAL
 ========================================================= */
 
 function openModal(id){
@@ -2250,8 +2412,6 @@ async function saveItem(){
 
     try{
 
-        /* EDIT */
-
         if(
             editingFirestoreId
         ){
@@ -2288,9 +2448,6 @@ async function saveItem(){
             );
 
         }
-
-        /* TAMBAH */
-
         else{
 
             const safeId =
@@ -2364,7 +2521,7 @@ async function saveItem(){
     catch(error){
 
         console.error(
-            "SAVE ITEM ERROR:",
+            "SAVE ERROR:",
             error
         );
 
@@ -2427,15 +2584,6 @@ async function deleteItem(code){
         }
 
 
-        /*
-           PENTING:
-
-           Gunakan firestoreId asli
-           dari Firebase.
-
-           Bukan membuat ID baru.
-        */
-
         const itemRef =
             doc(
                 db,
@@ -2469,21 +2617,7 @@ async function deleteItem(code){
         );
 
 
-        items =
-            items.filter(
-                function(x){
-
-                    return x.firestoreId
-                        !==
-                        item.firestoreId;
-
-                }
-            );
-
-
-        renderTable();
-
-        updateSelects();
+        await loadItems();
 
 
         showMessage(
@@ -2511,7 +2645,7 @@ async function deleteItem(code){
 
 
 /* =========================================================
-   TRANSACTION OPEN
+   OPEN TRANSACTION
 ========================================================= */
 
 function openTransaction(
@@ -2566,7 +2700,12 @@ function openTransaction(
         "";
 
 
-    updateAvailableStock();
+    /*
+       Selalu mulai dengan tulisan
+       "Ketuk untuk melihat stock".
+    */
+
+    resetStockDisplay();
 
 
     openModal(
@@ -2644,11 +2783,6 @@ async function saveTransaction(){
 
     try{
 
-        /*
-           Cari item berdasarkan kode
-           lalu ambil ID Firebase ASLI.
-        */
-
         const item =
             items.find(
                 function(x){
@@ -2678,7 +2812,8 @@ async function saveTransaction(){
             );
 
 
-        let newQty = 0;
+        let newQty =
+            0;
 
 
         await runTransaction(
@@ -2754,10 +2889,7 @@ async function saveTransaction(){
 
 
         /*
-           Simpan history.
-
-           History disimpan setelah
-           stock berhasil berubah.
+           Simpan history
         */
 
         await addDoc(
@@ -2976,8 +3108,7 @@ async function loadHistory(){
                 if(
                     item.createdAt
                     &&
-                    typeof
-                    item.createdAt.toDate
+                    typeof item.createdAt.toDate
                     ===
                     "function"
                 ){
@@ -3079,7 +3210,7 @@ async function loadHistory(){
 
 
 /* =========================================================
-   EXCEL FILE
+   EXCEL IMPORT
 ========================================================= */
 
 $("excelFile")
@@ -3296,13 +3427,10 @@ $("excelFile")
                 </div>
 
                 <p>
-
                     Total data:
-
                     <strong>
                         ${excelRows.length}
                     </strong>
-
                 </p>
 
             `;
@@ -3334,7 +3462,7 @@ $("excelFile")
 
 
 /* =========================================================
-   IMPORT EXCEL TO FIREBASE
+   IMPORT TO FIREBASE
 ========================================================= */
 
 $("importButton")
@@ -3522,7 +3650,7 @@ $("importButton")
 
 
 /* =========================================================
-   EXPORT EXCEL
+   EXPORT
 ========================================================= */
 
 function exportExcel(){
@@ -3701,7 +3829,18 @@ $("search")
 
 
 /* =========================================================
-   TRANSACTION CODE CHANGE
+   KETUK STOCK
+========================================================= */
+
+$("availableStock")
+.addEventListener(
+    "click",
+    showAvailableStock
+);
+
+
+/* =========================================================
+   GANTI SPAREPART
 ========================================================= */
 
 $("transactionCode")
@@ -3709,14 +3848,14 @@ $("transactionCode")
     "change",
     function(){
 
-        updateAvailableStock();
+        resetStockDisplay();
 
     }
 );
 
 
 /* =========================================================
-   MENU BUTTON
+   MENU
 ========================================================= */
 
 $("menuButton")
@@ -3736,10 +3875,6 @@ $("menuButton")
 );
 
 
-/* =========================================================
-   OVERLAY
-========================================================= */
-
 $("overlay")
 .addEventListener(
     "click",
@@ -3758,7 +3893,7 @@ $("overlay")
 
 
 /* =========================================================
-   MENU ITEMS
+   MENU ITEM
 ========================================================= */
 
 document
@@ -3779,6 +3914,7 @@ document
                 $("drawer")
                     .classList
                     .remove("open");
+
 
                 $("overlay")
                     .classList
@@ -3957,7 +4093,7 @@ $("historyCode")
 
 
 /* =========================================================
-   CLICK OUTSIDE MODAL
+   CLOSE MODAL OUTSIDE
 ========================================================= */
 
 document
