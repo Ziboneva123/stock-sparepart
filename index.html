@@ -4,18 +4,15 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Stock Sparepart</title>
 
-<!-- Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-
-/* =========================================================
-   RESET
-========================================================= */
 
 *{
     box-sizing:border-box;
@@ -30,7 +27,6 @@ body{
     background:#f4f6f8;
     color:#222;
 }
-
 
 /* =========================================================
    HEADER
@@ -53,7 +49,6 @@ header p{
     color:#d1d5db;
     font-size:19px;
 }
-
 
 /* =========================================================
    MENU
@@ -83,6 +78,7 @@ header p{
 
 .drawer{
     position:fixed;
+
     top:0;
     right:-380px;
 
@@ -115,11 +111,13 @@ header p{
 
 .menu-item{
     display:block;
+
     width:100%;
 
     padding:17px 10px;
 
     border:0;
+
     border-bottom:1px solid #e5e7eb;
 
     background:white;
@@ -127,6 +125,7 @@ header p{
     text-align:left;
 
     font-size:17px;
+
     color:#111827;
 
     cursor:pointer;
@@ -140,6 +139,7 @@ header p{
     display:none;
 
     position:fixed;
+
     inset:0;
 
     background:rgba(0,0,0,.45);
@@ -151,7 +151,6 @@ header p{
     display:block;
 }
 
-
 /* =========================================================
    CONTAINER
 ========================================================= */
@@ -162,7 +161,6 @@ header p{
 
     margin:25px auto 50px;
 }
-
 
 /* =========================================================
    SEARCH
@@ -198,9 +196,8 @@ header p{
     border-color:#2563eb;
 }
 
-
 /* =========================================================
-   STATISTICS
+   DASHBOARD
 ========================================================= */
 
 .stats{
@@ -225,6 +222,7 @@ header p{
 
 .stat-title{
     color:#64748b;
+
     font-size:17px;
 }
 
@@ -235,92 +233,6 @@ header p{
 
     font-weight:bold;
 }
-
-
-/* =========================================================
-   INVENTORY ALERT
-========================================================= */
-
-.alert-stats{
-    display:grid;
-
-    grid-template-columns:repeat(3,1fr);
-
-    gap:15px;
-
-    margin-bottom:20px;
-}
-
-.alert-card{
-    background:white;
-
-    border-radius:15px;
-
-    padding:20px;
-
-    box-shadow:0 4px 15px rgba(0,0,0,.07);
-
-    cursor:pointer;
-
-    transition:.2s;
-
-    border-left:6px solid transparent;
-}
-
-.alert-card:hover{
-    transform:translateY(-2px);
-
-    box-shadow:0 7px 20px rgba(0,0,0,.12);
-}
-
-.alert-card.restock{
-    border-left-color:#7c3aed;
-}
-
-.alert-card.empty{
-    border-left-color:#dc2626;
-}
-
-.alert-card.low{
-    border-left-color:#d97706;
-}
-
-.alert-title{
-    font-size:16px;
-
-    font-weight:bold;
-
-    color:#475569;
-}
-
-.alert-number{
-    font-size:34px;
-
-    font-weight:bold;
-
-    margin-top:8px;
-}
-
-.alert-card.restock .alert-number{
-    color:#7c3aed;
-}
-
-.alert-card.empty .alert-number{
-    color:#dc2626;
-}
-
-.alert-card.low .alert-number{
-    color:#d97706;
-}
-
-.alert-subtitle{
-    margin-top:5px;
-
-    color:#64748b;
-
-    font-size:14px;
-}
-
 
 /* =========================================================
    TABLE
@@ -366,22 +278,18 @@ td{
 
 .status-ok{
     color:#15803d;
-
     font-weight:bold;
 }
 
 .status-low{
     color:#d97706;
-
     font-weight:bold;
 }
 
 .status-empty{
     color:#dc2626;
-
     font-weight:bold;
 }
-
 
 /* =========================================================
    BUTTON
@@ -393,21 +301,15 @@ button{
 
 .actions{
     display:flex;
-
     flex-wrap:wrap;
-
     gap:6px;
 }
 
 .btn{
     border:0;
-
     border-radius:8px;
-
     padding:9px 12px;
-
     font-weight:bold;
-
     color:white;
 }
 
@@ -469,6 +371,33 @@ button{
     font-weight:bold;
 }
 
+/* =========================================================
+   STOCK INFO
+========================================================= */
+
+.stock-info{
+    background:#f1f5f9;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:9px;
+
+    padding:13px;
+
+    margin-bottom:15px;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    color:#334155;
+}
+
+.stock-info span{
+    color:#2563eb;
+
+    font-size:20px;
+}
 
 /* =========================================================
    MODAL
@@ -562,56 +491,8 @@ button{
     margin-top:18px;
 }
 
-
 /* =========================================================
-   ALERT TABLE
-========================================================= */
-
-.alert-modal-list{
-    overflow:auto;
-
-    max-height:65vh;
-}
-
-.alert-table{
-    width:100%;
-
-    border-collapse:collapse;
-
-    min-width:700px;
-}
-
-.alert-table th{
-    background:#374151;
-
-    color:white;
-
-    padding:12px;
-
-    text-align:left;
-}
-
-.alert-table td{
-    padding:12px;
-
-    border-bottom:1px solid #e5e7eb;
-}
-
-.alert-stock-empty{
-    color:#dc2626;
-
-    font-weight:bold;
-}
-
-.alert-stock-low{
-    color:#d97706;
-
-    font-weight:bold;
-}
-
-
-/* =========================================================
-   IMPORT EXCEL
+   EXCEL
 ========================================================= */
 
 .import-info{
@@ -636,6 +517,9 @@ button{
     margin-top:15px;
 }
 
+.excel-preview table{
+    min-width:700px;
+}
 
 /* =========================================================
    MESSAGE
@@ -679,7 +563,6 @@ button{
     background:#b91c1c;
 }
 
-
 /* =========================================================
    FOOTER
 ========================================================= */
@@ -693,7 +576,6 @@ footer{
 
     font-size:16px;
 }
-
 
 /* =========================================================
    MOBILE
@@ -717,12 +599,12 @@ footer{
         grid-template-columns:1fr;
     }
 
-    .alert-stats{
-        grid-template-columns:1fr;
-    }
-
     .drawer{
         width:320px;
+    }
+
+    .container{
+        width:94%;
     }
 
 }
@@ -734,10 +616,6 @@ footer{
 
 <body>
 
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
 
 <header>
 
@@ -751,10 +629,6 @@ footer{
 
 </header>
 
-
-<!-- =========================================================
-     MENU
-========================================================= -->
 
 <button
     class="menu-button"
@@ -845,14 +719,8 @@ footer{
 </aside>
 
 
-<!-- =========================================================
-     MAIN
-========================================================= -->
-
 <main class="container">
 
-
-    <!-- SEARCH -->
 
     <section class="search-box">
 
@@ -863,8 +731,6 @@ footer{
 
     </section>
 
-
-    <!-- STATISTICS -->
 
     <section class="stats">
 
@@ -922,88 +788,6 @@ footer{
     </section>
 
 
-    <!-- =====================================================
-         INVENTORY ALERT
-    ====================================================== -->
-
-    <section class="alert-stats">
-
-
-        <div
-            class="alert-card restock"
-            id="restockCard">
-
-            <div class="alert-title">
-                PERLU RESTOCK
-            </div>
-
-            <div
-                class="alert-number"
-                id="restockCount">
-
-                0
-
-            </div>
-
-            <div class="alert-subtitle">
-                Klik untuk melihat data
-            </div>
-
-        </div>
-
-
-        <div
-            class="alert-card empty"
-            id="emptyCard">
-
-            <div class="alert-title">
-                HABIS
-            </div>
-
-            <div
-                class="alert-number"
-                id="emptyCount">
-
-                0
-
-            </div>
-
-            <div class="alert-subtitle">
-                Klik untuk melihat data
-            </div>
-
-        </div>
-
-
-        <div
-            class="alert-card low"
-            id="lowCard">
-
-            <div class="alert-title">
-                LOW STOCK
-            </div>
-
-            <div
-                class="alert-number"
-                id="lowCount">
-
-                0
-
-            </div>
-
-            <div class="alert-subtitle">
-                Klik untuk melihat data
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         DATA TABLE
-    ====================================================== -->
-
     <section class="table-wrap">
 
         <table>
@@ -1012,33 +796,19 @@ footer{
 
                 <tr>
 
-                    <th>
-                        Kode
-                    </th>
+                    <th>Kode</th>
 
-                    <th>
-                        Nama Sparepart
-                    </th>
+                    <th>Nama Sparepart</th>
 
-                    <th>
-                        Lokasi
-                    </th>
+                    <th>Lokasi</th>
 
-                    <th>
-                        Stock
-                    </th>
+                    <th>Stock</th>
 
-                    <th>
-                        Min. Stock
-                    </th>
+                    <th>Min. Stock</th>
 
-                    <th>
-                        Status
-                    </th>
+                    <th>Status</th>
 
-                    <th>
-                        Aksi
-                    </th>
+                    <th>Aksi</th>
 
                 </tr>
 
@@ -1078,7 +848,7 @@ footer{
 
 
 <!-- =========================================================
-     ADD / EDIT MODAL
+     TAMBAH / EDIT
 ========================================================= -->
 
 <div
@@ -1147,6 +917,18 @@ footer{
         </div>
 
 
+        <div
+            id="editStockInfo"
+            class="stock-info"
+            style="display:none">
+
+            Stock saat ini:
+            <span id="editStockValue">0</span>
+            pcs
+
+        </div>
+
+
         <div class="form-group">
 
             <label>
@@ -1189,7 +971,7 @@ footer{
 
 
 <!-- =========================================================
-     TRANSACTION MODAL
+     TRANSAKSI
 ========================================================= -->
 
 <div
@@ -1212,6 +994,19 @@ footer{
             <select
                 id="transactionCode">
             </select>
+
+        </div>
+
+
+        <div
+            id="availableStock"
+            class="stock-info">
+
+            Stock tersedia:
+            <span id="availableStockValue">
+                0
+            </span>
+            pcs
 
         </div>
 
@@ -1418,49 +1213,6 @@ footer{
 </div>
 
 
-<!-- =========================================================
-     INVENTORY ALERT MODAL
-========================================================= -->
-
-<div
-    class="modal"
-    id="alertModal">
-
-    <div class="modal-card">
-
-        <h2 id="alertModalTitle">
-            Data Inventory
-        </h2>
-
-
-        <div
-            id="alertModalContent"
-            class="alert-modal-list">
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button
-                class="btn-light"
-                id="cancelAlert">
-
-                Tutup
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     MESSAGE
-========================================================= -->
-
 <div
     class="message"
     id="message">
@@ -1472,7 +1224,6 @@ footer{
 ========================================================= -->
 
 <script type="module">
-
 
 import {
     initializeApp
@@ -1488,11 +1239,14 @@ import {
     getDocs,
     getDoc,
     doc,
-    addDoc,
     setDoc,
     updateDoc,
     deleteDoc,
-    serverTimestamp
+    addDoc,
+    query,
+    where,
+    serverTimestamp,
+    runTransaction
 
 }
 from
@@ -1530,15 +1284,11 @@ const firebaseConfig = {
 
 
 const app =
-    initializeApp(
-        firebaseConfig
-    );
+    initializeApp(firebaseConfig);
 
 
 const db =
-    getFirestore(
-        app
-    );
+    getFirestore(app);
 
 
 const stockRef =
@@ -1556,12 +1306,12 @@ const transactionRef =
 
 
 /* =========================================================
-   VARIABLES
+   VARIABLE
 ========================================================= */
 
 let items = [];
 
-let editingItemId = null;
+let editingCode = null;
 
 let transactionMode = "in";
 
@@ -1639,6 +1389,19 @@ function escapeHtml(value){
 
 
 /* =========================================================
+   FIRESTORE ID
+========================================================= */
+
+function firestoreKey(code){
+
+    return encodeURIComponent(
+        String(code).trim()
+    );
+
+}
+
+
+/* =========================================================
    STATUS
 ========================================================= */
 
@@ -1650,40 +1413,32 @@ function getStatus(item){
         );
 
 
-    const minqty =
+    const min =
         Number(
             item.minqty || 0
         );
 
 
-    if(
-        qty <= 0
-    ){
+    if(qty <= 0){
 
         return {
 
-            text:
-                "HABIS",
+            text:"HABIS",
 
-            className:
-                "status-empty"
+            className:"status-empty"
 
         };
 
     }
 
 
-    if(
-        qty <= minqty
-    ){
+    if(qty <= min){
 
         return {
 
-            text:
-                "LOW",
+            text:"LOW",
 
-            className:
-                "status-low"
+            className:"status-low"
 
         };
 
@@ -1692,11 +1447,9 @@ function getStatus(item){
 
     return {
 
-        text:
-            "OK",
+        text:"OK",
 
-        className:
-            "status-ok"
+        className:"status-ok"
 
     };
 
@@ -1711,41 +1464,37 @@ async function loadItems(){
 
     try{
 
-        const snapshot =
+        const snap =
             await getDocs(
                 stockRef
             );
 
 
         items =
-            snapshot.docs.map(
-                function(
-                    documentSnapshot
-                ){
+            snap.docs.map(
+                function(d){
 
                     const data =
-                        documentSnapshot.data();
+                        d.data();
 
 
                     return {
 
                         firestoreId:
-                            documentSnapshot.id,
+                            d.id,
 
                         code:
-                            String(
-                                data.code || ""
+                            data.code
+                            ||
+                            decodeURIComponent(
+                                d.id
                             ),
 
                         name:
-                            String(
-                                data.name || ""
-                            ),
+                            data.name || "",
 
                         lokasi:
-                            String(
-                                data.lokasi || ""
-                            ),
+                            data.lokasi || "",
 
                         qty:
                             Number(
@@ -1782,18 +1531,16 @@ async function loadItems(){
 
         updateSelects();
 
-        updateInventoryAlerts();
+        updateAvailableStock();
 
     }
     catch(error){
 
-        console.error(
-            "LOAD ERROR:",
-            error
-        );
+        console.error(error);
 
 
-        $("stockBody").innerHTML = `
+        $("stockBody")
+        .innerHTML = `
 
             <tr>
 
@@ -1824,382 +1571,12 @@ async function loadItems(){
 
 
 /* =========================================================
-   INVENTORY ALERT
-========================================================= */
-
-function updateInventoryAlerts(){
-
-    const restockItems =
-        items.filter(
-            function(item){
-
-                const qty =
-                    Number(
-                        item.qty || 0
-                    );
-
-                const min =
-                    Number(
-                        item.minqty || 0
-                    );
-
-
-                return qty <= min;
-
-            }
-        );
-
-
-    const emptyItems =
-        items.filter(
-            function(item){
-
-                return Number(
-                    item.qty || 0
-                ) === 0;
-
-            }
-        );
-
-
-    const lowItems =
-        items.filter(
-            function(item){
-
-                const qty =
-                    Number(
-                        item.qty || 0
-                    );
-
-                const min =
-                    Number(
-                        item.minqty || 0
-                    );
-
-
-                return (
-                    qty > 0
-                    &&
-                    qty <= min
-                );
-
-            }
-        );
-
-
-    $("restockCount")
-        .textContent =
-        restockItems.length;
-
-
-    $("emptyCount")
-        .textContent =
-        emptyItems.length;
-
-
-    $("lowCount")
-        .textContent =
-        lowItems.length;
-
-}
-
-
-/* =========================================================
-   SHOW ALERT DATA
-========================================================= */
-
-function showInventoryAlert(
-    type
-){
-
-    let title = "";
-
-    let data = [];
-
-
-    if(
-        type === "restock"
-    ){
-
-        title =
-            "PERLU RESTOCK";
-
-
-        data =
-            items.filter(
-                function(item){
-
-                    const qty =
-                        Number(
-                            item.qty || 0
-                        );
-
-                    const min =
-                        Number(
-                            item.minqty || 0
-                        );
-
-
-                    return qty <= min;
-
-                }
-            );
-
-    }
-
-
-    else if(
-        type === "empty"
-    ){
-
-        title =
-            "SPAREPART HABIS";
-
-
-        data =
-            items.filter(
-                function(item){
-
-                    return Number(
-                        item.qty || 0
-                    ) === 0;
-
-                }
-            );
-
-    }
-
-
-    else if(
-        type === "low"
-    ){
-
-        title =
-            "LOW STOCK";
-
-
-        data =
-            items.filter(
-                function(item){
-
-                    const qty =
-                        Number(
-                            item.qty || 0
-                        );
-
-                    const min =
-                        Number(
-                            item.minqty || 0
-                        );
-
-
-                    return (
-                        qty > 0
-                        &&
-                        qty <= min
-                    );
-
-                }
-            );
-
-    }
-
-
-    $("alertModalTitle")
-        .textContent =
-        title;
-
-
-    if(
-        data.length === 0
-    ){
-
-        $("alertModalContent")
-            .innerHTML = `
-
-                <div
-                    style="
-                    padding:30px;
-                    text-align:center;
-                    color:#64748b">
-
-                    Tidak ada sparepart
-                    dalam kategori ini.
-
-                </div>
-
-            `;
-
-
-        openModal(
-            "alertModal"
-        );
-
-
-        return;
-
-    }
-
-
-    let html = `
-
-        <table class="alert-table">
-
-            <thead>
-
-                <tr>
-
-                    <th>
-                        Kode
-                    </th>
-
-                    <th>
-                        Nama Sparepart
-                    </th>
-
-                    <th>
-                        Lokasi
-                    </th>
-
-                    <th>
-                        Stock
-                    </th>
-
-                    <th>
-                        Min. Stock
-                    </th>
-
-                    <th>
-                        Status
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-    `;
-
-
-    data.forEach(
-        function(item){
-
-            const qty =
-                Number(
-                    item.qty || 0
-                );
-
-
-            const min =
-                Number(
-                    item.minqty || 0
-                );
-
-
-            let statusText;
-
-            let statusClass;
-
-
-            if(
-                qty === 0
-            ){
-
-                statusText =
-                    "HABIS";
-
-                statusClass =
-                    "alert-stock-empty";
-
-            }
-            else{
-
-                statusText =
-                    "LOW";
-
-                statusClass =
-                    "alert-stock-low";
-
-            }
-
-
-            html += `
-
-                <tr>
-
-                    <td>
-                        ${escapeHtml(
-                            item.code
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(
-                            item.name
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(
-                            item.lokasi
-                        )}
-                    </td>
-
-                    <td
-                        class="${statusClass}">
-
-                        ${qty}
-
-                    </td>
-
-                    <td>
-                        ${min}
-                    </td>
-
-                    <td
-                        class="${statusClass}">
-
-                        ${statusText}
-
-                    </td>
-
-                </tr>
-
-            `;
-
-        }
-    );
-
-
-    html += `
-
-            </tbody>
-
-        </table>
-
-    `;
-
-
-    $("alertModalContent")
-        .innerHTML =
-        html;
-
-
-    openModal(
-        "alertModal"
-    );
-
-}
-
-
-/* =========================================================
    RENDER TABLE
 ========================================================= */
 
 function renderTable(){
 
-    const keyword =
+    const search =
         $("search")
         .value
         .trim()
@@ -2212,33 +1589,21 @@ function renderTable(){
 
                 return (
 
-                    String(
-                        item.code
-                    )
+                    String(item.code)
                     .toLowerCase()
-                    .includes(
-                        keyword
-                    )
+                    .includes(search)
 
                     ||
 
-                    String(
-                        item.name
-                    )
+                    String(item.name)
                     .toLowerCase()
-                    .includes(
-                        keyword
-                    )
+                    .includes(search)
 
                     ||
 
-                    String(
-                        item.lokasi
-                    )
+                    String(item.lokasi)
                     .toLowerCase()
-                    .includes(
-                        keyword
-                    )
+                    .includes(search)
 
                 );
 
@@ -2247,61 +1612,54 @@ function renderTable(){
 
 
     $("totalItems")
-        .textContent =
-        items.length;
+    .textContent =
+    items.length;
 
 
     $("okItems")
-        .textContent =
-        items.filter(
-            function(item){
+    .textContent =
+    items.filter(
+        function(item){
 
-                return getStatus(
-                    item
-                ).text === "OK";
+            return getStatus(item)
+                .text === "OK";
 
-            }
-        ).length;
+        }
+    ).length;
 
 
     $("lowItems")
-        .textContent =
-        items.filter(
-            function(item){
+    .textContent =
+    items.filter(
+        function(item){
 
-                return getStatus(
-                    item
-                ).text !== "OK";
+            return getStatus(item)
+                .text !== "OK";
 
-            }
-        ).length;
+        }
+    ).length;
 
 
-    if(
-        filtered.length === 0
-    ){
+    if(filtered.length === 0){
 
         $("stockBody")
-            .innerHTML = `
+        .innerHTML = `
 
-                <tr>
+            <tr>
 
-                    <td
-                        colspan="7"
-                        style="
-                        text-align:center;
-                        padding:30px">
+                <td
+                    colspan="7"
+                    style="
+                    text-align:center;
+                    padding:30px">
 
-                        Tidak ada data sparepart.
+                    Tidak ada data sparepart.
 
-                    </td>
+                </td>
 
-                </tr>
+            </tr>
 
-            `;
-
-
-        updateInventoryAlerts();
+        `;
 
         return;
 
@@ -2309,15 +1667,13 @@ function renderTable(){
 
 
     $("stockBody")
-        .innerHTML =
+    .innerHTML =
 
         filtered.map(
             function(item){
 
                 const status =
-                    getStatus(
-                        item
-                    );
+                    getStatus(item);
 
 
                 return `
@@ -2350,25 +1706,18 @@ function renderTable(){
                             ${item.minqty}
                         </td>
 
-                        <td
-                            class="${status.className}">
-
+                        <td class="${status.className}">
                             ${status.text}
-
                         </td>
 
                         <td>
 
-                            <div
-                                class="actions">
-
+                            <div class="actions">
 
                                 <button
                                     class="btn btn-in"
                                     data-action="in"
-                                    data-id="${escapeHtml(
-                                        item.firestoreId
-                                    )}">
+                                    data-code="${escapeHtml(item.code)}">
 
                                     Masuk
 
@@ -2378,9 +1727,7 @@ function renderTable(){
                                 <button
                                     class="btn btn-out"
                                     data-action="out"
-                                    data-id="${escapeHtml(
-                                        item.firestoreId
-                                    )}">
+                                    data-code="${escapeHtml(item.code)}">
 
                                     Keluar
 
@@ -2390,9 +1737,7 @@ function renderTable(){
                                 <button
                                     class="btn btn-edit"
                                     data-action="edit"
-                                    data-id="${escapeHtml(
-                                        item.firestoreId
-                                    )}">
+                                    data-code="${escapeHtml(item.code)}">
 
                                     Edit
 
@@ -2402,14 +1747,11 @@ function renderTable(){
                                 <button
                                     class="btn btn-delete"
                                     data-action="delete"
-                                    data-id="${escapeHtml(
-                                        item.firestoreId
-                                    )}">
+                                    data-code="${escapeHtml(item.code)}">
 
                                     Hapus
 
                                 </button>
-
 
                             </div>
 
@@ -2422,14 +1764,11 @@ function renderTable(){
             }
         ).join("");
 
-
-    updateInventoryAlerts();
-
 }
 
 
 /* =========================================================
-   UPDATE SELECT
+   SELECT
 ========================================================= */
 
 function updateSelects(){
@@ -2468,14 +1807,52 @@ function updateSelects(){
 
     $("historyCode")
         .innerHTML =
-
         `<option value="">
             -- Pilih Sparepart --
         </option>`
-
         +
-
         options;
+
+}
+
+
+/* =========================================================
+   UPDATE STOCK TERSEDIA
+========================================================= */
+
+function updateAvailableStock(){
+
+    const id =
+        $("transactionCode")
+        .value;
+
+
+    const item =
+        items.find(
+            function(x){
+
+                return x.firestoreId === id;
+
+            }
+        );
+
+
+    if(!item){
+
+        $("availableStockValue")
+            .textContent =
+            "0";
+
+        return;
+
+    }
+
+
+    $("availableStockValue")
+        .textContent =
+        Number(
+            item.qty || 0
+        );
 
 }
 
@@ -2503,13 +1880,12 @@ function closeModal(id){
 
 
 /* =========================================================
-   ADD
+   TAMBAH
 ========================================================= */
 
 function openAdd(){
 
-    editingItemId =
-        null;
+    editingCode = null;
 
 
     $("itemTitle")
@@ -2541,6 +1917,12 @@ function openAdd(){
         .disabled = false;
 
 
+    $("editStockInfo")
+        .style
+        .display =
+        "none";
+
+
     openModal(
         "itemModal"
     );
@@ -2552,13 +1934,17 @@ function openAdd(){
    EDIT
 ========================================================= */
 
-function openEdit(id){
+function openEdit(code){
 
     const item =
         items.find(
             function(x){
 
-                return x.firestoreId === id;
+                return String(
+                    x.code
+                ) === String(
+                    code
+                );
 
             }
         );
@@ -2567,7 +1953,7 @@ function openEdit(id){
     if(!item){
 
         showMessage(
-            "Dokumen Firebase tidak ditemukan.",
+            "Data tidak ditemukan.",
             "error"
         );
 
@@ -2576,8 +1962,8 @@ function openEdit(id){
     }
 
 
-    editingItemId =
-        item.firestoreId;
+    editingCode =
+        item.code;
 
 
     $("itemTitle")
@@ -2605,14 +1991,24 @@ function openEdit(id){
         item.qty;
 
 
+    $("editStockValue")
+        .textContent =
+        item.qty;
+
+
+    $("editStockInfo")
+        .style
+        .display =
+        "block";
+
+
     $("itemMin")
         .value =
         item.minqty;
 
 
     $("itemCode")
-        .disabled =
-        true;
+        .disabled = true;
 
 
     openModal(
@@ -2685,29 +2081,12 @@ async function saveItem(){
 
 
     if(
-        !Number.isFinite(qty)
-        ||
-        qty < 0
-    ){
-
-        showMessage(
-            "Stock tidak valid.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(
-        !Number.isFinite(minqty)
-        ||
+        qty < 0 ||
         minqty < 0
     ){
 
         showMessage(
-            "Minimum stock tidak valid.",
+            "Stock tidak boleh negatif.",
             "error"
         );
 
@@ -2716,53 +2095,39 @@ async function saveItem(){
     }
 
 
-    const button =
-        $("saveItem");
-
-
-    button.disabled =
-        true;
-
-
-    button.textContent =
-        "Menyimpan...";
-
-
     try{
 
-        /* ================= EDIT ================= */
+        if(editingCode){
 
-        if(
-            editingItemId
-        ){
+            const item =
+                items.find(
+                    function(x){
 
-            const itemRef =
-                doc(
-                    db,
-                    "spareparts",
-                    editingItemId
+                        return String(
+                            x.code
+                        ) === String(
+                            editingCode
+                        );
+
+                    }
                 );
 
 
-            const check =
-                await getDoc(
-                    itemRef
-                );
-
-
-            if(
-                !check.exists()
-            ){
+            if(!item){
 
                 throw new Error(
-                    "Dokumen sparepart tidak ditemukan di Firebase."
+                    "Data sparepart tidak ditemukan."
                 );
 
             }
 
 
             await updateDoc(
-                itemRef,
+                doc(
+                    db,
+                    "spareparts",
+                    item.firestoreId
+                ),
                 {
 
                     name:name,
@@ -2786,27 +2151,25 @@ async function saveItem(){
 
         }
 
-
-        /* ================= TAMBAH ================= */
-
         else{
 
-            const duplicate =
-                items.some(
-                    function(item){
-
-                        return item.code
-                            .toLowerCase()
-                            ===
-                            code.toLowerCase();
-
-                    }
+            const safeId =
+                firestoreKey(
+                    code
                 );
 
 
-            if(
-                duplicate
-            ){
+            const existing =
+                await getDoc(
+                    doc(
+                        db,
+                        "spareparts",
+                        safeId
+                    )
+                );
+
+
+            if(existing.exists()){
 
                 showMessage(
                     "Kode sparepart sudah ada.",
@@ -2818,8 +2181,12 @@ async function saveItem(){
             }
 
 
-            await addDoc(
-                stockRef,
+            await setDoc(
+                doc(
+                    db,
+                    "spareparts",
+                    safeId
+                ),
                 {
 
                     code:code,
@@ -2857,7 +2224,7 @@ async function saveItem(){
     catch(error){
 
         console.error(
-            "SAVE ERROR:",
+            "SAVE ITEM ERROR:",
             error
         );
 
@@ -2869,16 +2236,6 @@ async function saveItem(){
         );
 
     }
-    finally{
-
-        button.disabled =
-            false;
-
-
-        button.textContent =
-            "Simpan";
-
-    }
 
 }
 
@@ -2887,39 +2244,13 @@ async function saveItem(){
    DELETE
 ========================================================= */
 
-async function deleteItem(id){
-
-    const item =
-        items.find(
-            function(x){
-
-                return x.firestoreId === id;
-
-            }
-        );
-
-
-    if(!item){
-
-        showMessage(
-            "Data tidak ditemukan.",
-            "error"
-        );
-
-        return;
-
-    }
-
+async function deleteItem(code){
 
     const yakin =
         confirm(
-            "Hapus sparepart ini?\n\n" +
-
+            "Apakah Anda yakin ingin menghapus?\n\n" +
             "Kode : " +
-            item.code +
-
-            "\nNama : " +
-            item.name
+            code
         );
 
 
@@ -2932,20 +2263,94 @@ async function deleteItem(id){
 
     try{
 
-        const itemRef =
-            doc(
-                db,
-                "spareparts",
-                item.firestoreId
+        const q =
+            query(
+                stockRef,
+                where(
+                    "code",
+                    "==",
+                    code
+                )
             );
 
 
-        await deleteDoc(
-            itemRef
-        );
+        const snap =
+            await getDocs(q);
 
 
-        await loadItems();
+        if(!snap.empty){
+
+            for(
+                const documentSnapshot
+                of snap.docs
+            ){
+
+                await deleteDoc(
+                    documentSnapshot.ref
+                );
+
+            }
+
+        }
+
+        else{
+
+            const item =
+                items.find(
+                    function(x){
+
+                        return String(
+                            x.code
+                        ) === String(
+                            code
+                        );
+
+                    }
+                );
+
+
+            if(!item){
+
+                showMessage(
+                    "Data tidak ditemukan.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "spareparts",
+                    item.firestoreId
+                )
+            );
+
+        }
+
+
+        items =
+            items.filter(
+                function(item){
+
+                    return String(
+                        item.code
+                    ) !== String(
+                        code
+                    );
+
+                }
+            );
+
+
+        renderTable();
+
+        updateSelects();
+
+        updateAvailableStock();
 
 
         showMessage(
@@ -2978,46 +2383,73 @@ async function deleteItem(id){
 
 function openTransaction(
     mode,
-    id = ""
+    code = ""
 ){
 
     transactionMode =
         mode;
 
 
-    $("transactionTitle")
-        .textContent =
+    if(mode === "in"){
 
-        mode === "in"
-        ? "Barang Masuk"
-        : "Barang Keluar";
+        $("transactionTitle")
+            .textContent =
+            "Barang Masuk";
+
+    }
+
+    else{
+
+        $("transactionTitle")
+            .textContent =
+            "Barang Keluar";
+
+    }
 
 
     updateSelects();
 
 
-    if(id){
+    if(code){
 
-        $("transactionCode")
-            .value =
-            id;
+        const item =
+            items.find(
+                function(x){
+
+                    return String(
+                        x.code
+                    ) === String(
+                        code
+                    );
+
+                }
+            );
+
+
+        if(item){
+
+            $("transactionCode")
+                .value =
+                item.firestoreId;
+
+        }
 
     }
 
 
     $("transactionQty")
-        .value =
-        1;
+        .value = 1;
 
 
     $("transactionOperator")
-        .value =
-        "";
+        .value = "";
 
 
     $("transactionNote")
-        .value =
-        "";
+        .value = "";
+
+
+    updateAvailableStock();
 
 
     openModal(
@@ -3033,9 +2465,36 @@ function openTransaction(
 
 async function saveTransaction(){
 
-    const id =
+    const firestoreId =
         $("transactionCode")
         .value;
+
+
+    const selectedItem =
+        items.find(
+            function(x){
+
+                return x.firestoreId ===
+                    firestoreId;
+
+            }
+        );
+
+
+    if(!selectedItem){
+
+        showMessage(
+            "Sparepart tidak ditemukan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const code =
+        selectedItem.code;
 
 
     const qty =
@@ -3057,23 +2516,7 @@ async function saveTransaction(){
         .trim();
 
 
-    if(!id){
-
-        showMessage(
-            "Pilih sparepart.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(
-        !Number.isFinite(qty)
-        ||
-        qty <= 0
-    ){
+    if(qty <= 0){
 
         showMessage(
             "Jumlah harus lebih dari 0.",
@@ -3097,187 +2540,119 @@ async function saveTransaction(){
     }
 
 
-    const button =
-        $("saveTransaction");
-
-
-    button.disabled =
-        true;
-
-
-    button.textContent =
-        "Menyimpan...";
-
-
     try{
-
-        const item =
-            items.find(
-                function(x){
-
-                    return x.firestoreId === id;
-
-                }
-            );
-
-
-        if(!item){
-
-            throw new Error(
-                "Sparepart tidak ditemukan."
-            );
-
-        }
-
 
         const itemRef =
             doc(
                 db,
                 "spareparts",
-                item.firestoreId
+                firestoreId
             );
 
 
-        const latest =
-            await getDoc(
-                itemRef
-            );
+        let finalQty = 0;
 
 
-        if(
-            !latest.exists()
-        ){
+        await runTransaction(
+            db,
+            async function(transaction){
 
-            throw new Error(
-                "Dokumen sparepart tidak ditemukan."
-            );
-
-        }
-
-
-        const data =
-            latest.data();
+                const snap =
+                    await transaction.get(
+                        itemRef
+                    );
 
 
-        const oldQty =
-            Number(
-                data.qty || 0
-            );
+                if(!snap.exists()){
+
+                    throw new Error(
+                        "Sparepart tidak ditemukan di Firebase."
+                    );
+
+                }
 
 
-        let newQty;
+                const data =
+                    snap.data();
 
 
-        if(
-            transactionMode === "in"
-        ){
-
-            newQty =
-                oldQty + qty;
-
-        }
-        else{
-
-            newQty =
-                oldQty - qty;
+                const oldQty =
+                    Number(
+                        data.qty || 0
+                    );
 
 
-            if(
-                newQty < 0
-            ){
+                if(
+                    transactionMode === "out"
+                ){
 
-                throw new Error(
-                    "Stock tidak mencukupi. Stock sekarang: " +
-                    oldQty
+                    if(
+                        qty > oldQty
+                    ){
+
+                        throw new Error(
+                            "Stock tidak mencukupi. Stock tersedia: " +
+                            oldQty +
+                            " pcs."
+                        );
+
+                    }
+
+
+                    finalQty =
+                        oldQty - qty;
+
+                }
+
+                else{
+
+                    finalQty =
+                        oldQty + qty;
+
+                }
+
+
+                transaction.update(
+                    itemRef,
+                    {
+
+                        qty:finalQty,
+
+                        updatedAt:
+                            serverTimestamp()
+
+                    }
                 );
-
-            }
-
-        }
-
-
-        /* =================================================
-           UPDATE STOCK
-        ================================================= */
-
-        await updateDoc(
-            itemRef,
-            {
-
-                qty:newQty,
-
-                updatedAt:
-                    serverTimestamp()
 
             }
         );
 
 
-        /* =================================================
-           HISTORY
-        ================================================= */
+        /*
+          Simpan history setelah
+          perubahan stock berhasil.
+        */
 
-        try{
+        await addDoc(
+            transactionRef,
+            {
 
-            await addDoc(
-                transactionRef,
-                {
+                code:code,
 
-                    code:
-                        data.code ||
-                        item.code,
+                type:
+                    transactionMode,
 
-                    type:
-                        transactionMode,
+                qty:qty,
 
-                    qty:qty,
+                operator:operator,
 
-                    operator:
-                        operator,
+                note:note,
 
-                    note:
-                        note,
+                createdAt:
+                    serverTimestamp()
 
-                    createdAt:
-                        serverTimestamp()
-
-                }
-            );
-
-        }
-        catch(historyError){
-
-            /*
-             * Stock sudah berhasil berubah.
-             *
-             * Jadi jangan mengatakan
-             * transaksi gagal.
-             */
-
-            console.error(
-                "HISTORY ERROR:",
-                historyError
-            );
-
-
-            showMessage(
-                "Stock berhasil diperbarui, tetapi history gagal disimpan: " +
-                historyError.message,
-                "error"
-            );
-
-
-            closeModal(
-                "transactionModal"
-            );
-
-
-            await loadItems();
-
-
-            return;
-
-        }
+            }
+        );
 
 
         closeModal(
@@ -3285,21 +2660,27 @@ async function saveTransaction(){
         );
 
 
-        showMessage(
-
+        if(
             transactionMode === "in"
+        ){
 
-            ?
+            showMessage(
+                "Barang masuk berhasil. Stock sekarang: " +
+                finalQty +
+                " pcs."
+            );
 
-            "Barang masuk berhasil. Stock sekarang: " +
-            newQty
+        }
 
-            :
+        else{
 
-            "Barang keluar berhasil. Stock sekarang: " +
-            newQty
+            showMessage(
+                "Barang keluar berhasil. Stock sekarang: " +
+                finalQty +
+                " pcs."
+            );
 
-        );
+        }
 
 
         await loadItems();
@@ -3320,16 +2701,6 @@ async function saveTransaction(){
         );
 
     }
-    finally{
-
-        button.disabled =
-            false;
-
-
-        button.textContent =
-            "Simpan";
-
-    }
 
 }
 
@@ -3340,12 +2711,12 @@ async function saveTransaction(){
 
 async function loadHistory(){
 
-    const id =
+    const firestoreId =
         $("historyCode")
         .value;
 
 
-    if(!id){
+    if(!firestoreId){
 
         $("historyContent")
             .innerHTML =
@@ -3360,13 +2731,18 @@ async function loadHistory(){
         items.find(
             function(x){
 
-                return x.firestoreId === id;
+                return x.firestoreId ===
+                    firestoreId;
 
             }
         );
 
 
     if(!item){
+
+        $("historyContent")
+            .innerHTML =
+            "Sparepart tidak ditemukan.";
 
         return;
 
@@ -3375,21 +2751,20 @@ async function loadHistory(){
 
     try{
 
-        const snapshot =
+        const snap =
             await getDocs(
                 transactionRef
             );
 
 
         const data =
-            snapshot.docs
+            snap.docs
             .map(
                 function(d){
 
                     return {
 
-                        id:
-                            d.id,
+                        id:d.id,
 
                         ...d.data()
 
@@ -3398,9 +2773,13 @@ async function loadHistory(){
                 }
             )
             .filter(
-                function(row){
+                function(x){
 
-                    return row.code === item.code;
+                    return String(
+                        x.code
+                    ) === String(
+                        item.code
+                    );
 
                 }
             );
@@ -3413,11 +2792,9 @@ async function loadHistory(){
                     a.createdAt?.seconds
                     || 0;
 
-
                 const tb =
                     b.createdAt?.seconds
                     || 0;
-
 
                 return tb - ta;
 
@@ -3425,13 +2802,21 @@ async function loadHistory(){
         );
 
 
-        if(
-            data.length === 0
-        ){
+        if(data.length === 0){
 
             $("historyContent")
-                .innerHTML =
-                "<p>Belum ada transaksi.</p>";
+                .innerHTML = `
+
+                    <p>
+                        Belum ada transaksi untuk
+                        <strong>
+                            ${escapeHtml(
+                                item.code
+                            )}
+                        </strong>.
+                    </p>
+
+                `;
 
             return;
 
@@ -3448,25 +2833,15 @@ async function loadHistory(){
 
                         <tr>
 
-                            <th>
-                                Tanggal
-                            </th>
+                            <th>Tanggal</th>
 
-                            <th>
-                                Jenis
-                            </th>
+                            <th>Jenis</th>
 
-                            <th>
-                                Jumlah
-                            </th>
+                            <th>Jumlah</th>
 
-                            <th>
-                                Operator
-                            </th>
+                            <th>Operator</th>
 
-                            <th>
-                                Keterangan
-                            </th>
+                            <th>Keterangan</th>
 
                         </tr>
 
@@ -3478,20 +2853,19 @@ async function loadHistory(){
 
 
         data.forEach(
-            function(row){
+            function(transaction){
 
-                let date =
-                    "-";
+                let date = "-";
 
 
                 if(
-                    row.createdAt
+                    transaction.createdAt
                     &&
-                    row.createdAt.toDate
+                    transaction.createdAt.toDate
                 ){
 
                     date =
-                        row.createdAt
+                        transaction.createdAt
                         .toDate()
                         .toLocaleString(
                             "id-ID"
@@ -3501,7 +2875,7 @@ async function loadHistory(){
 
 
                 const jenis =
-                    row.type === "in"
+                    transaction.type === "in"
                     ? "MASUK"
                     : "KELUAR";
 
@@ -3511,9 +2885,7 @@ async function loadHistory(){
                     <tr>
 
                         <td>
-                            ${escapeHtml(
-                                date
-                            )}
+                            ${escapeHtml(date)}
                         </td>
 
                         <td>
@@ -3521,18 +2893,20 @@ async function loadHistory(){
                         </td>
 
                         <td>
-                            ${row.qty}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                row.operator
+                            ${Number(
+                                transaction.qty || 0
                             )}
                         </td>
 
                         <td>
                             ${escapeHtml(
-                                row.note || "-"
+                                transaction.operator
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                transaction.note || "-"
                             )}
                         </td>
 
@@ -3569,13 +2943,21 @@ async function loadHistory(){
 
 
         $("historyContent")
-            .innerHTML =
+            .innerHTML = `
 
-            "Gagal mengambil history: " +
+                <p style="color:#b91c1c">
 
-            escapeHtml(
-                error.message
-            );
+                    Gagal mengambil history:
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        error.message
+                    )}
+
+                </p>
+
+            `;
 
     }
 
@@ -3731,25 +3113,15 @@ $("excelFile")
 
                             <tr>
 
-                                <th>
-                                    Kode
-                                </th>
+                                <th>Kode</th>
 
-                                <th>
-                                    Nama
-                                </th>
+                                <th>Nama</th>
 
-                                <th>
-                                    Lokasi
-                                </th>
+                                <th>Lokasi</th>
 
-                                <th>
-                                    Stock
-                                </th>
+                                <th>Stock</th>
 
-                                <th>
-                                    Min. Stock
-                                </th>
+                                <th>Min. Stock</th>
 
                             </tr>
 
@@ -3768,21 +3140,15 @@ $("excelFile")
                         <tr>
 
                             <td>
-                                ${escapeHtml(
-                                    row.code
-                                )}
+                                ${escapeHtml(row.code)}
                             </td>
 
                             <td>
-                                ${escapeHtml(
-                                    row.name
-                                )}
+                                ${escapeHtml(row.name)}
                             </td>
 
                             <td>
-                                ${escapeHtml(
-                                    row.lokasi
-                                )}
+                                ${escapeHtml(row.lokasi)}
                             </td>
 
                             <td>
@@ -3810,13 +3176,10 @@ $("excelFile")
                 </div>
 
                 <p>
-
                     Total data:
-
                     <strong>
                         ${excelRows.length}
                     </strong>
-
                 </p>
 
             `;
@@ -3834,15 +3197,10 @@ $("excelFile")
         }
         catch(error){
 
-            console.error(
-                "EXCEL ERROR:",
-                error
-            );
-
+            console.error(error);
 
             showMessage(
-                "Gagal membaca Excel: " +
-                error.message,
+                "Gagal membaca Excel.",
                 "error"
             );
 
@@ -3853,7 +3211,7 @@ $("excelFile")
 
 
 /* =========================================================
-   IMPORT EXCEL KE FIREBASE
+   IMPORT FIREBASE
 ========================================================= */
 
 $("importButton")
@@ -3870,50 +3228,17 @@ $("importButton")
         }
 
 
-        const button =
-            this;
-
-
-        button.disabled =
-            true;
-
-
-        button.textContent =
-            "Mengimport...";
-
-
         try{
 
-            let count =
-                0;
+            this.disabled =
+                true;
 
 
-            /*
-             * Ambil data terbaru Firebase
-             * sebelum import.
-             */
-
-            const snapshot =
-                await getDocs(
-                    stockRef
-                );
+            this.textContent =
+                "Mengimport...";
 
 
-            const firebaseItems =
-                snapshot.docs.map(
-                    function(d){
-
-                        return {
-
-                            firestoreId:
-                                d.id,
-
-                            ...d.data()
-
-                        };
-
-                    }
-                );
+            let count = 0;
 
 
             for(
@@ -3921,46 +3246,41 @@ $("importButton")
                 of excelRows
             ){
 
-                const existing =
-                    firebaseItems.find(
-                        function(item){
-
-                            return String(
-                                item.code || ""
-                            )
-                            .toLowerCase()
-                            ===
-                            row.code
-                                .toLowerCase();
-
-                        }
+                const safeId =
+                    firestoreKey(
+                        row.code
                     );
 
 
-                if(existing){
+                const itemRef =
+                    doc(
+                        db,
+                        "spareparts",
+                        safeId
+                    );
+
+
+                const existing =
+                    await getDoc(
+                        itemRef
+                    );
+
+
+                if(existing.exists()){
 
                     await updateDoc(
-                        doc(
-                            db,
-                            "spareparts",
-                            existing.firestoreId
-                        ),
+                        itemRef,
                         {
 
-                            code:
-                                row.code,
+                            code:row.code,
 
-                            name:
-                                row.name,
+                            name:row.name,
 
-                            lokasi:
-                                row.lokasi,
+                            lokasi:row.lokasi,
 
-                            qty:
-                                row.qty,
+                            qty:row.qty,
 
-                            minqty:
-                                row.minqty,
+                            minqty:row.minqty,
 
                             updatedAt:
                                 serverTimestamp()
@@ -3969,26 +3289,22 @@ $("importButton")
                     );
 
                 }
+
                 else{
 
-                    await addDoc(
-                        stockRef,
+                    await setDoc(
+                        itemRef,
                         {
 
-                            code:
-                                row.code,
+                            code:row.code,
 
-                            name:
-                                row.name,
+                            name:row.name,
 
-                            lokasi:
-                                row.lokasi,
+                            lokasi:row.lokasi,
 
-                            qty:
-                                row.qty,
+                            qty:row.qty,
 
-                            minqty:
-                                row.minqty,
+                            minqty:row.minqty,
 
                             createdAt:
                                 serverTimestamp()
@@ -4010,25 +3326,24 @@ $("importButton")
             );
 
 
-            excelRows =
-                [];
+            excelRows = [];
 
 
             $("excelFile")
-                .value =
-                "";
+                .value = "";
 
 
             $("excelPreview")
-                .innerHTML =
-                "";
+                .innerHTML = "";
 
 
-            button.disabled =
+            $("importButton")
+                .disabled =
                 true;
 
 
-            button.textContent =
+            $("importButton")
+                .textContent =
                 "Import ke Firebase";
 
 
@@ -4042,17 +3357,14 @@ $("importButton")
         }
         catch(error){
 
-            console.error(
-                "IMPORT ERROR:",
-                error
-            );
+            console.error(error);
 
 
-            button.disabled =
+            this.disabled =
                 false;
 
 
-            button.textContent =
+            this.textContent =
                 "Import ke Firebase";
 
 
@@ -4074,9 +3386,7 @@ $("importButton")
 
 function exportExcel(){
 
-    if(
-        items.length === 0
-    ){
+    if(items.length === 0){
 
         showMessage(
             "Tidak ada data untuk diexport.",
@@ -4110,9 +3420,8 @@ function exportExcel(){
                         item.minqty,
 
                     "Status":
-                        getStatus(
-                            item
-                        ).text
+                        getStatus(item)
+                        .text
 
                 };
 
@@ -4176,51 +3485,36 @@ $("stockBody")
             button.dataset.action;
 
 
-        const id =
-            button.dataset.id;
+        const code =
+            button.dataset.code;
 
 
-        if(
-            action === "edit"
-        ){
+        if(action === "delete"){
 
-            openEdit(
-                id
-            );
+            deleteItem(code);
 
         }
 
+        else if(action === "edit"){
 
-        else if(
-            action === "delete"
-        ){
-
-            deleteItem(
-                id
-            );
+            openEdit(code);
 
         }
 
-
-        else if(
-            action === "in"
-        ){
+        else if(action === "in"){
 
             openTransaction(
                 "in",
-                id
+                code
             );
 
         }
 
-
-        else if(
-            action === "out"
-        ){
+        else if(action === "out"){
 
             openTransaction(
                 "out",
-                id
+                code
             );
 
         }
@@ -4245,7 +3539,22 @@ $("search")
 
 
 /* =========================================================
-   MENU BUTTON
+   TRANSACTION SELECT
+========================================================= */
+
+$("transactionCode")
+.addEventListener(
+    "change",
+    function(){
+
+        updateAvailableStock();
+
+    }
+);
+
+
+/* =========================================================
+   MENU
 ========================================================= */
 
 $("menuButton")
@@ -4255,16 +3564,12 @@ $("menuButton")
 
         $("drawer")
             .classList
-            .toggle(
-                "open"
-            );
+            .toggle("open");
 
 
         $("overlay")
             .classList
-            .toggle(
-                "show"
-            );
+            .toggle("show");
 
     }
 );
@@ -4277,23 +3582,19 @@ $("overlay")
 
         $("drawer")
             .classList
-            .remove(
-                "open"
-            );
+            .remove("open");
 
 
         $("overlay")
             .classList
-            .remove(
-                "show"
-            );
+            .remove("show");
 
     }
 );
 
 
 /* =========================================================
-   MENU
+   MENU ITEM
 ========================================================= */
 
 document
@@ -4313,21 +3614,15 @@ document
 
                 $("drawer")
                     .classList
-                    .remove(
-                        "open"
-                    );
+                    .remove("open");
 
 
                 $("overlay")
                     .classList
-                    .remove(
-                        "show"
-                    );
+                    .remove("show");
 
 
-                if(
-                    menu === "data"
-                ){
+                if(menu === "data"){
 
                     window.scrollTo({
 
@@ -4340,18 +3635,14 @@ document
                 }
 
 
-                else if(
-                    menu === "add"
-                ){
+                else if(menu === "add"){
 
                     openAdd();
 
                 }
 
 
-                else if(
-                    menu === "import"
-                ){
+                else if(menu === "import"){
 
                     openModal(
                         "importModal"
@@ -4360,18 +3651,14 @@ document
                 }
 
 
-                else if(
-                    menu === "export"
-                ){
+                else if(menu === "export"){
 
                     exportExcel();
 
                 }
 
 
-                else if(
-                    menu === "in"
-                ){
+                else if(menu === "in"){
 
                     openTransaction(
                         "in"
@@ -4380,9 +3667,7 @@ document
                 }
 
 
-                else if(
-                    menu === "out"
-                ){
+                else if(menu === "out"){
 
                     openTransaction(
                         "out"
@@ -4391,14 +3676,11 @@ document
                 }
 
 
-                else if(
-                    menu === "history"
-                ){
+                else if(menu === "history"){
 
                     $("historyContent")
                         .innerHTML =
                         "Pilih sparepart.";
-
 
                     openModal(
                         "historyModal"
@@ -4414,7 +3696,7 @@ document
 
 
 /* =========================================================
-   MODAL BUTTONS
+   MODAL BUTTON
 ========================================================= */
 
 $("cancelItem")
@@ -4469,23 +3751,6 @@ $("cancelHistory")
 );
 
 
-$("cancelAlert")
-.addEventListener(
-    "click",
-    function(){
-
-        closeModal(
-            "alertModal"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   SAVE BUTTON
-========================================================= */
-
 $("saveItem")
 .addEventListener(
     "click",
@@ -4504,49 +3769,6 @@ $("historyCode")
 .addEventListener(
     "change",
     loadHistory
-);
-
-
-/* =========================================================
-   ALERT CARDS
-========================================================= */
-
-$("restockCard")
-.addEventListener(
-    "click",
-    function(){
-
-        showInventoryAlert(
-            "restock"
-        );
-
-    }
-);
-
-
-$("emptyCard")
-.addEventListener(
-    "click",
-    function(){
-
-        showInventoryAlert(
-            "empty"
-        );
-
-    }
-);
-
-
-$("lowCard")
-.addEventListener(
-    "click",
-    function(){
-
-        showInventoryAlert(
-            "low"
-        );
-
-    }
 );
 
 
@@ -4570,9 +3792,7 @@ document
                 ){
 
                     modal.classList
-                        .remove(
-                            "show"
-                        );
+                        .remove("show");
 
                 }
 
