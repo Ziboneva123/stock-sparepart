@@ -1,108 +1,150 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Stock Sparepart</title>
+<title>Stock Sparepart</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #222;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
 
-        header {
-            background: #1f2937;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+header {
+    background: #1f2937;
+    color: white;
+    padding: 32px 20px;
+    text-align: center;
+}
 
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
 
-        header p {
-            margin: 8px 0 0;
-            color: #d1d5db;
-        }
+header p {
+    margin: 12px 0 0;
+    font-size: 20px;
+    color: #d1d5db;
+}
 
-        .container {
-            max-width: 1100px;
-            margin: 25px auto;
-            padding: 0 15px;
-        }
+.container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
 
-        .search-box {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+.search-box {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
 
-        .search-box input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 7px;
-            font-size: 16px;
-        }
+#search {
+    width: 100%;
+    padding: 18px;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    outline: none;
+}
 
-        .table-box {
-            background: white;
-            border-radius: 10px;
-            overflow-x: auto;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+.table-box {
+    background: white;
+    border-radius: 18px;
+    overflow-x: auto;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
 
-        th {
-            background: #374151;
-            color: white;
-            padding: 13px;
-            text-align: left;
-        }
+thead {
+    background: #374151;
+    color: white;
+}
 
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
+th {
+    padding: 18px;
+    text-align: left;
+    font-size: 20px;
+}
 
-        tr:hover {
-            background: #f9fafb;
-        }
+td {
+    padding: 18px;
+    font-size: 19px;
+    border-bottom: 1px solid #eee;
+}
 
-        .ok {
-            color: #15803d;
-            font-weight: bold;
-        }
+.status-ok {
+    color: #16803c;
+    font-weight: bold;
+}
 
-        .ng {
-            color: #dc2626;
-            font-weight: bold;
-        }
+.status-ng {
+    color: #dc2626;
+    font-weight: bold;
+}
 
-        .footer {
-            text-align: center;
-            margin: 30px 0;
-            color: #777;
-            font-size: 14px;
-        }
-    </style>
+.loading {
+    text-align: center;
+    padding: 30px;
+    font-size: 20px;
+}
+
+.error {
+    text-align: center;
+    padding: 30px;
+    color: red;
+    font-size: 18px;
+}
+
+.footer {
+    text-align: center;
+    margin: 50px 0 30px;
+    color: #777;
+    font-size: 18px;
+}
+
+@media (max-width: 600px) {
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    header p {
+        font-size: 16px;
+    }
+
+    .container {
+        margin: 20px auto;
+        padding: 0 10px;
+    }
+
+    th,
+    td {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    #search {
+        font-size: 16px;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -124,7 +166,7 @@
 
     <div class="table-box">
 
-        <table>
+        <table id="stockTable">
 
             <thead>
                 <tr>
@@ -137,17 +179,12 @@
                 </tr>
             </thead>
 
-            <tbody id="stockTable">
-
+            <tbody id="stockBody">
                 <tr>
-                    <td>BRG001</td>
-                    <td>Arduino</td>
-                    <td>Rak 1</td>
-                    <td>3</td>
-                    <td>0</td>
-                    <td class="ok">OK</td>
+                    <td colspan="6" class="loading">
+                        Memuat data sparepart...
+                    </td>
                 </tr>
-
             </tbody>
 
         </table>
@@ -160,29 +197,216 @@
     Created by : Nugroho Kunto Aji
 </div>
 
-<script>
 
-const search = document.getElementById("search");
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* ==============================
+   FIREBASE CONFIGURATION
+   ============================== */
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyB4ea4a-Q2wNWagzatBWx6DuEgmyLKTjOs",
+
+    authDomain:
+        "stock-sparepart-a66cf.firebaseapp.com",
+
+    projectId:
+        "stock-sparepart-a66cf",
+
+    storageBucket:
+        "stock-sparepart-a66cf.firebasestorage.app",
+
+    messagingSenderId:
+        "1064348530987",
+
+    appId:
+        "1:1064348530987:web:299b60f0db04e5a904ed6e",
+
+    measurementId:
+        "G-RNF9ZEXF6X"
+};
+
+
+/* ==============================
+   INITIALIZE FIREBASE
+   ============================== */
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+/* ==============================
+   LOAD DATA SPAREPART
+   ============================== */
+
+async function loadSpareparts() {
+
+    const tbody = document.getElementById("stockBody");
+
+    try {
+
+        const querySnapshot =
+            await getDocs(collection(db, "spareparts"));
+
+        tbody.innerHTML = "";
+
+        if (querySnapshot.empty) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="loading">
+                        Belum ada data sparepart.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        querySnapshot.forEach((doc) => {
+
+            const data = doc.data();
+
+            const kode = doc.id;
+
+            const nama = data.name ?? "-";
+
+            const lokasi = data.lokasi ?? "-";
+
+            const qty = Number(data.qty ?? 0);
+
+            const minqty = Number(data.minqty ?? 0);
+
+
+            let status;
+
+            if (qty <= minqty) {
+
+                status = `
+                    <span class="status-ng">
+                        NG
+                    </span>
+                `;
+
+            } else {
+
+                status = `
+                    <span class="status-ok">
+                        OK
+                    </span>
+                `;
+            }
+
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+
+                <td>${kode}</td>
+
+                <td>${nama}</td>
+
+                <td>${lokasi}</td>
+
+                <td>${qty}</td>
+
+                <td>${minqty}</td>
+
+                <td>${status}</td>
+
+            `;
+
+
+            tbody.appendChild(row);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td colspan="6" class="error">
+
+                    Gagal mengambil data Firebase.<br><br>
+
+                    ${error.message}
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+}
+
+
+/* ==============================
+   SEARCH
+   ============================== */
+
+const search =
+    document.getElementById("search");
+
 
 search.addEventListener("input", function() {
 
-    const keyword = this.value.toLowerCase();
+    const keyword =
+        this.value.toLowerCase();
 
-    const rows = document.querySelectorAll("#stockTable tr");
+    const rows =
+        document.querySelectorAll(
+            "#stockTable tbody tr"
+        );
+
 
     rows.forEach(row => {
 
-        const text = row.innerText.toLowerCase();
+        const text =
+            row.innerText.toLowerCase();
+
 
         if (text.includes(keyword)) {
+
             row.style.display = "";
+
         } else {
+
             row.style.display = "none";
+
         }
 
     });
 
 });
+
+
+/* ==============================
+   START
+   ============================== */
+
+loadSpareparts();
 
 </script>
 
