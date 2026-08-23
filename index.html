@@ -81,6 +81,11 @@ body{
     box-shadow:0 0 0 3px rgba(37,99,235,.12);
 }
 
+.password-wrapper{position:relative;width:100%;}
+.password-wrapper #loginPassword{padding-right:60px;}
+.toggle-password{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:45px;height:45px;border:0;border-radius:9px;background:transparent;color:#475569;font-size:23px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.toggle-password:hover{background:#f1f5f9;}
+
 #loginButton{
     width:100%;
     height:70px;
@@ -679,11 +684,23 @@ footer{
             Masukkan password untuk melanjutkan
         </div>
 
-        <input
-            id="loginPassword"
-            type="password"
-            placeholder="Password"
-            autocomplete="off">
+        <div class="password-wrapper">
+
+            <input
+                id="loginPassword"
+                type="password"
+                placeholder="Password"
+                autocomplete="off">
+
+            <button
+                type="button"
+                id="togglePassword"
+                class="toggle-password"
+                aria-label="Tampilkan password">
+                ðŸ‘
+            </button>
+
+        </div>
 
         <button id="loginButton">
             MASUK
@@ -1353,7 +1370,7 @@ const loginError =
 function login(){
 
     if(
-        loginPassword.value === PASSWORD
+        loginPassword.value.trim() === PASSWORD
     ){
 
         sessionStorage.setItem(
@@ -1386,6 +1403,37 @@ loginButton.addEventListener(
     "click",
     login
 );
+
+/* =====================================================
+   SESSION LOGIN
+===================================================== */
+
+if(
+    sessionStorage.getItem("inventoryLogin") === "true"
+){
+    loginScreen.style.display = "none";
+    websiteContent.style.display = "block";
+}
+
+/* =====================================================
+   LIHAT / SEMBUNYIKAN PASSWORD
+===================================================== */
+
+const togglePassword = document.getElementById("togglePassword");
+
+if(togglePassword){
+    togglePassword.addEventListener("click", function(){
+        if(loginPassword.type === "password"){
+            loginPassword.type = "text";
+            togglePassword.textContent = "ðŸ™ˆ";
+            togglePassword.setAttribute("aria-label", "Sembunyikan password");
+        }else{
+            loginPassword.type = "password";
+            togglePassword.textContent = "ðŸ‘";
+            togglePassword.setAttribute("aria-label", "Tampilkan password");
+        }
+    });
+}
 
 
 loginPassword.addEventListener(
