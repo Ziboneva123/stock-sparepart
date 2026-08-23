@@ -4041,10 +4041,25 @@ function openQr(code){
     openModal("qrModal");
 
     setTimeout(function(){
-        new QRCode($("qrCode"),{
+        const qrBox = $("qrCode");
+
+        qrBox.innerHTML = "";
+
+        const qrInner = document.createElement("div");
+        qrInner.style.width = "260px";
+        qrInner.style.height = "260px";
+        qrInner.style.padding = "20px";
+        qrInner.style.background = "#ffffff";
+        qrInner.style.boxSizing = "border-box";
+
+        qrBox.appendChild(qrInner);
+
+        new QRCode(qrInner,{
             text:String(item.code),
             width:220,
             height:220,
+            colorDark:"#000000",
+            colorLight:"#ffffff",
             correctLevel:QRCode.CorrectLevel.H
         });
     },100);
@@ -4618,48 +4633,71 @@ function setQrPdfProgress(text){
 
 async function createAllQrCanvas(code){
 
+    /*
+     * Buat QR dengan QUIET ZONE (bingkai putih) yang cukup.
+     * Ini penting supaya kamera HP lebih mudah mengenali QR,
+     * terutama QR hasil download/print.
+     */
+
     const box = document.getElementById("allQrGenerator");
 
     box.innerHTML = "";
+    box.style.width = "360px";
+    box.style.height = "360px";
+    box.style.background = "#ffffff";
 
     new QRCode(box,{
         text:String(code),
-        width:320,
-        height:320,
+        width:360,
+        height:360,
         colorDark:"#000000",
         colorLight:"#ffffff",
         correctLevel:QRCode.CorrectLevel.H
     });
 
-    await qrPdfSleep(100);
+    await qrPdfSleep(150);
 
-    const canvas = box.querySelector("canvas");
+    const sourceCanvas = box.querySelector("canvas");
+    const sourceImg = box.querySelector("img");
 
-    if(canvas){
-        return canvas;
+    /*
+     * Output 400x400 dengan border putih 20px di semua sisi.
+     * QR aktual tetap 360x360 sehingga tidak kehilangan detail.
+     */
+
+    const result = document.createElement("canvas");
+    result.width = 400;
+    result.height = 400;
+
+    const ctx = result.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0,0,400,400);
+
+    if(sourceCanvas){
+
+        ctx.drawImage(
+            sourceCanvas,
+            20,
+            20,
+            360,
+            360
+        );
+
+        return result;
     }
 
-    const img = box.querySelector("img");
+    if(sourceImg){
 
-    if(img){
+        await new Promise(function(resolve,reject){
 
-        const canvas2 = document.createElement("canvas");
-
-        canvas2.width = 320;
-        canvas2.height = 320;
-
-        const ctx = canvas2.getContext("2d");
-
-        await new Promise(function(resolve){
-
-            if(img.complete){
+            if(sourceImg.complete && sourceImg.naturalWidth > 0){
 
                 ctx.drawImage(
-                    img,
-                    0,
-                    0,
-                    320,
-                    320
+                    sourceImg,
+                    20,
+                    20,
+                    360,
+                    360
                 );
 
                 resolve();
@@ -4667,25 +4705,29 @@ async function createAllQrCanvas(code){
             }
             else{
 
-                img.onload=function(){
+                sourceImg.onload=function(){
 
                     ctx.drawImage(
-                        img,
-                        0,
-                        0,
-                        320,
-                        320
+                        sourceImg,
+                        20,
+                        20,
+                        360,
+                        360
                     );
 
                     resolve();
 
                 };
 
+                sourceImg.onerror=function(){
+                    reject(new Error("Gambar QR gagal dimuat."));
+                };
+
             }
 
         });
 
-        return canvas2;
+        return result;
     }
 
     throw new Error("QR Code gagal dibuat.");
