@@ -12,9 +12,7 @@ content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script
-src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"
-data-jspdf="true"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
@@ -1552,6 +1550,14 @@ from
 const PASSWORD =
     "mtcgoahead";
 
+/* =====================================================
+   PASSWORD HAPUS BARANG
+   Bisa diganti kapan saja di sini.
+===================================================== */
+
+const DELETE_PASSWORD =
+    "mtcgoahead";
+
 
 const loginScreen =
     document.getElementById(
@@ -2602,15 +2608,40 @@ async function saveItem(){
 
 async function deleteItem(code){
 
+    /* ================================================
+       PASSWORD HAPUS
+    ================================================ */
+
+    const password =
+        prompt(
+            "Masukkan password untuk menghapus barang:\n\n" +
+            "Kode : " + code
+        );
+
+    /* Batal */
+    if(password === null){
+        return;
+    }
+
+    /* Password salah */
+    if(password !== DELETE_PASSWORD){
+
+        showMessage(
+            "Password hapus salah. Barang tidak dihapus.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* Konfirmasi terakhir */
     if(
         !confirm(
             "Apakah Anda yakin ingin menghapus?\n\n" +
             "Kode : " + code
         )
     ){
-
         return;
-
     }
 
 
@@ -2650,7 +2681,6 @@ async function deleteItem(code){
             const safeId =
                 firestoreKey(code);
 
-
             const ref =
                 doc(
                     db,
@@ -2658,10 +2688,8 @@ async function deleteItem(code){
                     safeId
                 );
 
-
             const check =
                 await getDoc(ref);
-
 
             if(!check.exists()){
 
@@ -2674,7 +2702,6 @@ async function deleteItem(code){
 
             }
 
-
             await deleteDoc(ref);
 
         }
@@ -2683,7 +2710,6 @@ async function deleteItem(code){
         showMessage(
             "Sparepart berhasil dihapus."
         );
-
 
         await loadItems();
 
@@ -4629,133 +4655,9 @@ async function createAllQrCanvas(code){
 }
 
 
-async function ensureJsPdf(){
-
-    if(
-        window.jspdf &&
-        window.jspdf.jsPDF
-    ){
-
-        return window.jspdf.jsPDF;
-
-    }
-
-    return new Promise(function(resolve,reject){
-
-        const existing =
-            document.querySelector(
-                'script[data-jspdf="true"]'
-            );
-
-        if(existing){
-
-            existing.addEventListener(
-                "load",
-                function(){
-
-                    if(
-                        window.jspdf &&
-                        window.jspdf.jsPDF
-                    ){
-
-                        resolve(
-                            window.jspdf.jsPDF
-                        );
-
-                    }
-                    else{
-
-                        reject(
-                            new Error(
-                                "jsPDF gagal dimuat."
-                            )
-                        );
-
-                    }
-
-                }
-            );
-
-            existing.addEventListener(
-                "error",
-                function(){
-
-                    reject(
-                        new Error(
-                            "Tidak dapat memuat library PDF."
-                        )
-                    );
-
-                }
-            );
-
-            return;
-
-        }
-
-        const script =
-            document.createElement(
-                "script"
-            );
-
-        script.src =
-            "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js";
-
-        script.dataset.jspdf =
-            "true";
-
-        script.onload =
-            function(){
-
-                if(
-                    window.jspdf &&
-                    window.jspdf.jsPDF
-                ){
-
-                    resolve(
-                        window.jspdf.jsPDF
-                    );
-
-                }
-                else{
-
-                    reject(
-                        new Error(
-                            "jsPDF tidak tersedia."
-                        )
-                    );
-
-                }
-
-            };
-
-        script.onerror =
-            function(){
-
-                reject(
-                    new Error(
-                        "Library PDF tidak dapat dimuat. Periksa koneksi internet."
-                    )
-                );
-
-            };
-
-        document.head.appendChild(
-            script
-        );
-
-    });
-
-}
-
-
 async function downloadAllQR(){
 
-    if(
-        typeof items === "undefined" ||
-        !Array.isArray(items) ||
-        items.length===0
-    ){
+    if(typeof items === "undefined" || items.length===0){
 
         showMessage(
             "Tidak ada data sparepart.",
@@ -4775,53 +4677,34 @@ async function downloadAllQR(){
         return;
     }
 
-    let progress =
-        document.getElementById(
-            "qrPdfProgress"
+    if(
+        !window.jspdf ||
+        !window.jspdf.jsPDF
+    ){
+
+        showMessage(
+            "Library PDF belum termuat. Refresh halaman.",
+            "error"
         );
 
-    /*
-     * Buat progress otomatis kalau elemen
-     * belum ada. Jadi tidak akan lagi
-     * muncul error "Komponen PDF belum siap".
-     */
+        return;
+    }
+
+    const progress =
+        document.getElementById("qrPdfProgress");
 
     if(!progress){
 
-        progress =
-            document.createElement(
-                "div"
-            );
-
-        progress.id =
-            "qrPdfProgress";
-
-        progress.style.cssText =
-            "position:fixed;inset:0;z-index:999999;" +
-            "display:flex;align-items:center;" +
-            "justify-content:center;" +
-            "background:rgba(0,0,0,.5);";
-
-        progress.innerHTML =
-            '<div style="background:white;padding:25px 30px;' +
-            'border-radius:16px;text-align:center;font-family:Arial;' +
-            'box-shadow:0 15px 45px rgba(0,0,0,.25);">' +
-            '<div style="font-size:20px;font-weight:bold;">' +
-            'Membuat PDF QR Code' +
-            '</div>' +
-            '<div id="qrPdfProgressText" ' +
-            'style="margin-top:10px;color:#64748b;">' +
-            'Menyiapkan...' +
-            '</div></div>';
-
-        document.body.appendChild(
-            progress
+        showMessage(
+            "Komponen PDF belum siap. Silakan refresh halaman.",
+            "error"
         );
+
+        return;
 
     }
 
-    progress.style.display =
-        "flex";
+    progress.classList.add("show");
 
     setQrPdfProgress(
         "Menyiapkan " +
@@ -4832,7 +4715,7 @@ async function downloadAllQR(){
     try{
 
         const jsPDF =
-            await ensureJsPdf();
+            window.jspdf.jsPDF;
 
         const pdf =
             new jsPDF({
@@ -5007,7 +4890,6 @@ async function downloadAllQR(){
             "QR_Code_Semua_Sparepart.pdf"
         );
 
-        progress.style.display = "none";
         progress.classList.remove("show");
 
         showMessage(
