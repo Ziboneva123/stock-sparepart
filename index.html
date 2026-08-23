@@ -83,7 +83,7 @@ body{
 
 .password-wrapper{position:relative;width:100%;}
 .password-wrapper #loginPassword{padding-right:60px;}
-.toggle-password{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:45px;height:45px;border:0;border-radius:9px;background:transparent;color:#475569;font-size:23px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.toggle-password{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:62px;height:45px;border:0;border-radius:9px;background:transparent;color:#475569;font-size:14px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .toggle-password:hover{background:#f1f5f9;}
 
 #loginButton{
@@ -1427,12 +1427,12 @@ if(togglePassword){
     togglePassword.addEventListener("click", function(){
         if(loginPassword.type === "password"){
             loginPassword.type = "text";
-            togglePassword.textContent = "ðŸ™ˆ";
-            togglePassword.setAttribute("aria-label", "Sembunyikan password");
+            togglePassword.textContent = "Tutup";
+            togglePassword.setAttribute("aria-label", "Tutup password");
         }else{
             loginPassword.type = "password";
-            togglePassword.textContent = "ðŸ‘";
-            togglePassword.setAttribute("aria-label", "Tampilkan password");
+            togglePassword.textContent = "Buka";
+            togglePassword.setAttribute("aria-label", "Buka password");
         }
     });
 }
