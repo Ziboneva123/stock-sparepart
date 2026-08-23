@@ -659,6 +659,17 @@ footer{
 .scan-row:last-child{border-bottom:0;}
 
 @media(max-width:700px){
+
+    .search-row{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .search-scan-button{
+        width:100%;
+    }
+
+
     .scan-row{flex-direction:column;gap:2px;}
 }
 
@@ -862,10 +873,23 @@ footer{
 
 <section class="search-box">
 
-    <input
-        id="search"
-        type="search"
-        placeholder="Cari kode, nama atau lokasi sparepart...">
+    <div class="search-row">
+
+        <input
+            id="search"
+            type="search"
+            placeholder="Cari kode, nama atau lokasi sparepart...">
+
+        <button
+            type="button"
+            id="searchScanQrButton"
+            class="search-scan-button">
+
+            SCAN QR
+
+        </button>
+
+    </div>
 
 </section>
 
