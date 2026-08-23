@@ -728,11 +728,44 @@ footer{
 
 }
 
+
+.qr-pdf-progress{
+    position:fixed;
+    inset:0;
+    z-index:3000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.5);
+    padding:20px;
+}
+.qr-pdf-progress.show{display:flex;}
+.qr-pdf-progress-card{
+    width:min(420px,100%);
+    background:white;
+    border-radius:16px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 15px 45px rgba(0,0,0,.25);
+}
+.qr-pdf-progress-title{
+    font-size:20px;
+    font-weight:bold;
+    color:#1f2937;
+}
+.qr-pdf-progress-text{
+    margin-top:10px;
+    color:#64748b;
+}
+
 </style>
 
 </head>
 
 <body>
+<div id="allQrGenerator"
+     style="position:fixed;left:-10000px;top:-10000px;width:320px;height:320px;background:white;"></div>
+
 
 
 <!-- =====================================================
@@ -848,6 +881,14 @@ footer{
 
     <button class="menu-item" data-menu="export">
         Export Excel
+    </button>
+
+    <button
+        class="menu-item"
+        data-menu="downloadAllQR">
+
+        Download Semua QR
+
     </button>
 
     <button class="menu-item" data-menu="in">
@@ -4053,7 +4094,17 @@ function printQr(){
 
     win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
     <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
-    </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p></body></html>`);
+    </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
+<div class="qr-pdf-progress" id="qrPdfProgress">
+    <div class="qr-pdf-progress-card">
+        <div class="qr-pdf-progress-title">Membuat PDF QR Code</div>
+        <div class="qr-pdf-progress-text" id="qrPdfProgressText">
+            Menyiapkan data...
+        </div>
+    </div>
+</div>
+
+</body></html>`);
     win.document.close();
     setTimeout(function(){win.focus();win.print();},500);
 }
@@ -4476,6 +4527,377 @@ document
 ===================================================== */
 
 loadItems();
+
+
+/* =========================================================
+   DOWNLOAD SEMUA QR - PDF A4
+========================================================= */
+
+function qrPdfSleep(ms){
+    return new Promise(function(resolve){
+        setTimeout(resolve,ms);
+    });
+}
+
+function setQrPdfProgress(text){
+    const el = document.getElementById("qrPdfProgressText");
+    if(el) el.textContent = text;
+}
+
+async function createAllQrCanvas(code){
+
+    const box = document.getElementById("allQrGenerator");
+
+    box.innerHTML = "";
+
+    new QRCode(box,{
+        text:String(code),
+        width:320,
+        height:320,
+        colorDark:"#000000",
+        colorLight:"#ffffff",
+        correctLevel:QRCode.CorrectLevel.H
+    });
+
+    await qrPdfSleep(100);
+
+    const canvas = box.querySelector("canvas");
+
+    if(canvas){
+        return canvas;
+    }
+
+    const img = box.querySelector("img");
+
+    if(img){
+
+        const canvas2 = document.createElement("canvas");
+
+        canvas2.width = 320;
+        canvas2.height = 320;
+
+        const ctx = canvas2.getContext("2d");
+
+        await new Promise(function(resolve){
+
+            if(img.complete){
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    320,
+                    320
+                );
+
+                resolve();
+
+            }
+            else{
+
+                img.onload=function(){
+
+                    ctx.drawImage(
+                        img,
+                        0,
+                        0,
+                        320,
+                        320
+                    );
+
+                    resolve();
+
+                };
+
+            }
+
+        });
+
+        return canvas2;
+    }
+
+    throw new Error("QR Code gagal dibuat.");
+}
+
+
+async function downloadAllQR(){
+
+    if(!items || items.length===0){
+
+        showMessage(
+            "Tidak ada data sparepart.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(typeof QRCode==="undefined"){
+
+        showMessage(
+            "Library QR Code belum termuat. Refresh halaman.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(
+        !window.jspdf ||
+        !window.jspdf.jsPDF
+    ){
+
+        showMessage(
+            "Library PDF belum termuat. Refresh halaman.",
+            "error"
+        );
+
+        return;
+    }
+
+    const progress =
+        document.getElementById("qrPdfProgress");
+
+    progress.classList.add("show");
+
+    try{
+
+        const jsPDF =
+            window.jspdf.jsPDF;
+
+        const pdf =
+            new jsPDF({
+                orientation:"portrait",
+                unit:"mm",
+                format:"a4"
+            });
+
+        const pageWidth=210;
+        const pageHeight=297;
+
+        const margin=8;
+        const columns=3;
+        const rows=4;
+        const gap=3;
+
+        const cellWidth =
+            (
+                pageWidth -
+                margin*2 -
+                gap*(columns-1)
+            ) / columns;
+
+        const cellHeight =
+            (
+                pageHeight -
+                margin*2 -
+                gap*(rows-1)
+            ) / rows;
+
+        const qrSize=43;
+
+        for(
+            let i=0;
+            i<items.length;
+            i++
+        ){
+
+            const item=items[i];
+
+            setQrPdfProgress(
+                "Membuat QR " +
+                (i+1) +
+                " dari " +
+                items.length
+            );
+
+            const canvas =
+                await createAllQrCanvas(
+                    item.code
+                );
+
+            if(
+                i>0 &&
+                i%(columns*rows)===0
+            ){
+
+                pdf.addPage();
+
+            }
+
+            const pos =
+                i%(columns*rows);
+
+            const col =
+                pos%columns;
+
+            const row =
+                Math.floor(pos/columns);
+
+            const x =
+                margin +
+                col*(cellWidth+gap);
+
+            const y =
+                margin +
+                row*(cellHeight+gap);
+
+            pdf.setDrawColor(
+                210,214,220
+            );
+
+            pdf.setLineWidth(.3);
+
+            pdf.roundedRect(
+                x,
+                y,
+                cellWidth,
+                cellHeight,
+                2,
+                2
+            );
+
+            const qrX =
+                x+(cellWidth-qrSize)/2;
+
+            pdf.addImage(
+                canvas.toDataURL("image/png"),
+                "PNG",
+                qrX,
+                y+5,
+                qrSize,
+                qrSize
+            );
+
+            pdf.setTextColor(
+                20,30,45
+            );
+
+            pdf.setFont(
+                "helvetica",
+                "bold"
+            );
+
+            pdf.setFontSize(12);
+
+            pdf.text(
+                String(item.code),
+                x+cellWidth/2,
+                y+53,
+                {align:"center"}
+            );
+
+            pdf.setFont(
+                "helvetica",
+                "normal"
+            );
+
+            pdf.setFontSize(8);
+
+            const nameLines =
+                pdf.splitTextToSize(
+                    String(item.name||""),
+                    cellWidth-8
+                );
+
+            pdf.text(
+                nameLines.slice(0,2),
+                x+4,
+                y+59
+            );
+
+            if(item.lokasi){
+
+                pdf.setFontSize(7);
+
+                pdf.setTextColor(
+                    100,116,139
+                );
+
+                const lokasiLines =
+                    pdf.splitTextToSize(
+                        "Lokasi: "+String(item.lokasi),
+                        cellWidth-8
+                    );
+
+                pdf.text(
+                    lokasiLines.slice(0,2),
+                    x+4,
+                    y+68
+                );
+
+            }
+
+        }
+
+        setQrPdfProgress(
+            "Menyimpan PDF..."
+        );
+
+        pdf.save(
+            "QR_Code_Semua_Sparepart.pdf"
+        );
+
+        progress.classList.remove("show");
+
+        showMessage(
+            items.length +
+            " QR Code berhasil dibuat."
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "DOWNLOAD ALL QR ERROR:",
+            error
+        );
+
+        progress.classList.remove("show");
+
+        showMessage(
+            "Gagal membuat PDF: "+
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MENU - DOWNLOAD SEMUA QR
+========================================================= */
+
+document
+.querySelectorAll(".menu-item")
+.forEach(function(button){
+
+    if(
+        button.dataset.menu ===
+        "downloadAllQR"
+    ){
+
+        button.addEventListener(
+            "click",
+            function(){
+
+                $("drawer")
+                    .classList.remove("open");
+
+                $("overlay")
+                    .classList.remove("show");
+
+                downloadAllQR();
+
+            }
+        );
+
+    }
+
+});
+
 
 </script>
 
