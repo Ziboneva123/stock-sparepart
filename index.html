@@ -766,6 +766,19 @@ footer{
 <div id="allQrGenerator"
      style="position:fixed;left:-10000px;top:-10000px;width:320px;height:320px;background:white;"></div>
 
+<!-- =====================================================
+     PROGRESS DOWNLOAD SEMUA QR
+===================================================== -->
+<div class="qr-pdf-progress" id="qrPdfProgress">
+    <div class="qr-pdf-progress-card">
+        <div class="qr-pdf-progress-title">Membuat ZIP QR Code</div>
+        <div class="qr-pdf-progress-text" id="qrPdfProgressText">
+            Menyiapkan data...
+        </div>
+    </div>
+</div>
+
+
 
 
 <!-- =====================================================
@@ -4156,15 +4169,6 @@ function printQr(){
     win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
     <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
-<div class="qr-pdf-progress" id="qrPdfProgress">
-    <div class="qr-pdf-progress-card">
-        <div class="qr-pdf-progress-title">Membuat ZIP QR Code</div>
-        <div class="qr-pdf-progress-text" id="qrPdfProgressText">
-            Menyiapkan data...
-        </div>
-    </div>
-</div>
-
 </body></html>`);
     win.document.close();
     setTimeout(function(){win.focus();win.print();},500);
@@ -4696,8 +4700,8 @@ async function loadJSZip(){
     }
 
     const urls = [
-        "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js",
         "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js",
         "https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"
     ];
 
