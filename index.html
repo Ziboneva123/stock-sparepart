@@ -6,11 +6,9 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+      content="width=device-width, initial-scale=1.0">
 
 <title>Inventory Database</title>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
 
@@ -18,640 +16,361 @@ content="width=device-width, initial-scale=1.0">
     box-sizing:border-box;
 }
 
-html{
-    font-family:Arial,Helvetica,sans-serif;
+html,
+body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 }
 
 body{
-    margin:0;
-    background:#f4f6f8;
-    color:#222;
+
+    background:#1f2937;
+
 }
+
 
 /* =====================================================
-   LOGIN
+   LOGIN PAGE
 ===================================================== */
 
-#loginScreen{
-    position:fixed;
-    inset:0;
-    z-index:99999;
+.login-page{
+
+    min-height:100vh;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
-    padding:20px;
-    background:#1f2937;
+
+    padding:25px;
+
 }
+
+
+/* =====================================================
+   LOGIN CARD
+===================================================== */
 
 .login-card{
+
     width:100%;
+
     max-width:630px;
+
     background:white;
+
     border-radius:28px;
-    padding:48px 50px 40px;
-    box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+    padding:48px 48px 42px;
+
     text-align:center;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.25);
+
 }
 
-.login-card h1{
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.login-title{
+
     margin:0;
+
     color:#1f2937;
-    font-size:36px;
+
+    font-size:42px;
+
+    font-weight:bold;
+
+    letter-spacing:.5px;
+
 }
+
 
 .login-subtitle{
-    margin:14px 0 35px;
+
+    margin-top:18px;
+
+    margin-bottom:40px;
+
     color:#64748b;
-    font-size:20px;
+
+    font-size:23px;
+
 }
+
+
+/* =====================================================
+   PASSWORD
+===================================================== */
+
+.password-wrapper{
+
+    position:relative;
+
+    width:100%;
+
+}
+
 
 #loginPassword{
+
     width:100%;
+
     height:70px;
-    padding:0 20px;
-    border:1px solid #cbd5e1;
+
+    padding:
+        10px
+        65px
+        10px
+        20px;
+
+    border:
+        1px solid
+        #cbd5e1;
+
     border-radius:14px;
-    outline:none;
-    font-size:22px;
+
+    font-size:24px;
+
     text-align:center;
+
+    outline:none;
+
 }
+
 
 #loginPassword:focus{
+
     border-color:#2563eb;
-    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,.12);
+
 }
 
-#loginButton{
-    width:100%;
-    height:70px;
-    margin-top:24px;
+
+/* =====================================================
+   PASSWORD EYE BUTTON
+===================================================== */
+
+.toggle-password{
+
+    position:absolute;
+
+    right:12px;
+
+    top:50%;
+
+    transform:
+        translateY(-50%);
+
+    width:48px;
+
+    height:48px;
+
     border:0;
-    border-radius:14px;
-    background:#2563eb;
-    color:white;
-    font-size:22px;
-    font-weight:bold;
-    cursor:pointer;
-}
 
-#loginButton:active{
-    transform:scale(.98);
-}
-
-#loginError{
-    min-height:24px;
-    margin-top:14px;
-    color:#dc2626;
-    font-weight:bold;
-}
-
-.developer-contact{
-    margin-top:20px;
-    color:#64748b;
-    font-size:15px;
-    line-height:1.7;
-}
-
-.developer-contact strong{
-    color:#1f2937;
-}
-
-#websiteContent{
-    display:none;
-}
-
-/* =====================================================
-   HEADER
-===================================================== */
-
-header{
-    background:#1f2937;
-    color:white;
-    padding:30px 70px;
-    text-align:center;
-}
-
-header h1{
-    margin:0;
-    font-size:34px;
-}
-
-header p{
-    margin:8px 0 0;
-    color:#d1d5db;
-    font-size:19px;
-}
-
-/* =====================================================
-   MENU
-===================================================== */
-
-.menu-button{
-    position:fixed;
-    top:16px;
-    right:16px;
-    z-index:1001;
-    padding:13px 18px;
-    border:0;
-    border-radius:12px;
-    background:white;
-    color:#111827;
-    font-size:16px;
-    font-weight:bold;
-    box-shadow:0 4px 15px rgba(0,0,0,.2);
-}
-
-.drawer{
-    position:fixed;
-    top:0;
-    right:-380px;
-    width:350px;
-    max-width:90%;
-    height:100vh;
-    background:white;
-    z-index:1000;
-    padding:25px 20px;
-    box-shadow:-8px 0 25px rgba(0,0,0,.2);
-    transition:.25s;
-    overflow:auto;
-}
-
-.drawer.open{
-    right:0;
-}
-
-.drawer h2{
-    margin-top:0;
-    color:#1f2937;
-}
-
-.menu-item{
-    display:block;
-    width:100%;
-    padding:17px 10px;
-    border:0;
-    border-bottom:1px solid #e5e7eb;
-    background:white;
-    text-align:left;
-    font-size:17px;
-    color:#111827;
-}
-
-.menu-item:hover{
-    background:#f3f4f6;
-}
-
-.overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.45);
-    z-index:999;
-}
-
-.overlay.show{
-    display:block;
-}
-
-/* =====================================================
-   CONTAINER
-===================================================== */
-
-.container{
-    width:94%;
-    max-width:1400px;
-    margin:25px auto 50px;
-}
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-.search-box{
-    background:white;
-    padding:18px;
-    border-radius:16px;
-    margin-bottom:20px;
-    box-shadow:0 4px 15px rgba(0,0,0,.07);
-}
-
-.search-box input{
-    width:100%;
-    padding:16px;
-    border:1px solid #cbd5e1;
     border-radius:10px;
-    font-size:18px;
-    outline:none;
-}
 
-/* =====================================================
-   DASHBOARD
-===================================================== */
+    background:transparent;
 
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    margin-bottom:20px;
-}
+    font-size:24px;
 
-.stat{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 4px 15px rgba(0,0,0,.06);
     cursor:pointer;
-    transition:.2s;
-}
 
-.stat:hover{
-    transform:translateY(-2px);
-    box-shadow:0 7px 20px rgba(0,0,0,.1);
-}
-
-.stat-title{
-    color:#64748b;
-    font-size:17px;
-}
-
-.stat-value{
-    margin-top:7px;
-    font-size:34px;
-    font-weight:bold;
-}
-
-.stat-ok{
-    border-left:5px solid #15803d;
-}
-
-.stat-low{
-    border-left:5px solid #d97706;
-}
-
-.stat-empty{
-    border-left:5px solid #dc2626;
-}
-
-.stat-restock{
-    border-left:5px solid #7c3aed;
-}
-
-/* =====================================================
-   FILTER RESULT
-===================================================== */
-
-.filter-info{
-    display:none;
-    background:#e0e7ff;
-    color:#3730a3;
-    padding:14px 18px;
-    border-radius:10px;
-    margin-bottom:15px;
-    font-weight:bold;
-}
-
-.filter-info.show{
     display:flex;
-    justify-content:space-between;
+
     align-items:center;
-    gap:10px;
-}
 
-.clear-filter{
-    border:0;
-    background:#3730a3;
-    color:white;
-    padding:8px 12px;
-    border-radius:7px;
-    font-weight:bold;
-}
-
-/* =====================================================
-   TABLE
-===================================================== */
-
-.table-wrap{
-    background:white;
-    border-radius:16px;
-    overflow:auto;
-    box-shadow:0 4px 15px rgba(0,0,0,.07);
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1000px;
-}
-
-th{
-    background:#374151;
-    color:white;
-    padding:15px;
-    text-align:left;
-}
-
-td{
-    padding:14px;
-    border-bottom:1px solid #e5e7eb;
-}
-
-.status-ok{
-    color:#15803d;
-    font-weight:bold;
-}
-
-.status-low{
-    color:#d97706;
-    font-weight:bold;
-}
-
-.status-empty{
-    color:#dc2626;
-    font-weight:bold;
-}
-
-/* =====================================================
-   BUTTON
-===================================================== */
-
-.actions{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-}
-
-.btn{
-    border:0;
-    border-radius:8px;
-    padding:9px 12px;
-    font-weight:bold;
-    color:white;
-}
-
-.btn-in{
-    background:#15803d;
-}
-
-.btn-out{
-    background:#dc2626;
-}
-
-.btn-edit{
-    background:#475569;
-}
-
-.btn-delete{
-    background:#991b1b;
-}
-
-.btn-primary{
-    background:#2563eb;
-    color:white;
-    border:0;
-    border-radius:8px;
-    padding:12px 16px;
-    font-weight:bold;
-}
-
-.btn-success{
-    background:#15803d;
-    color:white;
-    border:0;
-    border-radius:8px;
-    padding:12px 16px;
-    font-weight:bold;
-}
-
-.btn-light{
-    background:#e5e7eb;
-    color:#111827;
-    border:0;
-    border-radius:8px;
-    padding:12px 16px;
-    font-weight:bold;
-}
-
-/* =====================================================
-   MODAL
-===================================================== */
-
-.modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:1100;
-    background:rgba(0,0,0,.5);
-    align-items:center;
     justify-content:center;
-    padding:15px;
+
 }
 
-.modal.show{
-    display:flex;
+
+.toggle-password:hover{
+
+    background:#f1f5f9;
+
 }
 
-.modal-card{
-    width:min(900px,100%);
-    max-height:92vh;
-    overflow:auto;
-    background:white;
-    border-radius:16px;
-    padding:22px;
-}
 
-.modal-card.small{
-    width:min(550px,100%);
-}
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
 
-.modal-card h2{
-    margin-top:0;
-    color:#1f2937;
-}
+.login-button{
 
-.form-group{
-    margin-bottom:14px;
-}
-
-.form-group label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:bold;
-}
-
-.form-group input,
-.form-group select{
     width:100%;
-    padding:12px;
-    border:1px solid #cbd5e1;
-    border-radius:8px;
-    font-size:16px;
-    outline:none;
-}
 
-.modal-actions{
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-    margin-top:18px;
-}
+    height:70px;
 
-/* =====================================================
-   AVAILABLE STOCK
-===================================================== */
+    margin-top:24px;
 
-.available-stock{
-    background:#eff6ff;
-    border:1px solid #bfdbfe;
-    color:#1e40af;
-    padding:14px;
-    border-radius:10px;
-    margin-bottom:15px;
-    font-size:17px;
-    font-weight:bold;
-}
+    border:0;
 
-.stock-number{
-    font-size:26px;
-}
+    border-radius:14px;
 
-/* =====================================================
-   IMPORT
-===================================================== */
+    background:#2563eb;
 
-.import-info{
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:10px;
-    padding:14px;
-    margin-bottom:15px;
-    line-height:1.6;
-}
-
-.excel-preview{
-    overflow:auto;
-    max-height:400px;
-    margin-top:15px;
-}
-
-.excel-preview table{
-    min-width:700px;
-}
-
-/* =====================================================
-   HISTORY
-===================================================== */
-
-.history-summary{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin-bottom:15px;
-}
-
-.history-box{
-    background:#f8fafc;
-    border-radius:10px;
-    padding:15px;
-    text-align:center;
-}
-
-.history-box strong{
-    display:block;
-    font-size:25px;
-    margin-top:5px;
-}
-
-/* =====================================================
-   MESSAGE
-===================================================== */
-
-.message{
-    position:fixed;
-    left:50%;
-    bottom:20px;
-    transform:translateX(-50%);
-    z-index:2000;
-    padding:13px 20px;
-    border-radius:9px;
     color:white;
-    display:none;
-    max-width:90%;
-    text-align:center;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
 }
 
-.message.show{
-    display:block;
+
+.login-button:hover{
+
+    background:#1d4ed8;
+
 }
 
-.message.ok{
-    background:#15803d;
+
+.login-button:active{
+
+    transform:scale(.99);
+
 }
 
-.message.error{
-    background:#b91c1c;
-}
 
 /* =====================================================
-   FOOTER
+   ERROR
 ===================================================== */
 
-footer{
-    text-align:center;
-    color:#6b7280;
-    padding:25px;
-    font-size:16px;
+.login-error{
+
+    min-height:25px;
+
+    margin-top:18px;
+
+    color:#dc2626;
+
+    font-size:17px;
+
+    font-weight:bold;
+
 }
+
+
+/* =====================================================
+   DEVELOPER INFO
+===================================================== */
+
+.developer-info{
+
+    margin-top:25px;
+
+    padding-top:20px;
+
+    border-top:
+        1px solid
+        #e5e7eb;
+
+    color:#64748b;
+
+    font-size:17px;
+
+    line-height:1.6;
+
+}
+
+
+.developer-info strong{
+
+    color:#1f2937;
+
+}
+
+
+.developer-link{
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+}
+
 
 /* =====================================================
    MOBILE
 ===================================================== */
 
-@media(max-width:800px){
+@media(max-width:600px){
 
-    header{
-        padding:35px 70px 28px 20px;
+    .login-page{
+
+        padding:20px;
+
     }
 
-    header h1{
-        font-size:28px;
-    }
-
-    header p{
-        font-size:16px;
-    }
-
-    .stats{
-        grid-template-columns:1fr;
-    }
-
-    .drawer{
-        width:320px;
-    }
-
-    .container{
-        width:94%;
-    }
 
     .login-card{
-        padding:42px 25px 35px;
+
+        padding:
+            40px
+            25px
+            35px;
+
         border-radius:25px;
+
     }
 
-    .login-card h1{
-        font-size:30px;
+
+    .login-title{
+
+        font-size:34px;
+
     }
+
 
     .login-subtitle{
-        font-size:18px;
+
+        font-size:19px;
+
+        margin-bottom:30px;
+
     }
 
-    #loginPassword,
-    #loginButton{
-        height:65px;
+
+    #loginPassword{
+
+        height:62px;
+
+        font-size:21px;
+
     }
 
-    .history-summary{
-        grid-template-columns:1fr;
+
+    .login-button{
+
+        height:62px;
+
+        font-size:21px;
+
+    }
+
+
+    .developer-info{
+
+        font-size:15px;
+
     }
 
 }
@@ -660,6 +379,7 @@ footer{
 
 </head>
 
+
 <body>
 
 
@@ -667,670 +387,115 @@ footer{
      LOGIN
 ===================================================== -->
 
-<div id="loginScreen">
+<div
+    class="login-page"
+    id="loginPage">
 
-    <div class="login-card">
 
-        <h1>
+    <div
+        class="login-card">
+
+
+        <h1
+            class="login-title">
+
             INVENTORY DATABASE
+
         </h1>
 
-        <div class="login-subtitle">
+
+        <div
+            class="login-subtitle">
+
             Masukkan password untuk melanjutkan
+
         </div>
 
-        <input
-            id="loginPassword"
-            type="password"
-            placeholder="Password"
-            autocomplete="off">
 
-        <button id="loginButton">
+        <!-- PASSWORD -->
+
+        <div
+            class="password-wrapper">
+
+
+            <input
+                id="loginPassword"
+                type="password"
+                placeholder="Password"
+                autocomplete="off">
+
+
+            <button
+                type="button"
+                id="togglePassword"
+                class="toggle-password"
+                aria-label="Tampilkan password">
+
+                👁
+
+            </button>
+
+
+        </div>
+
+
+        <!-- LOGIN BUTTON -->
+
+        <button
+            type="button"
+            id="loginButton"
+            class="login-button">
+
             MASUK
+
         </button>
 
-        <div id="loginError"></div>
 
-        <div class="developer-contact">
+        <!-- ERROR -->
 
-            Belum punya Password ?<br>
+        <div
+            id="loginError"
+            class="login-error">
+
+        </div>
+
+
+        <!-- DEVELOPER -->
+
+        <div
+            class="developer-info">
+
+            Belum punya Password ?
+
+            <br>
 
             hub Developer :
+
             <strong>
                 Nugroho Kunto Aji
             </strong>
 
         </div>
 
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     WEBSITE
-===================================================== -->
-
-<div id="websiteContent">
-
-
-<header>
-
-    <h1>
-        STOCK SPAREPART
-    </h1>
-
-    <p>
-        Database Sparepart &amp; Inventory
-    </p>
-
-</header>
-
-
-<button
-    class="menu-button"
-    id="menuButton">
-
-    MENU
-
-</button>
-
-
-<div
-    class="overlay"
-    id="overlay">
-</div>
-
-
-<aside
-    class="drawer"
-    id="drawer">
-
-    <h2>MENU</h2>
-
-    <button class="menu-item" data-menu="data">
-        Data Sparepart
-    </button>
-
-    <button class="menu-item" data-menu="add">
-        Tambah Sparepart
-    </button>
-
-    <button class="menu-item" data-menu="import">
-        Import Excel
-    </button>
-
-    <button class="menu-item" data-menu="export">
-        Export Excel
-    </button>
-
-    <button class="menu-item" data-menu="in">
-        Barang Masuk
-    </button>
-
-    <button class="menu-item" data-menu="out">
-        Barang Keluar
-    </button>
-
-    <button class="menu-item" data-menu="history">
-        History Transaksi
-    </button>
-
-</aside>
-
-
-<main class="container">
-
-
-<section class="search-box">
-
-    <input
-        id="search"
-        type="search"
-        placeholder="Cari kode, nama atau lokasi sparepart...">
-
-</section>
-
-
-<!-- =====================================================
-     DASHBOARD
-===================================================== -->
-
-<section class="stats">
-
-
-    <div
-        class="stat"
-        id="statOK">
-
-        <div class="stat-title">
-            Status OK
-        </div>
-
-        <div
-            class="stat-value"
-            id="okItems">
-
-            0
-
-        </div>
 
     </div>
 
-
-    <div
-        class="stat stat-low"
-        id="statLOW">
-
-        <div class="stat-title">
-            Stock LOW
-        </div>
-
-        <div
-            class="stat-value"
-            id="lowItems">
-
-            0
-
-        </div>
-
-    </div>
-
-
-    <div
-        class="stat stat-empty"
-        id="statHABIS">
-
-        <div class="stat-title">
-            Stock HABIS
-        </div>
-
-        <div
-            class="stat-value"
-            id="emptyItems">
-
-            0
-
-        </div>
-
-    </div>
-
-
-    <div
-        class="stat stat-restock"
-        id="statRESTOCK">
-
-        <div class="stat-title">
-            Perlu Restock
-        </div>
-
-        <div
-            class="stat-value"
-            id="restockItems">
-
-            0
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<div
-    class="filter-info"
-    id="filterInfo">
-
-    <span id="filterText"></span>
-
-    <button
-        class="clear-filter"
-        id="clearFilter">
-
-        Tampilkan Semua
-
-    </button>
-
 </div>
 
 
-<section class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Kode</th>
-<th>Nama Sparepart</th>
-<th>Lokasi</th>
-<th>Stock</th>
-<th>Min. Stock</th>
-<th>Status</th>
-<th>Aksi</th>
-
-</tr>
-
-</thead>
-
-<tbody id="stockBody">
-
-<tr>
-
-<td
-    colspan="7"
-    style="text-align:center;padding:30px">
-
-    Memuat data...
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</section>
-
-</main>
-
-
-<footer>
-    Created by : Nugroho Kunto Aji
-</footer>
-
-
-<!-- =====================================================
-     ADD / EDIT
-===================================================== -->
-
-<div
-    class="modal"
-    id="itemModal">
-
-<div class="modal-card small">
-
-<h2 id="itemTitle">
-    Tambah Sparepart
-</h2>
-
-
-<div class="form-group">
-
-<label>Kode Sparepart</label>
-
-<input
-    id="itemCode"
-    type="text"
-    placeholder="Contoh: BRG001">
-
-</div>
-
-
-<div class="form-group">
-
-<label>Nama Sparepart</label>
-
-<input
-    id="itemName"
-    type="text">
-
-</div>
-
-
-<div class="form-group">
-
-<label>Lokasi</label>
-
-<input
-    id="itemLocation"
-    type="text">
-
-</div>
-
-
-<div class="form-group">
-
-<label>Stock</label>
-
-<input
-    id="itemQty"
-    type="number"
-    min="0"
-    value="0">
-
-</div>
-
-
-<div class="form-group">
-
-<label>Minimum Stock</label>
-
-<input
-    id="itemMin"
-    type="number"
-    min="0"
-    value="0">
-
-</div>
-
-
-<div class="modal-actions">
-
-<button
-    class="btn-light"
-    id="cancelItem">
-
-    Batal
-
-</button>
-
-<button
-    class="btn-primary"
-    id="saveItem">
-
-    Simpan
-
-</button>
-
-</div>
-
-</div>
-</div>
-
-
-<!-- =====================================================
-     TRANSACTION
-===================================================== -->
-
-<div
-    class="modal"
-    id="transactionModal">
-
-<div class="modal-card small">
-
-<h2 id="transactionTitle">
-    Barang Masuk
-</h2>
-
-
-<div class="form-group">
-
-<label>Kode Sparepart</label>
-
-<select id="transactionCode"></select>
-
-</div>
-
-
-<div
-    class="available-stock"
-    id="availableStock">
-
-    Stock tersedia:
-    <span
-        class="stock-number"
-        id="availableStockNumber">
-        0
-    </span>
-
-</div>
-
-
-<div class="form-group">
-
-<label>Jumlah</label>
-
-<input
-    id="transactionQty"
-    type="number"
-    min="1"
-    value="1">
-
-</div>
-
-
-<div class="form-group">
-
-<label>Operator</label>
-
-<input
-    id="transactionOperator"
-    type="text">
-
-</div>
-
-
-<div class="form-group">
-
-<label>Keterangan</label>
-
-<input
-    id="transactionNote"
-    type="text">
-
-</div>
-
-
-<div class="modal-actions">
-
-<button
-    class="btn-light"
-    id="cancelTransaction">
-
-    Batal
-
-</button>
-
-<button
-    class="btn-primary"
-    id="saveTransaction">
-
-    Simpan
-
-</button>
-
-</div>
-
-</div>
-</div>
-
-
-<!-- =====================================================
-     IMPORT EXCEL
-===================================================== -->
-
-<div
-    class="modal"
-    id="importModal">
-
-<div class="modal-card">
-
-<h2>
-    Import Excel
-</h2>
-
-
-<div class="import-info">
-
-Format kolom Excel:
-
-<br><br>
-
-<strong>
-Kode | Nama Sparepart | Lokasi | Stock | Min. Stock
-</strong>
-
-<br><br>
-
-Kode yang sudah ada akan
-<strong>di-update</strong>.
-
-<br>
-
-Kode baru akan
-<strong>ditambahkan</strong>.
-
-<br>
-
-Data lainnya tidak dihapus.
-
-</div>
-
-
-<div class="form-group">
-
-<label>
-    Pilih File Excel
-</label>
-
-<input
-    id="excelFile"
-    type="file"
-    accept=".xlsx,.xls">
-
-</div>
-
-
-<div id="excelPreview"></div>
-
-
-<div class="modal-actions">
-
-<button
-    class="btn-light"
-    id="cancelImport">
-
-    Batal
-
-</button>
-
-<button
-    class="btn-success"
-    id="importButton"
-    disabled>
-
-    Import ke Firebase
-
-</button>
-
-</div>
-
-</div>
-</div>
-
-
-<!-- =====================================================
-     HISTORY
-===================================================== -->
-
-<div
-    class="modal"
-    id="historyModal">
-
-<div class="modal-card">
-
-<h2>
-    History Transaksi
-</h2>
-
-
-<div class="form-group">
-
-<label>
-    Sparepart
-</label>
-
-<select id="historyCode"></select>
-
-</div>
-
-
-<div id="historyContent">
-    Pilih sparepart.
-</div>
-
-
-<div class="modal-actions">
-
-<button
-    class="btn-light"
-    id="cancelHistory">
-
-    Tutup
-
-</button>
-
-</div>
-
-</div>
-</div>
-
-
-<div
-    class="message"
-    id="message">
-</div>
-
-
-</div>
-
-
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
-
-<script type="module">
-
-import {
-    initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-
-import {
-
-    getFirestore,
-    collection,
-    getDocs,
-    getDoc,
-    doc,
-    setDoc,
-    updateDoc,
-    deleteDoc,
-    addDoc,
-    query,
-    where,
-    serverTimestamp,
-    runTransaction
-
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
+<script>
 
 /* =====================================================
-   LOGIN
+   PASSWORD
 ===================================================== */
 
-const PASSWORD =
+const CORRECT_PASSWORD =
     "mtcgoahead";
 
 
-const loginScreen =
-    document.getElementById(
-        "loginScreen"
-    );
-
-
-const websiteContent =
-    document.getElementById(
-        "websiteContent"
-    );
-
+/* =====================================================
+   ELEMENT
+===================================================== */
 
 const loginPassword =
     document.getElementById(
@@ -1350,22 +515,100 @@ const loginError =
     );
 
 
+const togglePassword =
+    document.getElementById(
+        "togglePassword"
+    );
+
+
+/* =====================================================
+   SHOW / HIDE PASSWORD
+===================================================== */
+
+togglePassword.addEventListener(
+    "click",
+    function(){
+
+        if(
+            loginPassword.type ===
+            "password"
+        ){
+
+            loginPassword.type =
+                "text";
+
+
+            togglePassword.textContent =
+                "🙈";
+
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Sembunyikan password"
+            );
+
+        }
+        else{
+
+            loginPassword.type =
+                "password";
+
+
+            togglePassword.textContent =
+                "👁";
+
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Tampilkan password"
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
 function login(){
 
+    const password =
+        loginPassword.value;
+
+
+    loginError.textContent =
+        "";
+
+
     if(
-        loginPassword.value === PASSWORD
+        password ===
+        CORRECT_PASSWORD
     ){
+
+        /*
+         * Simpan status login
+         * selama browser/session masih aktif.
+         */
 
         sessionStorage.setItem(
             "inventoryLogin",
             "true"
         );
 
-        loginScreen.style.display =
-            "none";
 
-        websiteContent.style.display =
-            "block";
+        /*
+         * Masuk ke halaman inventory.
+         *
+         * GANTI "inventory.html"
+         * jika nama file inventory
+         * Anda berbeda.
+         */
+
+        window.location.href =
+            "inventory.html";
 
     }
     else{
@@ -1373,7 +616,8 @@ function login(){
         loginError.textContent =
             "Password salah.";
 
-        loginPassword.value = "";
+        loginPassword.value =
+            "";
 
         loginPassword.focus();
 
@@ -1382,2391 +626,35 @@ function login(){
 }
 
 
+/* =====================================================
+   BUTTON MASUK
+===================================================== */
+
 loginButton.addEventListener(
     "click",
     login
 );
 
 
+/* =====================================================
+   ENTER
+===================================================== */
+
 loginPassword.addEventListener(
     "keydown",
-    function(e){
-
-        if(e.key === "Enter"){
-            login();
-        }
-
-    }
-);
-
-
-/* =====================================================
-   FIREBASE
-===================================================== */
-
-const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyB4ea4a-Q2wNWagzatBWx6DuEgmyLKTjOs",
-
-    authDomain:
-        "stock-sparepart-a66cf.firebaseapp.com",
-
-    projectId:
-        "stock-sparepart-a66cf",
-
-    storageBucket:
-        "stock-sparepart-a66cf.firebasestorage.app",
-
-    messagingSenderId:
-        "1064348530987",
-
-    appId:
-        "1:1064348530987:web:299b60f0db04e5a904ed6e",
-
-    measurementId:
-        "G-RNF9ZEXF6X"
-
-};
-
-
-const app =
-    initializeApp(
-        firebaseConfig
-    );
-
-
-const db =
-    getFirestore(app);
-
-
-const stockRef =
-    collection(
-        db,
-        "spareparts"
-    );
-
-
-const transactionRef =
-    collection(
-        db,
-        "transactions"
-    );
-
-
-let items = [];
-
-let editingCode = null;
-
-let transactionMode = "in";
-
-let excelRows = [];
-
-let dashboardFilter = "";
-
-
-/* =====================================================
-   HELPER
-===================================================== */
-
-function $(id){
-    return document.getElementById(id);
-}
-
-
-function showMessage(
-    text,
-    type="ok"
-){
-
-    const el =
-        $("message");
-
-    el.textContent =
-        text;
-
-    el.className =
-        "message show " + type;
-
-    setTimeout(
-        function(){
-
-            el.className =
-                "message";
-
-        },
-        3500
-    );
-
-}
-
-
-function escapeHtml(value){
-
-    return String(
-        value ?? ""
-    )
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-/* =====================================================
-   FIRESTORE KEY
-===================================================== */
-
-function firestoreKey(code){
-
-    return encodeURIComponent(
-        String(code).trim()
-    );
-
-}
-
-
-/* =====================================================
-   STATUS
-===================================================== */
-
-function getStatus(item){
-
-    const qty =
-        Number(item.qty || 0);
-
-    const min =
-        Number(item.minqty || 0);
-
-
-    if(qty <= 0){
-
-        return {
-            text:"HABIS",
-            className:"status-empty",
-            type:"empty"
-        };
-
-    }
-
-
-    if(qty <= min){
-
-        return {
-            text:"LOW",
-            className:"status-low",
-            type:"low"
-        };
-
-    }
-
-
-    return {
-        text:"OK",
-        className:"status-ok",
-        type:"ok"
-    };
-
-}
-
-
-/* =====================================================
-   LOAD DATA
-===================================================== */
-
-async function loadItems(){
-
-    try{
-
-        const snap =
-            await getDocs(
-                stockRef
-            );
-
-
-        items =
-            snap.docs.map(
-                function(d){
-
-                    const data =
-                        d.data();
-
-                    return {
-
-                        firestoreId:d.id,
-
-                        code:
-                            data.code ||
-                            decodeURIComponent(d.id),
-
-                        name:
-                            data.name || "",
-
-                        lokasi:
-                            data.lokasi || "",
-
-                        qty:
-                            Number(data.qty || 0),
-
-                        minqty:
-                            Number(data.minqty || 0)
-
-                    };
-
-                }
-            );
-
-
-        items.sort(
-            function(a,b){
-
-                return String(a.code)
-                    .localeCompare(
-                        String(b.code)
-                    );
-
-            }
-        );
-
-
-        updateDashboard();
-
-        renderTable();
-
-        updateSelects();
-
-    }
-    catch(error){
-
-        console.error(error);
-
-        $("stockBody").innerHTML = `
-
-        <tr>
-
-        <td
-            colspan="7"
-            style="
-            text-align:center;
-            color:#b91c1c;
-            padding:30px">
-
-            Gagal mengambil data Firebase.
-
-            <br><br>
-
-            ${escapeHtml(error.message)}
-
-        </td>
-
-        </tr>
-
-        `;
-
-    }
-
-}
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-function updateDashboard(){
-
-    const ok =
-        items.filter(
-            x => getStatus(x).type === "ok"
-        ).length;
-
-
-    const low =
-        items.filter(
-            x => getStatus(x).type === "low"
-        ).length;
-
-
-    const empty =
-        items.filter(
-            x => getStatus(x).type === "empty"
-        ).length;
-
-
-    const restock =
-        items.filter(
-            x =>
-                Number(x.qty || 0)
-                <=
-                Number(x.minqty || 0)
-        ).length;
-
-
-    $("okItems").textContent =
-        ok;
-
-    $("lowItems").textContent =
-        low;
-
-    $("emptyItems").textContent =
-        empty;
-
-    $("restockItems").textContent =
-        restock;
-
-}
-
-
-/* =====================================================
-   FILTER DASHBOARD
-===================================================== */
-
-function setDashboardFilter(filter){
-
-    dashboardFilter =
-        filter;
-
-
-    if(!filter){
-
-        $("filterInfo")
-            .classList.remove("show");
-
-        $("filterText")
-            .textContent = "";
-
-    }
-    else{
-
-        let text = "";
-
-        if(filter === "ok"){
-            text = "Menampilkan Stock OK";
-        }
-
-        if(filter === "low"){
-            text = "Menampilkan Stock LOW";
-        }
-
-        if(filter === "empty"){
-            text = "Menampilkan Stock HABIS";
-        }
-
-        if(filter === "restock"){
-            text = "Menampilkan Sparepart yang Perlu Restock";
-        }
-
-        $("filterText")
-            .textContent = text;
-
-        $("filterInfo")
-            .classList.add("show");
-
-    }
-
-
-    renderTable();
-
-}
-
-
-/* =====================================================
-   RENDER TABLE
-===================================================== */
-
-function renderTable(){
-
-    const search =
-        $("search")
-        .value
-        .trim()
-        .toLowerCase();
-
-
-    let filtered =
-        items.filter(
-            function(item){
-
-                return (
-
-                    String(item.code)
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    String(item.name)
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    String(item.lokasi)
-                        .toLowerCase()
-                        .includes(search)
-
-                );
-
-            }
-        );
-
-
-    if(dashboardFilter){
-
-        filtered =
-            filtered.filter(
-                function(item){
-
-                    const status =
-                        getStatus(item);
-
-
-                    if(
-                        dashboardFilter === "ok"
-                    ){
-
-                        return status.type === "ok";
-
-                    }
-
-
-                    if(
-                        dashboardFilter === "low"
-                    ){
-
-                        return status.type === "low";
-
-                    }
-
-
-                    if(
-                        dashboardFilter === "empty"
-                    ){
-
-                        return status.type === "empty";
-
-                    }
-
-
-                    if(
-                        dashboardFilter === "restock"
-                    ){
-
-                        return Number(item.qty || 0)
-                            <=
-                            Number(item.minqty || 0);
-
-                    }
-
-
-                    return true;
-
-                }
-            );
-
-    }
-
-
-    if(filtered.length === 0){
-
-        $("stockBody").innerHTML = `
-
-        <tr>
-
-        <td
-            colspan="7"
-            style="
-            text-align:center;
-            padding:30px">
-
-            Tidak ada data sparepart.
-
-        </td>
-
-        </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    $("stockBody").innerHTML =
-
-        filtered.map(
-            function(item){
-
-                const status =
-                    getStatus(item);
-
-
-                return `
-
-                <tr>
-
-                    <td>
-                        ${escapeHtml(item.code)}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(item.name)}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(item.lokasi)}
-                    </td>
-
-                    <td>
-                        <strong>
-                            ${item.qty}
-                        </strong>
-                    </td>
-
-                    <td>
-                        ${item.minqty}
-                    </td>
-
-                    <td class="${status.className}">
-                        ${status.text}
-                    </td>
-
-                    <td>
-
-                        <div class="actions">
-
-                            <button
-                                class="btn btn-in"
-                                data-action="in"
-                                data-code="${escapeHtml(item.code)}">
-
-                                Masuk
-
-                            </button>
-
-                            <button
-                                class="btn btn-out"
-                                data-action="out"
-                                data-code="${escapeHtml(item.code)}">
-
-                                Keluar
-
-                            </button>
-
-                            <button
-                                class="btn btn-edit"
-                                data-action="edit"
-                                data-code="${escapeHtml(item.code)}">
-
-                                Edit
-
-                            </button>
-
-                            <button
-                                class="btn btn-delete"
-                                data-action="delete"
-                                data-code="${escapeHtml(item.code)}">
-
-                                Hapus
-
-                            </button>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-                `;
-
-            }
-        )
-        .join("");
-
-}
-
-
-/* =====================================================
-   SELECT
-===================================================== */
-
-function updateSelects(){
-
-    const options =
-        items.map(
-            function(item){
-
-                return `
-
-                <option
-                    value="${escapeHtml(item.code)}">
-
-                    ${escapeHtml(item.code)}
-                    -
-                    ${escapeHtml(item.name)}
-
-                </option>
-
-                `;
-
-            }
-        )
-        .join("");
-
-
-    $("transactionCode")
-        .innerHTML =
-        options;
-
-
-    $("historyCode")
-        .innerHTML =
-        `<option value="">
-            -- Pilih Sparepart --
-        </option>`
-        +
-        options;
-
-}
-
-
-/* =====================================================
-   MODAL
-===================================================== */
-
-function openModal(id){
-    $(id).classList.add("show");
-}
-
-
-function closeModal(id){
-    $(id).classList.remove("show");
-}
-
-
-/* =====================================================
-   ADD
-===================================================== */
-
-function openAdd(){
-
-    editingCode = null;
-
-    $("itemTitle")
-        .textContent =
-        "Tambah Sparepart";
-
-    $("itemCode").value = "";
-
-    $("itemName").value = "";
-
-    $("itemLocation").value = "";
-
-    $("itemQty").value = 0;
-
-    $("itemMin").value = 0;
-
-    $("itemCode").disabled = false;
-
-    openModal("itemModal");
-
-}
-
-
-/* =====================================================
-   EDIT
-===================================================== */
-
-function openEdit(code){
-
-    const item =
-        items.find(
-            x =>
-                String(x.code)
-                ===
-                String(code)
-        );
-
-
-    if(!item){
-
-        showMessage(
-            "Data tidak ditemukan.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    editingCode =
-        item.code;
-
-
-    $("itemTitle")
-        .textContent =
-        "Edit Sparepart";
-
-
-    $("itemCode").value =
-        item.code;
-
-
-    $("itemName").value =
-        item.name;
-
-
-    $("itemLocation").value =
-        item.lokasi;
-
-
-    $("itemQty").value =
-        item.qty;
-
-
-    $("itemMin").value =
-        item.minqty;
-
-
-    $("itemCode").disabled =
-        true;
-
-
-    openModal("itemModal");
-
-}
-
-
-/* =====================================================
-   SAVE ITEM
-===================================================== */
-
-async function saveItem(){
-
-    const code =
-        $("itemCode")
-        .value
-        .trim();
-
-
-    const name =
-        $("itemName")
-        .value
-        .trim();
-
-
-    const lokasi =
-        $("itemLocation")
-        .value
-        .trim();
-
-
-    const qty =
-        Number($("itemQty").value);
-
-
-    const minqty =
-        Number($("itemMin").value);
-
-
-    if(!code){
-
-        showMessage(
-            "Kode sparepart wajib diisi.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(!name){
-
-        showMessage(
-            "Nama sparepart wajib diisi.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(qty < 0 || minqty < 0){
-
-        showMessage(
-            "Stock tidak boleh negatif.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    try{
-
-        if(editingCode){
-
-            const safeId =
-                firestoreKey(
-                    editingCode
-                );
-
-
-            await updateDoc(
-                doc(
-                    db,
-                    "spareparts",
-                    safeId
-                ),
-                {
-
-                    name:name,
-
-                    lokasi:lokasi,
-
-                    qty:qty,
-
-                    minqty:minqty,
-
-                    updatedAt:
-                        serverTimestamp()
-
-                }
-            );
-
-
-            showMessage(
-                "Sparepart berhasil diperbarui."
-            );
-
-        }
-        else{
-
-            const safeId =
-                firestoreKey(code);
-
-
-            const ref =
-                doc(
-                    db,
-                    "spareparts",
-                    safeId
-                );
-
-
-            const existing =
-                await getDoc(ref);
-
-
-            if(existing.exists()){
-
-                showMessage(
-                    "Kode sparepart sudah ada.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            await setDoc(
-                ref,
-                {
-
-                    code:code,
-
-                    name:name,
-
-                    lokasi:lokasi,
-
-                    qty:qty,
-
-                    minqty:minqty,
-
-                    createdAt:
-                        serverTimestamp()
-
-                }
-            );
-
-
-            showMessage(
-                "Sparepart berhasil ditambahkan."
-            );
-
-        }
-
-
-        closeModal("itemModal");
-
-        await loadItems();
-
-    }
-    catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "Gagal menyimpan: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   DELETE
-===================================================== */
-
-async function deleteItem(code){
-
-    if(
-        !confirm(
-            "Apakah Anda yakin ingin menghapus?\n\n" +
-            "Kode : " + code
-        )
-    ){
-
-        return;
-
-    }
-
-
-    try{
-
-        const q =
-            query(
-                stockRef,
-                where(
-                    "code",
-                    "==",
-                    code
-                )
-            );
-
-
-        const snap =
-            await getDocs(q);
-
-
-        if(!snap.empty){
-
-            for(
-                const d
-                of snap.docs
-            ){
-
-                await deleteDoc(
-                    d.ref
-                );
-
-            }
-
-        }
-        else{
-
-            const safeId =
-                firestoreKey(code);
-
-
-            const ref =
-                doc(
-                    db,
-                    "spareparts",
-                    safeId
-                );
-
-
-            const check =
-                await getDoc(ref);
-
-
-            if(!check.exists()){
-
-                showMessage(
-                    "Data tidak ditemukan.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            await deleteDoc(ref);
-
-        }
-
-
-        showMessage(
-            "Sparepart berhasil dihapus."
-        );
-
-
-        await loadItems();
-
-    }
-    catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "Gagal menghapus: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   TRANSACTION
-===================================================== */
-
-function updateAvailableStock(){
-
-    const code =
-        $("transactionCode").value;
-
-
-    const item =
-        items.find(
-            x =>
-                String(x.code)
-                ===
-                String(code)
-        );
-
-
-    const stock =
-        item
-        ? Number(item.qty || 0)
-        : 0;
-
-
-    $("availableStockNumber")
-        .textContent =
-        stock;
-
-
-    if(
-        transactionMode === "out"
-    ){
-
-        $("availableStock")
-            .style.background =
-            stock <= 0
-            ? "#fee2e2"
-            : "#eff6ff";
-
-    }
-    else{
-
-        $("availableStock")
-            .style.background =
-            "#f0fdf4";
-
-    }
-
-}
-
-
-function openTransaction(
-    mode,
-    code=""
-){
-
-    transactionMode =
-        mode;
-
-
-    $("transactionTitle")
-        .textContent =
-        mode === "in"
-        ? "Barang Masuk"
-        : "Barang Keluar";
-
-
-    updateSelects();
-
-
-    if(code){
-
-        $("transactionCode")
-            .value =
-            code;
-
-    }
-
-
-    $("transactionQty").value = 1;
-
-    $("transactionOperator").value = "";
-
-    $("transactionNote").value = "";
-
-
-    updateAvailableStock();
-
-
-    openModal(
-        "transactionModal"
-    );
-
-}
-
-
-/* =====================================================
-   SAVE TRANSACTION
-===================================================== */
-
-async function saveTransaction(){
-
-    const code =
-        $("transactionCode").value;
-
-
-    const qty =
-        Number(
-            $("transactionQty").value
-        );
-
-
-    const operator =
-        $("transactionOperator")
-        .value
-        .trim();
-
-
-    const note =
-        $("transactionNote")
-        .value
-        .trim();
-
-
-    if(!code){
-
-        showMessage(
-            "Pilih sparepart.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(qty <= 0){
-
-        showMessage(
-            "Jumlah harus lebih dari 0.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if(!operator){
-
-        showMessage(
-            "Nama operator wajib diisi.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    try{
-
-        const safeId =
-            firestoreKey(code);
-
-
-        const itemRef =
-            doc(
-                db,
-                "spareparts",
-                safeId
-            );
-
-
-        let newQty = 0;
-
-
-        await runTransaction(
-            db,
-            async function(transaction){
-
-                const snap =
-                    await transaction.get(
-                        itemRef
-                    );
-
-
-                if(!snap.exists()){
-
-                    throw new Error(
-                        "Sparepart tidak ditemukan."
-                    );
-
-                }
-
-
-                const data =
-                    snap.data();
-
-
-                const oldQty =
-                    Number(
-                        data.qty || 0
-                    );
-
-
-                if(
-                    transactionMode === "in"
-                ){
-
-                    newQty =
-                        oldQty + qty;
-
-                }
-                else{
-
-                    newQty =
-                        oldQty - qty;
-
-
-                    if(newQty < 0){
-
-                        throw new Error(
-                            "Stock tidak mencukupi."
-                        );
-
-                    }
-
-                }
-
-
-                transaction.update(
-                    itemRef,
-                    {
-
-                        qty:newQty,
-
-                        updatedAt:
-                            serverTimestamp()
-
-                    }
-                );
-
-            }
-        );
-
-
-        await addDoc(
-            transactionRef,
-            {
-
-                code:code,
-
-                type:transactionMode,
-
-                qty:qty,
-
-                operator:operator,
-
-                note:note,
-
-                createdAt:
-                    serverTimestamp()
-
-            }
-        );
-
-
-        closeModal(
-            "transactionModal"
-        );
-
-
-        showMessage(
-            transactionMode === "in"
-            ? "Barang masuk berhasil disimpan."
-            : "Barang keluar berhasil disimpan."
-        );
-
-
-        await loadItems();
-
-    }
-    catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "Gagal menyimpan transaksi: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   HISTORY
-===================================================== */
-
-async function loadHistory(){
-
-    const code =
-        $("historyCode").value;
-
-
-    if(!code){
-
-        $("historyContent")
-            .innerHTML =
-            "Pilih sparepart.";
-
-        return;
-
-    }
-
-
-    try{
-
-        const snap =
-            await getDocs(
-                transactionRef
-            );
-
-
-        const data =
-            snap.docs
-            .map(
-                d => ({
-                    id:d.id,
-                    ...d.data()
-                })
-            )
-            .filter(
-                x =>
-                    x.code === code
-            );
-
-
-        data.sort(
-            function(a,b){
-
-                const aTime =
-                    a.createdAt?.seconds || 0;
-
-                const bTime =
-                    b.createdAt?.seconds || 0;
-
-                return bTime - aTime;
-
-            }
-        );
-
-
-        if(data.length === 0){
-
-            $("historyContent")
-                .innerHTML =
-                "<p>Belum ada transaksi.</p>";
-
-            return;
-
-        }
-
-
-        let masuk = 0;
-        let keluar = 0;
-
-
-        data.forEach(
-            function(x){
-
-                if(x.type === "in"){
-                    masuk += Number(x.qty || 0);
-                }
-                else{
-                    keluar += Number(x.qty || 0);
-                }
-
-            }
-        );
-
-
-        let html = `
-
-        <div class="history-summary">
-
-            <div class="history-box">
-
-                Total Transaksi
-
-                <strong>
-                    ${data.length}
-                </strong>
-
-            </div>
-
-            <div class="history-box">
-
-                Barang Masuk
-
-                <strong>
-                    ${masuk}
-                </strong>
-
-            </div>
-
-            <div class="history-box">
-
-                Barang Keluar
-
-                <strong>
-                    ${keluar}
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="table-wrap">
-
-        <table>
-
-        <thead>
-
-        <tr>
-
-        <th>Tanggal</th>
-        <th>Jenis</th>
-        <th>Jumlah</th>
-        <th>Operator</th>
-        <th>Keterangan</th>
-
-        </tr>
-
-        </thead>
-
-        <tbody>
-        `;
-
-
-        data.forEach(
-            function(item){
-
-                let date = "-";
-
-
-                if(
-                    item.createdAt &&
-                    item.createdAt.toDate
-                ){
-
-                    date =
-                        item.createdAt
-                        .toDate()
-                        .toLocaleString(
-                            "id-ID"
-                        );
-
-                }
-
-
-                html += `
-
-                <tr>
-
-                    <td>
-                        ${escapeHtml(date)}
-                    </td>
-
-                    <td>
-                        ${
-                            item.type === "in"
-                            ? "MASUK"
-                            : "KELUAR"
-                        }
-                    </td>
-
-                    <td>
-                        ${item.qty}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(
-                            item.operator
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(
-                            item.note || "-"
-                        )}
-                    </td>
-
-                </tr>
-
-                `;
-
-            }
-        );
-
-
-        html += `
-
-        </tbody>
-
-        </table>
-
-        </div>
-
-        `;
-
-
-        $("historyContent")
-            .innerHTML =
-            html;
-
-    }
-    catch(error){
-
-        console.error(error);
-
-        $("historyContent")
-            .innerHTML =
-            "Gagal mengambil history: " +
-            escapeHtml(
-                error.message
-            );
-
-    }
-
-}
-
-
-/* =====================================================
-   IMPORT EXCEL
-===================================================== */
-
-$("excelFile")
-.addEventListener(
-    "change",
-    async function(){
-
-        const file =
-            this.files[0];
-
-
-        if(!file){
-
-            $("importButton")
-                .disabled =
-                true;
-
-            return;
-
-        }
-
-
-        try{
-
-            const buffer =
-                await file.arrayBuffer();
-
-
-            const workbook =
-                XLSX.read(
-                    buffer,
-                    {
-                        type:"array"
-                    }
-                );
-
-
-            const sheet =
-                workbook.Sheets[
-                    workbook.SheetNames[0]
-                ];
-
-
-            const rows =
-                XLSX.utils.sheet_to_json(
-                    sheet,
-                    {
-                        defval:""
-                    }
-                );
-
-
-            excelRows =
-                rows
-                .map(
-                    function(row){
-
-                        return {
-
-                            code:
-                                String(
-                                    row["Kode"]
-                                    ??
-                                    row["kode"]
-                                    ??
-                                    ""
-                                ).trim(),
-
-                            name:
-                                String(
-                                    row["Nama Sparepart"]
-                                    ??
-                                    row["Nama"]
-                                    ??
-                                    ""
-                                ).trim(),
-
-                            lokasi:
-                                String(
-                                    row["Lokasi"]
-                                    ??
-                                    row["lokasi"]
-                                    ??
-                                    ""
-                                ).trim(),
-
-                            qty:
-                                Number(
-                                    row["Stock"]
-                                    ??
-                                    0
-                                ),
-
-                            minqty:
-                                Number(
-                                    row["Min. Stock"]
-                                    ??
-                                    row["Min Stock"]
-                                    ??
-                                    0
-                                )
-
-                        };
-
-                    }
-                )
-                .filter(
-                    x =>
-                        x.code !== ""
-                );
-
-
-            let html = `
-
-            <div class="excel-preview">
-
-            <table>
-
-            <thead>
-
-            <tr>
-
-            <th>Kode</th>
-            <th>Nama</th>
-            <th>Lokasi</th>
-            <th>Stock</th>
-            <th>Min. Stock</th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-            `;
-
-
-            excelRows.forEach(
-                function(row){
-
-                    html += `
-
-                    <tr>
-
-                    <td>
-                        ${escapeHtml(row.code)}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(row.name)}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(row.lokasi)}
-                    </td>
-
-                    <td>
-                        ${row.qty}
-                    </td>
-
-                    <td>
-                        ${row.minqty}
-                    </td>
-
-                    </tr>
-
-                    `;
-
-                }
-            );
-
-
-            html += `
-
-            </tbody>
-
-            </table>
-
-            </div>
-
-            <p>
-                Total data:
-                <strong>
-                    ${excelRows.length}
-                </strong>
-            </p>
-
-            `;
-
-
-            $("excelPreview")
-                .innerHTML =
-                html;
-
-
-            $("importButton")
-                .disabled =
-                excelRows.length === 0;
-
-        }
-        catch(error){
-
-            console.error(error);
-
-            showMessage(
-                "Gagal membaca Excel.",
-                "error"
-            );
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   IMPORT FIREBASE
-===================================================== */
-
-$("importButton")
-.addEventListener(
-    "click",
-    async function(){
-
-        if(
-            excelRows.length === 0
-        ){
-            return;
-        }
-
-
-        try{
-
-            this.disabled = true;
-
-            this.textContent =
-                "Mengimport...";
-
-
-            let count = 0;
-
-
-            for(
-                const row
-                of excelRows
-            ){
-
-                const safeId =
-                    firestoreKey(
-                        row.code
-                    );
-
-
-                const ref =
-                    doc(
-                        db,
-                        "spareparts",
-                        safeId
-                    );
-
-
-                const existing =
-                    await getDoc(ref);
-
-
-                if(existing.exists()){
-
-                    await updateDoc(
-                        ref,
-                        {
-
-                            code:row.code,
-
-                            name:row.name,
-
-                            lokasi:row.lokasi,
-
-                            qty:row.qty,
-
-                            minqty:row.minqty,
-
-                            updatedAt:
-                                serverTimestamp()
-
-                        }
-                    );
-
-                }
-                else{
-
-                    await setDoc(
-                        ref,
-                        {
-
-                            code:row.code,
-
-                            name:row.name,
-
-                            lokasi:row.lokasi,
-
-                            qty:row.qty,
-
-                            minqty:row.minqty,
-
-                            createdAt:
-                                serverTimestamp()
-
-                        }
-                    );
-
-                }
-
-
-                count++;
-
-            }
-
-
-            showMessage(
-                count +
-                " data berhasil diimport."
-            );
-
-
-            excelRows = [];
-
-            $("excelFile").value = "";
-
-            $("excelPreview").innerHTML = "";
-
-            $("importButton").disabled = true;
-
-            $("importButton").textContent =
-                "Import ke Firebase";
-
-
-            closeModal(
-                "importModal"
-            );
-
-
-            await loadItems();
-
-        }
-        catch(error){
-
-            console.error(error);
-
-            this.disabled = false;
-
-            this.textContent =
-                "Import ke Firebase";
-
-
-            showMessage(
-                "Import gagal: " +
-                error.message,
-                "error"
-            );
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   EXPORT
-===================================================== */
-
-function exportExcel(){
-
-    if(items.length === 0){
-
-        showMessage(
-            "Tidak ada data.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const data =
-        items.map(
-            function(item){
-
-                return {
-
-                    "Kode":
-                        item.code,
-
-                    "Nama Sparepart":
-                        item.name,
-
-                    "Lokasi":
-                        item.lokasi,
-
-                    "Stock":
-                        item.qty,
-
-                    "Min. Stock":
-                        item.minqty,
-
-                    "Status":
-                        getStatus(item).text
-
-                };
-
-            }
-        );
-
-
-    const worksheet =
-        XLSX.utils.json_to_sheet(
-            data
-        );
-
-
-    const workbook =
-        XLSX.utils.book_new();
-
-
-    XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        "Sparepart"
-    );
-
-
-    XLSX.writeFile(
-        workbook,
-        "Inventory_Sparepart.xlsx"
-    );
-
-
-    showMessage(
-        "Excel berhasil dibuat."
-    );
-
-}
-
-
-/* =====================================================
-   TABLE ACTION
-===================================================== */
-
-$("stockBody")
-.addEventListener(
-    "click",
     function(event){
 
-        const button =
-            event.target.closest(
-                "button[data-action]"
-            );
+        if(
+            event.key ===
+            "Enter"
+        ){
 
+            login();
 
-        if(!button){
-            return;
-        }
-
-
-        const action =
-            button.dataset.action;
-
-
-        const code =
-            button.dataset.code;
-
-
-        if(action === "delete"){
-            deleteItem(code);
-        }
-
-
-        if(action === "edit"){
-            openEdit(code);
-        }
-
-
-        if(action === "in"){
-            openTransaction(
-                "in",
-                code
-            );
-        }
-
-
-        if(action === "out"){
-            openTransaction(
-                "out",
-                code
-            );
         }
 
     }
 );
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-$("search")
-.addEventListener(
-    "input",
-    renderTable
-);
-
-
-/* =====================================================
-   DASHBOARD CLICK
-===================================================== */
-
-$("statOK")
-.addEventListener(
-    "click",
-    function(){
-
-        setDashboardFilter("ok");
-
-    }
-);
-
-
-$("statLOW")
-.addEventListener(
-    "click",
-    function(){
-
-        setDashboardFilter("low");
-
-    }
-);
-
-
-$("statHABIS")
-.addEventListener(
-    "click",
-    function(){
-
-        setDashboardFilter("empty");
-
-    }
-);
-
-
-$("statRESTOCK")
-.addEventListener(
-    "click",
-    function(){
-
-        setDashboardFilter("restock");
-
-    }
-);
-
-
-$("clearFilter")
-.addEventListener(
-    "click",
-    function(){
-
-        setDashboardFilter("");
-
-    }
-);
-
-
-/* =====================================================
-   MENU
-===================================================== */
-
-$("menuButton")
-.addEventListener(
-    "click",
-    function(){
-
-        $("drawer")
-            .classList.toggle("open");
-
-        $("overlay")
-            .classList.toggle("show");
-
-    }
-);
-
-
-$("overlay")
-.addEventListener(
-    "click",
-    function(){
-
-        $("drawer")
-            .classList.remove("open");
-
-        $("overlay")
-            .classList.remove("show");
-
-    }
-);
-
-
-/* =====================================================
-   MENU ITEMS
-===================================================== */
-
-document
-.querySelectorAll(".menu-item")
-.forEach(
-    function(button){
-
-        button.addEventListener(
-            "click",
-            function(){
-
-                const menu =
-                    this.dataset.menu;
-
-
-                $("drawer")
-                    .classList.remove("open");
-
-                $("overlay")
-                    .classList.remove("show");
-
-
-                if(menu === "data"){
-
-                    window.scrollTo({
-                        top:0,
-                        behavior:"smooth"
-                    });
-
-                }
-
-
-                if(menu === "add"){
-
-                    openAdd();
-
-                }
-
-
-                if(menu === "import"){
-
-                    openModal(
-                        "importModal"
-                    );
-
-                }
-
-
-                if(menu === "export"){
-
-                    exportExcel();
-
-                }
-
-
-                if(menu === "in"){
-
-                    openTransaction("in");
-
-                }
-
-
-                if(menu === "out"){
-
-                    openTransaction("out");
-
-                }
-
-
-                if(menu === "history"){
-
-                    $("historyContent")
-                        .innerHTML =
-                        "Pilih sparepart.";
-
-                    openModal(
-                        "historyModal"
-                    );
-
-                }
-
-            }
-        );
-
-    }
-);
-
-
-/* =====================================================
-   MODAL BUTTONS
-===================================================== */
-
-$("cancelItem")
-.addEventListener(
-    "click",
-    function(){
-        closeModal("itemModal");
-    }
-);
-
-
-$("cancelTransaction")
-.addEventListener(
-    "click",
-    function(){
-        closeModal("transactionModal");
-    }
-);
-
-
-$("cancelImport")
-.addEventListener(
-    "click",
-    function(){
-        closeModal("importModal");
-    }
-);
-
-
-$("cancelHistory")
-.addEventListener(
-    "click",
-    function(){
-        closeModal("historyModal");
-    }
-);
-
-
-$("saveItem")
-.addEventListener(
-    "click",
-    saveItem
-);
-
-
-$("saveTransaction")
-.addEventListener(
-    "click",
-    saveTransaction
-);
-
-
-$("transactionCode")
-.addEventListener(
-    "change",
-    updateAvailableStock
-);
-
-
-$("historyCode")
-.addEventListener(
-    "change",
-    loadHistory
-);
-
-
-/* =====================================================
-   CLOSE MODAL OUTSIDE
-===================================================== */
-
-document
-.querySelectorAll(".modal")
-.forEach(
-    function(modal){
-
-        modal.addEventListener(
-            "click",
-            function(event){
-
-                if(
-                    event.target === modal
-                ){
-
-                    modal.classList.remove(
-                        "show"
-                    );
-
-                }
-
-            }
-        );
-
-    }
-);
-
-
-/* =====================================================
-   START
-===================================================== */
-
-loadItems();
 
 </script>
 
