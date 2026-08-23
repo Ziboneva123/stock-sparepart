@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Stock Sparepart</title>
+<title>Inventory Database</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
@@ -28,120 +28,106 @@ body{
     color:#222;
 }
 
-/* =========================================================
+/* =====================================================
    LOGIN
-========================================================= */
+===================================================== */
 
 #loginScreen{
     position:fixed;
     inset:0;
     z-index:99999;
-
-    background:#1f2937;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     padding:20px;
+    background:#1f2937;
 }
 
-.login-box{
-    width:min(420px,100%);
-
+.login-card{
+    width:100%;
+    max-width:630px;
     background:white;
-
-    border-radius:18px;
-
-    padding:30px;
-
+    border-radius:28px;
+    padding:48px 50px 40px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
     text-align:center;
-
-    box-shadow:0 10px 40px rgba(0,0,0,.3);
 }
 
-.login-box h2{
-    margin:0 0 8px;
-
+.login-card h1{
+    margin:0;
     color:#1f2937;
-
-    font-size:28px;
+    font-size:36px;
 }
 
-.login-box p{
-    margin:0 0 25px;
-
+.login-subtitle{
+    margin:14px 0 35px;
     color:#64748b;
-
-    font-size:16px;
+    font-size:20px;
 }
 
-.login-box input{
+#loginPassword{
     width:100%;
-
-    padding:15px;
-
+    height:70px;
+    padding:0 20px;
     border:1px solid #cbd5e1;
-
-    border-radius:10px;
-
-    font-size:18px;
-
+    border-radius:14px;
     outline:none;
-
+    font-size:22px;
     text-align:center;
 }
 
-.login-box input:focus{
+#loginPassword:focus{
     border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
 }
 
-.login-button{
+#loginButton{
     width:100%;
-
-    margin-top:15px;
-
-    padding:14px;
-
+    height:70px;
+    margin-top:24px;
     border:0;
-
-    border-radius:10px;
-
+    border-radius:14px;
     background:#2563eb;
-
     color:white;
-
-    font-size:17px;
-
+    font-size:22px;
     font-weight:bold;
-
     cursor:pointer;
 }
 
-.login-button:active{
+#loginButton:active{
     transform:scale(.98);
 }
 
-.login-error{
-    min-height:22px;
-
-    margin-top:12px;
-
+#loginError{
+    min-height:24px;
+    margin-top:14px;
     color:#dc2626;
-
     font-weight:bold;
 }
 
-/* =========================================================
+.developer-contact{
+    margin-top:20px;
+    color:#64748b;
+    font-size:15px;
+    line-height:1.7;
+}
+
+.developer-contact strong{
+    color:#1f2937;
+}
+
+#websiteContent{
+    display:none;
+}
+
+/* =====================================================
    HEADER
-========================================================= */
+===================================================== */
 
 header{
     background:#1f2937;
     color:white;
-
     padding:30px 70px;
-
     text-align:center;
 }
 
@@ -152,63 +138,41 @@ header h1{
 
 header p{
     margin:8px 0 0;
-
     color:#d1d5db;
-
     font-size:19px;
 }
 
-/* =========================================================
+/* =====================================================
    MENU
-========================================================= */
+===================================================== */
 
 .menu-button{
     position:fixed;
-
     top:16px;
     right:16px;
-
     z-index:1001;
-
     padding:13px 18px;
-
     border:0;
     border-radius:12px;
-
     background:white;
-
     color:#111827;
-
     font-size:16px;
-
     font-weight:bold;
-
     box-shadow:0 4px 15px rgba(0,0,0,.2);
-
-    cursor:pointer;
 }
 
 .drawer{
     position:fixed;
-
     top:0;
     right:-380px;
-
     width:350px;
     max-width:90%;
-
     height:100vh;
-
     background:white;
-
     z-index:1000;
-
     padding:25px 20px;
-
     box-shadow:-8px 0 25px rgba(0,0,0,.2);
-
     transition:.25s;
-
     overflow:auto;
 }
 
@@ -218,30 +182,19 @@ header p{
 
 .drawer h2{
     margin-top:0;
-
     color:#1f2937;
 }
 
 .menu-item{
     display:block;
-
     width:100%;
-
     padding:17px 10px;
-
     border:0;
-
     border-bottom:1px solid #e5e7eb;
-
     background:white;
-
     text-align:left;
-
     font-size:17px;
-
     color:#111827;
-
-    cursor:pointer;
 }
 
 .menu-item:hover{
@@ -250,13 +203,9 @@ header p{
 
 .overlay{
     display:none;
-
     position:fixed;
-
     inset:0;
-
     background:rgba(0,0,0,.45);
-
     z-index:999;
 }
 
@@ -264,114 +213,75 @@ header p{
     display:block;
 }
 
-/* =========================================================
+/* =====================================================
    CONTAINER
-========================================================= */
+===================================================== */
 
 .container{
     width:94%;
-
     max-width:1400px;
-
     margin:25px auto 50px;
 }
 
-/* =========================================================
+/* =====================================================
    SEARCH
-========================================================= */
+===================================================== */
 
 .search-box{
     background:white;
-
     padding:18px;
-
     border-radius:16px;
-
     margin-bottom:20px;
-
     box-shadow:0 4px 15px rgba(0,0,0,.07);
 }
 
 .search-box input{
     width:100%;
-
     padding:16px;
-
     border:1px solid #cbd5e1;
-
     border-radius:10px;
-
     font-size:18px;
-
     outline:none;
 }
 
-.search-box input:focus{
-    border-color:#2563eb;
-}
-
-/* =========================================================
+/* =====================================================
    DASHBOARD
-========================================================= */
+===================================================== */
 
 .stats{
     display:grid;
-
-    grid-template-columns:
-        repeat(5,1fr);
-
+    grid-template-columns:repeat(4,1fr);
     gap:15px;
-
     margin-bottom:20px;
 }
 
 .stat{
     background:white;
-
     padding:20px;
-
     border-radius:15px;
-
     box-shadow:0 4px 15px rgba(0,0,0,.06);
-
+    cursor:pointer;
     transition:.2s;
 }
 
-.stat.clickable{
-    cursor:pointer;
-}
-
-.stat.clickable:hover{
+.stat:hover{
     transform:translateY(-2px);
-
-    box-shadow:
-        0 7px 20px rgba(0,0,0,.12);
-}
-
-.stat.clickable:active{
-    transform:scale(.98);
+    box-shadow:0 7px 20px rgba(0,0,0,.1);
 }
 
 .stat-title{
     color:#64748b;
-
     font-size:17px;
 }
 
 .stat-value{
     margin-top:7px;
-
     font-size:34px;
-
     font-weight:bold;
 }
 
-.stat-hint{
-    margin-top:8px;
-
-    font-size:13px;
-
-    color:#94a3b8;
+.stat-ok{
+    border-left:5px solid #15803d;
 }
 
 .stat-low{
@@ -383,90 +293,98 @@ header p{
 }
 
 .stat-restock{
-    border-left:5px solid #f59e0b;
+    border-left:5px solid #7c3aed;
 }
 
-/* =========================================================
+/* =====================================================
+   FILTER RESULT
+===================================================== */
+
+.filter-info{
+    display:none;
+    background:#e0e7ff;
+    color:#3730a3;
+    padding:14px 18px;
+    border-radius:10px;
+    margin-bottom:15px;
+    font-weight:bold;
+}
+
+.filter-info.show{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.clear-filter{
+    border:0;
+    background:#3730a3;
+    color:white;
+    padding:8px 12px;
+    border-radius:7px;
+    font-weight:bold;
+}
+
+/* =====================================================
    TABLE
-========================================================= */
+===================================================== */
 
 .table-wrap{
     background:white;
-
     border-radius:16px;
-
     overflow:auto;
-
     box-shadow:0 4px 15px rgba(0,0,0,.07);
 }
 
 table{
     width:100%;
-
     border-collapse:collapse;
-
     min-width:1000px;
 }
 
 th{
     background:#374151;
-
     color:white;
-
     padding:15px;
-
     text-align:left;
 }
 
 td{
     padding:14px;
-
     border-bottom:1px solid #e5e7eb;
 }
 
 .status-ok{
     color:#15803d;
-
     font-weight:bold;
 }
 
 .status-low{
     color:#d97706;
-
     font-weight:bold;
 }
 
 .status-empty{
     color:#dc2626;
-
     font-weight:bold;
 }
 
-/* =========================================================
+/* =====================================================
    BUTTON
-========================================================= */
-
-button{
-    cursor:pointer;
-}
+===================================================== */
 
 .actions{
     display:flex;
-
     flex-wrap:wrap;
-
     gap:6px;
 }
 
 .btn{
     border:0;
-
     border-radius:8px;
-
     padding:9px 12px;
-
     font-weight:bold;
-
     color:white;
 }
 
@@ -488,65 +406,43 @@ button{
 
 .btn-primary{
     background:#2563eb;
-
     color:white;
-
     border:0;
-
     border-radius:8px;
-
     padding:12px 16px;
-
     font-weight:bold;
 }
 
 .btn-success{
     background:#15803d;
-
     color:white;
-
     border:0;
-
     border-radius:8px;
-
     padding:12px 16px;
-
     font-weight:bold;
 }
 
 .btn-light{
     background:#e5e7eb;
-
     color:#111827;
-
     border:0;
-
     border-radius:8px;
-
     padding:12px 16px;
-
     font-weight:bold;
 }
 
-/* =========================================================
+/* =====================================================
    MODAL
-========================================================= */
+===================================================== */
 
 .modal{
     display:none;
-
     position:fixed;
-
     inset:0;
-
     z-index:1100;
-
     background:rgba(0,0,0,.5);
-
     align-items:center;
-
     justify-content:center;
-
     padding:15px;
 }
 
@@ -556,15 +452,10 @@ button{
 
 .modal-card{
     width:min(900px,100%);
-
     max-height:92vh;
-
     overflow:auto;
-
     background:white;
-
     border-radius:16px;
-
     padding:22px;
 }
 
@@ -574,7 +465,6 @@ button{
 
 .modal-card h2{
     margin-top:0;
-
     color:#1f2937;
 }
 
@@ -584,147 +474,62 @@ button{
 
 .form-group label{
     display:block;
-
     margin-bottom:6px;
-
     font-weight:bold;
 }
 
 .form-group input,
 .form-group select{
     width:100%;
-
     padding:12px;
-
     border:1px solid #cbd5e1;
-
     border-radius:8px;
-
     font-size:16px;
-
     outline:none;
-}
-
-.form-group input:focus,
-.form-group select:focus{
-    border-color:#2563eb;
 }
 
 .modal-actions{
     display:flex;
-
     gap:10px;
-
     justify-content:flex-end;
-
     margin-top:18px;
 }
 
-/* =========================================================
-   STOCK LIST
-========================================================= */
+/* =====================================================
+   AVAILABLE STOCK
+===================================================== */
 
-.stock-list{
-    display:flex;
-
-    flex-direction:column;
-
-    gap:10px;
-
-    margin-top:15px;
-}
-
-.stock-item{
-    border:1px solid #e2e8f0;
-
-    border-radius:12px;
-
-    padding:15px;
-
-    background:#f8fafc;
-}
-
-.stock-item-header{
-    display:flex;
-
-    justify-content:space-between;
-
-    gap:10px;
-
-    align-items:center;
-}
-
-.stock-code{
-    font-weight:bold;
-
+.available-stock{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    color:#1e40af;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:15px;
     font-size:17px;
-}
-
-.stock-name{
-    color:#475569;
-
-    margin-top:5px;
-}
-
-.stock-info{
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:10px;
-
-    margin-top:10px;
-}
-
-.stock-badge{
-    padding:6px 10px;
-
-    border-radius:7px;
-
-    font-size:13px;
-
     font-weight:bold;
-
-    background:#e2e8f0;
-
-    color:#334155;
 }
 
-.badge-low{
-    background:#fef3c7;
-
-    color:#92400e;
+.stock-number{
+    font-size:26px;
 }
 
-.badge-empty{
-    background:#fee2e2;
-
-    color:#991b1b;
-}
-
-/* =========================================================
-   IMPORT EXCEL
-========================================================= */
+/* =====================================================
+   IMPORT
+===================================================== */
 
 .import-info{
     background:#f8fafc;
-
     border:1px solid #e2e8f0;
-
     border-radius:10px;
-
     padding:14px;
-
     margin-bottom:15px;
-
     line-height:1.6;
 }
 
 .excel-preview{
     overflow:auto;
-
     max-height:400px;
-
     margin-top:15px;
 }
 
@@ -732,34 +537,46 @@ button{
     min-width:700px;
 }
 
-/* =========================================================
+/* =====================================================
+   HISTORY
+===================================================== */
+
+.history-summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.history-box{
+    background:#f8fafc;
+    border-radius:10px;
+    padding:15px;
+    text-align:center;
+}
+
+.history-box strong{
+    display:block;
+    font-size:25px;
+    margin-top:5px;
+}
+
+/* =====================================================
    MESSAGE
-========================================================= */
+===================================================== */
 
 .message{
     position:fixed;
-
     left:50%;
-
     bottom:20px;
-
     transform:translateX(-50%);
-
     z-index:2000;
-
     padding:13px 20px;
-
     border-radius:9px;
-
     color:white;
-
     display:none;
-
     max-width:90%;
-
     text-align:center;
-
-    font-size:16px;
 }
 
 .message.show{
@@ -774,41 +591,25 @@ button{
     background:#b91c1c;
 }
 
-/* =========================================================
+/* =====================================================
    FOOTER
-========================================================= */
+===================================================== */
 
 footer{
     text-align:center;
-
     color:#6b7280;
-
     padding:25px;
-
     font-size:16px;
 }
 
-/* =========================================================
+/* =====================================================
    MOBILE
-========================================================= */
+===================================================== */
 
-@media(max-width:1000px){
-
-    .stats{
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-}
-
-@media(max-width:700px){
+@media(max-width:800px){
 
     header{
-        padding:
-            35px
-            70px
-            28px
-            20px;
+        padding:35px 70px 28px 20px;
     }
 
     header h1{
@@ -831,31 +632,52 @@ footer{
         width:94%;
     }
 
+    .login-card{
+        padding:42px 25px 35px;
+        border-radius:25px;
+    }
+
+    .login-card h1{
+        font-size:30px;
+    }
+
+    .login-subtitle{
+        font-size:18px;
+    }
+
+    #loginPassword,
+    #loginButton{
+        height:65px;
+    }
+
+    .history-summary{
+        grid-template-columns:1fr;
+    }
+
 }
 
 </style>
 
 </head>
 
-
 <body>
 
 
-<!-- =========================================================
+<!-- =====================================================
      LOGIN
-========================================================= -->
+===================================================== -->
 
 <div id="loginScreen">
 
-    <div class="login-box">
+    <div class="login-card">
 
-        <h2>
+        <h1>
             INVENTORY DATABASE
-        </h2>
+        </h1>
 
-        <p>
+        <div class="login-subtitle">
             Masukkan password untuk melanjutkan
-        </p>
+        </div>
 
         <input
             id="loginPassword"
@@ -863,17 +685,21 @@ footer{
             placeholder="Password"
             autocomplete="off">
 
-        <button
-            class="login-button"
-            id="loginButton">
-
+        <button id="loginButton">
             MASUK
-
         </button>
 
-        <div
-            class="login-error"
-            id="loginError">
+        <div id="loginError"></div>
+
+        <div class="developer-contact">
+
+            Belum punya Password ?<br>
+
+            hub Developer :
+            <strong>
+                Nugroho Kunto Aji
+            </strong>
+
         </div>
 
     </div>
@@ -881,9 +707,12 @@ footer{
 </div>
 
 
-<!-- =========================================================
-     HEADER
-========================================================= -->
+<!-- =====================================================
+     WEBSITE
+===================================================== -->
+
+<div id="websiteContent">
+
 
 <header>
 
@@ -897,10 +726,6 @@ footer{
 
 </header>
 
-
-<!-- =========================================================
-     MENU
-========================================================= -->
 
 <button
     class="menu-button"
@@ -921,79 +746,38 @@ footer{
     class="drawer"
     id="drawer">
 
-    <h2>
-        MENU
-    </h2>
+    <h2>MENU</h2>
 
-
-    <button
-        class="menu-item"
-        data-menu="data">
-
+    <button class="menu-item" data-menu="data">
         Data Sparepart
-
     </button>
 
-
-    <button
-        class="menu-item"
-        data-menu="add">
-
+    <button class="menu-item" data-menu="add">
         Tambah Sparepart
-
     </button>
 
-
-    <button
-        class="menu-item"
-        data-menu="import">
-
+    <button class="menu-item" data-menu="import">
         Import Excel
-
     </button>
 
-
-    <button
-        class="menu-item"
-        data-menu="export">
-
+    <button class="menu-item" data-menu="export">
         Export Excel
-
     </button>
 
-
-    <button
-        class="menu-item"
-        data-menu="in">
-
+    <button class="menu-item" data-menu="in">
         Barang Masuk
-
     </button>
 
-
-    <button
-        class="menu-item"
-        data-menu="out">
-
+    <button class="menu-item" data-menu="out">
         Barang Keluar
-
     </button>
 
-
-    <button
-        class="menu-item"
-        data-menu="history">
-
+    <button class="menu-item" data-menu="history">
         History Transaksi
-
     </button>
 
 </aside>
 
-
-<!-- =========================================================
-     MAIN
-========================================================= -->
 
 <main class="container">
 
@@ -1008,122 +792,107 @@ footer{
 </section>
 
 
-<!-- =========================================================
+<!-- =====================================================
      DASHBOARD
-========================================================= -->
+===================================================== -->
 
 <section class="stats">
 
 
-<div class="stat">
+    <div
+        class="stat"
+        id="statOK">
 
-    <div class="stat-title">
-        Total Sparepart
+        <div class="stat-title">
+            Status OK
+        </div>
+
+        <div
+            class="stat-value"
+            id="okItems">
+
+            0
+
+        </div>
+
     </div>
+
 
     <div
-        class="stat-value"
-        id="totalItems">
+        class="stat stat-low"
+        id="statLOW">
 
-        0
+        <div class="stat-title">
+            Stock LOW
+        </div>
+
+        <div
+            class="stat-value"
+            id="lowItems">
+
+            0
+
+        </div>
 
     </div>
 
-</div>
-
-
-<div class="stat">
-
-    <div class="stat-title">
-        Status OK
-    </div>
 
     <div
-        class="stat-value"
-        id="okItems">
+        class="stat stat-empty"
+        id="statHABIS">
 
-        0
+        <div class="stat-title">
+            Stock HABIS
+        </div>
+
+        <div
+            class="stat-value"
+            id="emptyItems">
+
+            0
+
+        </div>
 
     </div>
 
-</div>
-
-
-<div
-    class="stat stat-low clickable"
-    id="lowCard">
-
-    <div class="stat-title">
-        Stock LOW
-    </div>
 
     <div
-        class="stat-value"
-        id="lowStockItems">
+        class="stat stat-restock"
+        id="statRESTOCK">
 
-        0
+        <div class="stat-title">
+            Perlu Restock
+        </div>
 
-    </div>
+        <div
+            class="stat-value"
+            id="restockItems">
 
-    <div class="stat-hint">
-        Ketuk untuk melihat
-    </div>
+            0
 
-</div>
-
-
-<div
-    class="stat stat-empty clickable"
-    id="emptyCard">
-
-    <div class="stat-title">
-        Stock HABIS
-    </div>
-
-    <div
-        class="stat-value"
-        id="emptyStockItems">
-
-        0
+        </div>
 
     </div>
-
-    <div class="stat-hint">
-        Ketuk untuk melihat
-    </div>
-
-</div>
-
-
-<div
-    class="stat stat-restock clickable"
-    id="restockCard">
-
-    <div class="stat-title">
-        Perlu Restock
-    </div>
-
-    <div
-        class="stat-value"
-        id="restockItems">
-
-        0
-
-    </div>
-
-    <div class="stat-hint">
-        Ketuk untuk melihat
-    </div>
-
-</div>
-
 
 </section>
 
 
-<!-- =========================================================
-     TABLE
-========================================================= -->
+<div
+    class="filter-info"
+    id="filterInfo">
+
+    <span id="filterText"></span>
+
+    <button
+        class="clear-filter"
+        id="clearFilter">
+
+        Tampilkan Semua
+
+    </button>
+
+</div>
+
 
 <section class="table-wrap">
 
@@ -1144,7 +913,6 @@ footer{
 </tr>
 
 </thead>
-
 
 <tbody id="stockBody">
 
@@ -1170,51 +938,13 @@ footer{
 
 
 <footer>
-
-Created by : Nugroho Kunto Aji
-
+    Created by : Nugroho Kunto Aji
 </footer>
 
 
-<!-- =========================================================
-     STOCK LIST MODAL
-========================================================= -->
-
-<div
-    class="modal"
-    id="stockListModal">
-
-<div class="modal-card">
-
-<h2 id="stockListTitle">
-Daftar Sparepart
-</h2>
-
-
-<div id="stockListContent">
-</div>
-
-
-<div class="modal-actions">
-
-<button
-    class="btn-light"
-    id="closeStockList">
-
-Tutup
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =========================================================
-     ADD / EDIT MODAL
-========================================================= -->
+<!-- =====================================================
+     ADD / EDIT
+===================================================== -->
 
 <div
     class="modal"
@@ -1223,15 +953,13 @@ Tutup
 <div class="modal-card small">
 
 <h2 id="itemTitle">
-Tambah Sparepart
+    Tambah Sparepart
 </h2>
 
 
 <div class="form-group">
 
-<label>
-Kode Sparepart
-</label>
+<label>Kode Sparepart</label>
 
 <input
     id="itemCode"
@@ -1243,9 +971,7 @@ Kode Sparepart
 
 <div class="form-group">
 
-<label>
-Nama Sparepart
-</label>
+<label>Nama Sparepart</label>
 
 <input
     id="itemName"
@@ -1256,9 +982,7 @@ Nama Sparepart
 
 <div class="form-group">
 
-<label>
-Lokasi
-</label>
+<label>Lokasi</label>
 
 <input
     id="itemLocation"
@@ -1269,9 +993,7 @@ Lokasi
 
 <div class="form-group">
 
-<label>
-Stock
-</label>
+<label>Stock</label>
 
 <input
     id="itemQty"
@@ -1284,9 +1006,7 @@ Stock
 
 <div class="form-group">
 
-<label>
-Minimum Stock
-</label>
+<label>Minimum Stock</label>
 
 <input
     id="itemMin"
@@ -1303,29 +1023,27 @@ Minimum Stock
     class="btn-light"
     id="cancelItem">
 
-Batal
+    Batal
 
 </button>
-
 
 <button
     class="btn-primary"
     id="saveItem">
 
-Simpan
+    Simpan
 
 </button>
 
 </div>
 
 </div>
-
 </div>
 
 
-<!-- =========================================================
-     TRANSACTION MODAL
-========================================================= -->
+<!-- =====================================================
+     TRANSACTION
+===================================================== -->
 
 <div
     class="modal"
@@ -1334,46 +1052,36 @@ Simpan
 <div class="modal-card small">
 
 <h2 id="transactionTitle">
-Barang Masuk
+    Barang Masuk
 </h2>
 
 
 <div class="form-group">
 
-<label>
-Kode Sparepart
-</label>
+<label>Kode Sparepart</label>
 
-<select
-    id="transactionCode">
-</select>
+<select id="transactionCode"></select>
 
 </div>
 
 
 <div
-    id="availableStockBox"
-    style="
-    background:#f1f5f9;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:14px;
-    font-weight:bold;">
+    class="available-stock"
+    id="availableStock">
 
-Stock tersedia:
-
-<span id="availableStock">
-0
-</span>
+    Stock tersedia:
+    <span
+        class="stock-number"
+        id="availableStockNumber">
+        0
+    </span>
 
 </div>
 
 
 <div class="form-group">
 
-<label>
-Jumlah
-</label>
+<label>Jumlah</label>
 
 <input
     id="transactionQty"
@@ -1386,9 +1094,7 @@ Jumlah
 
 <div class="form-group">
 
-<label>
-Operator
-</label>
+<label>Operator</label>
 
 <input
     id="transactionOperator"
@@ -1399,9 +1105,7 @@ Operator
 
 <div class="form-group">
 
-<label>
-Keterangan
-</label>
+<label>Keterangan</label>
 
 <input
     id="transactionNote"
@@ -1416,29 +1120,27 @@ Keterangan
     class="btn-light"
     id="cancelTransaction">
 
-Batal
+    Batal
 
 </button>
-
 
 <button
     class="btn-primary"
     id="saveTransaction">
 
-Simpan
+    Simpan
 
 </button>
 
 </div>
 
 </div>
-
 </div>
 
 
-<!-- =========================================================
+<!-- =====================================================
      IMPORT EXCEL
-========================================================= -->
+===================================================== -->
 
 <div
     class="modal"
@@ -1447,7 +1149,7 @@ Simpan
 <div class="modal-card">
 
 <h2>
-Import Excel
+    Import Excel
 </h2>
 
 
@@ -1471,13 +1173,17 @@ Kode yang sudah ada akan
 Kode baru akan
 <strong>ditambahkan</strong>.
 
+<br>
+
+Data lainnya tidak dihapus.
+
 </div>
 
 
 <div class="form-group">
 
 <label>
-Pilih File Excel
+    Pilih File Excel
 </label>
 
 <input
@@ -1488,8 +1194,7 @@ Pilih File Excel
 </div>
 
 
-<div id="excelPreview">
-</div>
+<div id="excelPreview"></div>
 
 
 <div class="modal-actions">
@@ -1498,30 +1203,28 @@ Pilih File Excel
     class="btn-light"
     id="cancelImport">
 
-Batal
+    Batal
 
 </button>
-
 
 <button
     class="btn-success"
     id="importButton"
     disabled>
 
-Import ke Firebase
+    Import ke Firebase
 
 </button>
 
 </div>
 
 </div>
-
 </div>
 
 
-<!-- =========================================================
+<!-- =====================================================
      HISTORY
-========================================================= -->
+===================================================== -->
 
 <div
     class="modal"
@@ -1530,27 +1233,23 @@ Import ke Firebase
 <div class="modal-card">
 
 <h2>
-History Transaksi
+    History Transaksi
 </h2>
 
 
 <div class="form-group">
 
 <label>
-Sparepart
+    Sparepart
 </label>
 
-<select
-    id="historyCode">
-</select>
+<select id="historyCode"></select>
 
 </div>
 
 
 <div id="historyContent">
-
-Pilih sparepart.
-
+    Pilih sparepart.
 </div>
 
 
@@ -1560,20 +1259,15 @@ Pilih sparepart.
     class="btn-light"
     id="cancelHistory">
 
-Tutup
+    Tutup
 
 </button>
 
 </div>
 
 </div>
-
 </div>
 
-
-<!-- =========================================================
-     MESSAGE
-========================================================= -->
 
 <div
     class="message"
@@ -1581,19 +1275,60 @@ Tutup
 </div>
 
 
-<!-- =========================================================
-     LOGIN JAVASCRIPT
-========================================================= -->
+</div>
 
-<script>
 
-const WEBSITE_PASSWORD =
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script type="module">
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+
+import {
+
+    getFirestore,
+    collection,
+    getDocs,
+    getDoc,
+    doc,
+    setDoc,
+    updateDoc,
+    deleteDoc,
+    addDoc,
+    query,
+    where,
+    serverTimestamp,
+    runTransaction
+
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+const PASSWORD =
     "mtcgoahead";
 
 
 const loginScreen =
     document.getElementById(
         "loginScreen"
+    );
+
+
+const websiteContent =
+    document.getElementById(
+        "websiteContent"
     );
 
 
@@ -1615,63 +1350,22 @@ const loginError =
     );
 
 
-function checkLogin(){
-
-    const status =
-        sessionStorage.getItem(
-            "inventoryLogin"
-        );
-
-
-    if(status === "true"){
-
-        loginScreen.style.display =
-            "none";
-
-        document.body.style.overflow =
-            "";
-
-    }
-    else{
-
-        loginScreen.style.display =
-            "flex";
-
-        document.body.style.overflow =
-            "hidden";
-
-    }
-
-}
-
-
 function login(){
 
-    const password =
-        loginPassword.value;
-
-
-    if(password === WEBSITE_PASSWORD){
+    if(
+        loginPassword.value === PASSWORD
+    ){
 
         sessionStorage.setItem(
             "inventoryLogin",
             "true"
         );
 
-
         loginScreen.style.display =
             "none";
 
-
-        document.body.style.overflow =
-            "";
-
-
-        loginPassword.value =
-            "";
-
-        loginError.textContent =
-            "";
+        websiteContent.style.display =
+            "block";
 
     }
     else{
@@ -1679,8 +1373,7 @@ function login(){
         loginError.textContent =
             "Password salah.";
 
-        loginPassword.value =
-            "";
+        loginPassword.value = "";
 
         loginPassword.focus();
 
@@ -1697,72 +1390,19 @@ loginButton.addEventListener(
 
 loginPassword.addEventListener(
     "keydown",
-    function(event){
+    function(e){
 
-        if(event.key === "Enter"){
-
+        if(e.key === "Enter"){
             login();
-
         }
 
     }
 );
 
 
-checkLogin();
-
-</script>
-
-
-<!-- =========================================================
-     FIREBASE
-========================================================= -->
-
-<script type="module">
-
-import {
-    initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-
-import {
-
-    getFirestore,
-
-    collection,
-
-    getDocs,
-
-    getDoc,
-
-    doc,
-
-    setDoc,
-
-    updateDoc,
-
-    deleteDoc,
-
-    addDoc,
-
-    query,
-
-    where,
-
-    serverTimestamp,
-
-    runTransaction
-
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-
-/* =========================================================
-   FIREBASE CONFIG
-========================================================= */
+/* =====================================================
+   FIREBASE
+===================================================== */
 
 const firebaseConfig = {
 
@@ -1822,15 +1462,15 @@ let transactionMode = "in";
 
 let excelRows = [];
 
+let dashboardFilter = "";
 
-/* =========================================================
+
+/* =====================================================
    HELPER
-========================================================= */
+===================================================== */
 
 function $(id){
-
     return document.getElementById(id);
-
 }
 
 
@@ -1846,9 +1486,7 @@ function showMessage(
         text;
 
     el.className =
-        "message show " +
-        type;
-
+        "message show " + type;
 
     setTimeout(
         function(){
@@ -1868,34 +1506,18 @@ function escapeHtml(value){
     return String(
         value ?? ""
     )
-
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
+
+/* =====================================================
+   FIRESTORE KEY
+===================================================== */
 
 function firestoreKey(code){
 
@@ -1906,29 +1528,25 @@ function firestoreKey(code){
 }
 
 
-/* =========================================================
+/* =====================================================
    STATUS
-========================================================= */
+===================================================== */
 
 function getStatus(item){
 
     const qty =
-        Number(
-            item.qty || 0
-        );
-
+        Number(item.qty || 0);
 
     const min =
-        Number(
-            item.minqty || 0
-        );
+        Number(item.minqty || 0);
 
 
     if(qty <= 0){
 
         return {
             text:"HABIS",
-            className:"status-empty"
+            className:"status-empty",
+            type:"empty"
         };
 
     }
@@ -1938,7 +1556,8 @@ function getStatus(item){
 
         return {
             text:"LOW",
-            className:"status-low"
+            className:"status-low",
+            type:"low"
         };
 
     }
@@ -1946,15 +1565,16 @@ function getStatus(item){
 
     return {
         text:"OK",
-        className:"status-ok"
+        className:"status-ok",
+        type:"ok"
     };
 
 }
 
 
-/* =========================================================
+/* =====================================================
    LOAD DATA
-========================================================= */
+===================================================== */
 
 async function loadItems(){
 
@@ -1973,17 +1593,13 @@ async function loadItems(){
                     const data =
                         d.data();
 
-
                     return {
 
-                        firestoreId:
-                            d.id,
+                        firestoreId:d.id,
 
                         code:
                             data.code ||
-                            decodeURIComponent(
-                                d.id
-                            ),
+                            decodeURIComponent(d.id),
 
                         name:
                             data.name || "",
@@ -1992,14 +1608,10 @@ async function loadItems(){
                             data.lokasi || "",
 
                         qty:
-                            Number(
-                                data.qty || 0
-                            ),
+                            Number(data.qty || 0),
 
                         minqty:
-                            Number(
-                                data.minqty || 0
-                            )
+                            Number(data.minqty || 0)
 
                     };
 
@@ -2010,55 +1622,46 @@ async function loadItems(){
         items.sort(
             function(a,b){
 
-                return String(
-                    a.code
-                ).localeCompare(
-                    String(
-                        b.code
-                    )
-                );
+                return String(a.code)
+                    .localeCompare(
+                        String(b.code)
+                    );
 
             }
         );
 
 
-        renderTable();
-
         updateDashboard();
+
+        renderTable();
 
         updateSelects();
 
     }
-
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         $("stockBody").innerHTML = `
 
-            <tr>
+        <tr>
 
-                <td
-                    colspan="7"
-                    style="
-                    text-align:center;
-                    color:#b91c1c;
-                    padding:30px">
+        <td
+            colspan="7"
+            style="
+            text-align:center;
+            color:#b91c1c;
+            padding:30px">
 
-                    Gagal mengambil data Firebase.
+            Gagal mengambil data Firebase.
 
-                    <br><br>
+            <br><br>
 
-                    ${escapeHtml(
-                        error.message
-                    )}
+            ${escapeHtml(error.message)}
 
-                </td>
+        </td>
 
-            </tr>
+        </tr>
 
         `;
 
@@ -2067,353 +1670,110 @@ async function loadItems(){
 }
 
 
-/* =========================================================
+/* =====================================================
    DASHBOARD
-========================================================= */
+===================================================== */
 
 function updateDashboard(){
 
     const ok =
         items.filter(
-            function(item){
-
-                return getStatus(
-                    item
-                ).text === "OK";
-
-            }
-        );
+            x => getStatus(x).type === "ok"
+        ).length;
 
 
     const low =
         items.filter(
-            function(item){
-
-                return getStatus(
-                    item
-                ).text === "LOW";
-
-            }
-        );
+            x => getStatus(x).type === "low"
+        ).length;
 
 
     const empty =
         items.filter(
-            function(item){
-
-                return getStatus(
-                    item
-                ).text === "HABIS";
-
-            }
-        );
+            x => getStatus(x).type === "empty"
+        ).length;
 
 
     const restock =
         items.filter(
-            function(item){
-
-                return getStatus(
-                    item
-                ).text !== "OK";
-
-            }
-        );
+            x =>
+                Number(x.qty || 0)
+                <=
+                Number(x.minqty || 0)
+        ).length;
 
 
-    $("totalItems")
-        .textContent =
-        items.length;
+    $("okItems").textContent =
+        ok;
 
+    $("lowItems").textContent =
+        low;
 
-    $("okItems")
-        .textContent =
-        ok.length;
+    $("emptyItems").textContent =
+        empty;
 
-
-    $("lowStockItems")
-        .textContent =
-        low.length;
-
-
-    $("emptyStockItems")
-        .textContent =
-        empty.length;
-
-
-    $("restockItems")
-        .textContent =
-        restock.length;
+    $("restockItems").textContent =
+        restock;
 
 }
 
 
-/* =========================================================
-   DASHBOARD STOCK LIST
-========================================================= */
+/* =====================================================
+   FILTER DASHBOARD
+===================================================== */
 
-function showStockList(type){
+function setDashboardFilter(filter){
 
-    let list = [];
-
-    let title = "";
-
-
-    if(type === "low"){
-
-        list =
-            items.filter(
-                function(item){
-
-                    return getStatus(
-                        item
-                    ).text === "LOW";
-
-                }
-            );
+    dashboardFilter =
+        filter;
 
 
-        title =
-            "Stock LOW";
+    if(!filter){
+
+        $("filterInfo")
+            .classList.remove("show");
+
+        $("filterText")
+            .textContent = "";
 
     }
+    else{
 
+        let text = "";
 
-    else if(type === "empty"){
-
-        list =
-            items.filter(
-                function(item){
-
-                    return getStatus(
-                        item
-                    ).text === "HABIS";
-
-                }
-            );
-
-
-        title =
-            "Stock HABIS";
-
-    }
-
-
-    else if(type === "restock"){
-
-        list =
-            items.filter(
-                function(item){
-
-                    return getStatus(
-                        item
-                    ).text !== "OK";
-
-                }
-            );
-
-
-        title =
-            "Perlu Restock";
-
-    }
-
-
-    $("stockListTitle")
-        .textContent =
-        title +
-        " (" +
-        list.length +
-        " Sparepart)";
-
-
-    if(list.length === 0){
-
-        $("stockListContent")
-            .innerHTML = `
-
-                <div
-                    style="
-                    text-align:center;
-                    padding:30px;
-                    color:#64748b">
-
-                    Tidak ada sparepart
-                    dalam kategori ini.
-
-                </div>
-
-            `;
-
-
-        openModal(
-            "stockListModal"
-        );
-
-
-        return;
-
-    }
-
-
-    let html =
-        `<div class="stock-list">`;
-
-
-    list.forEach(
-        function(item){
-
-            const status =
-                getStatus(
-                    item
-                );
-
-
-            const badgeClass =
-                status.text === "HABIS"
-                ? "badge-empty"
-                : "badge-low";
-
-
-            html += `
-
-                <div class="stock-item">
-
-                    <div
-                        class="stock-item-header">
-
-                        <div>
-
-                            <div class="stock-code">
-
-                                ${escapeHtml(
-                                    item.code
-                                )}
-
-                            </div>
-
-                            <div class="stock-name">
-
-                                ${escapeHtml(
-                                    item.name
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        <span
-                            class="
-                            stock-badge
-                            ${badgeClass}">
-
-                            ${status.text}
-
-                        </span>
-
-                    </div>
-
-
-                    <div class="stock-info">
-
-                        <span class="stock-badge">
-
-                            Lokasi:
-                            ${escapeHtml(
-                                item.lokasi
-                            )}
-
-                        </span>
-
-
-                        <span class="stock-badge">
-
-                            Stock:
-                            ${item.qty}
-
-                        </span>
-
-
-                        <span class="stock-badge">
-
-                            Min:
-                            ${item.minqty}
-
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="actions"
-                        style="margin-top:12px">
-
-
-                        <button
-                            class="btn btn-in"
-                            data-list-action="in"
-                            data-code="${escapeHtml(
-                                item.code
-                            )}">
-
-                            Masuk
-
-                        </button>
-
-
-                        <button
-                            class="btn btn-out"
-                            data-list-action="out"
-                            data-code="${escapeHtml(
-                                item.code
-                            )}">
-
-                            Keluar
-
-                        </button>
-
-
-                        <button
-                            class="btn btn-edit"
-                            data-list-action="edit"
-                            data-code="${escapeHtml(
-                                item.code
-                            )}">
-
-                            Edit
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
+        if(filter === "ok"){
+            text = "Menampilkan Stock OK";
         }
-    );
+
+        if(filter === "low"){
+            text = "Menampilkan Stock LOW";
+        }
+
+        if(filter === "empty"){
+            text = "Menampilkan Stock HABIS";
+        }
+
+        if(filter === "restock"){
+            text = "Menampilkan Sparepart yang Perlu Restock";
+        }
+
+        $("filterText")
+            .textContent = text;
+
+        $("filterInfo")
+            .classList.add("show");
+
+    }
 
 
-    html +=
-        `</div>`;
-
-
-    $("stockListContent")
-        .innerHTML =
-        html;
-
-
-    openModal(
-        "stockListModal"
-    );
+    renderTable();
 
 }
 
 
-/* =========================================================
-   TABLE
-========================================================= */
+/* =====================================================
+   RENDER TABLE
+===================================================== */
 
 function renderTable(){
 
@@ -2424,39 +1784,27 @@ function renderTable(){
         .toLowerCase();
 
 
-    const filtered =
+    let filtered =
         items.filter(
             function(item){
 
                 return (
 
-                    String(
-                        item.code
-                    )
-                    .toLowerCase()
-                    .includes(
-                        search
-                    )
+                    String(item.code)
+                        .toLowerCase()
+                        .includes(search)
 
                     ||
 
-                    String(
-                        item.name
-                    )
-                    .toLowerCase()
-                    .includes(
-                        search
-                    )
+                    String(item.name)
+                        .toLowerCase()
+                        .includes(search)
 
                     ||
 
-                    String(
-                        item.lokasi
-                    )
-                    .toLowerCase()
-                    .includes(
-                        search
-                    )
+                    String(item.lokasi)
+                        .toLowerCase()
+                        .includes(search)
 
                 );
 
@@ -2464,140 +1812,171 @@ function renderTable(){
         );
 
 
+    if(dashboardFilter){
+
+        filtered =
+            filtered.filter(
+                function(item){
+
+                    const status =
+                        getStatus(item);
+
+
+                    if(
+                        dashboardFilter === "ok"
+                    ){
+
+                        return status.type === "ok";
+
+                    }
+
+
+                    if(
+                        dashboardFilter === "low"
+                    ){
+
+                        return status.type === "low";
+
+                    }
+
+
+                    if(
+                        dashboardFilter === "empty"
+                    ){
+
+                        return status.type === "empty";
+
+                    }
+
+
+                    if(
+                        dashboardFilter === "restock"
+                    ){
+
+                        return Number(item.qty || 0)
+                            <=
+                            Number(item.minqty || 0);
+
+                    }
+
+
+                    return true;
+
+                }
+            );
+
+    }
+
+
     if(filtered.length === 0){
 
-        $("stockBody")
-            .innerHTML = `
+        $("stockBody").innerHTML = `
 
-                <tr>
+        <tr>
 
-                    <td
-                        colspan="7"
-                        style="
-                        text-align:center;
-                        padding:30px">
+        <td
+            colspan="7"
+            style="
+            text-align:center;
+            padding:30px">
 
-                        Tidak ada data sparepart.
+            Tidak ada data sparepart.
 
-                    </td>
+        </td>
 
-                </tr>
+        </tr>
 
-            `;
-
+        `;
 
         return;
 
     }
 
 
-    $("stockBody")
-        .innerHTML =
+    $("stockBody").innerHTML =
 
         filtered.map(
             function(item){
 
                 const status =
-                    getStatus(
-                        item
-                    );
+                    getStatus(item);
 
 
                 return `
 
-                    <tr>
+                <tr>
 
-                        <td>
-                            ${escapeHtml(
-                                item.code
-                            )}
-                        </td>
+                    <td>
+                        ${escapeHtml(item.code)}
+                    </td>
 
-                        <td>
-                            ${escapeHtml(
-                                item.name
-                            )}
-                        </td>
+                    <td>
+                        ${escapeHtml(item.name)}
+                    </td>
 
-                        <td>
-                            ${escapeHtml(
-                                item.lokasi
-                            )}
-                        </td>
+                    <td>
+                        ${escapeHtml(item.lokasi)}
+                    </td>
 
-                        <td>
+                    <td>
+                        <strong>
                             ${item.qty}
-                        </td>
+                        </strong>
+                    </td>
 
-                        <td>
-                            ${item.minqty}
-                        </td>
+                    <td>
+                        ${item.minqty}
+                    </td>
 
-                        <td
-                            class="${status.className}">
+                    <td class="${status.className}">
+                        ${status.text}
+                    </td>
 
-                            ${status.text}
+                    <td>
 
-                        </td>
+                        <div class="actions">
 
-                        <td>
+                            <button
+                                class="btn btn-in"
+                                data-action="in"
+                                data-code="${escapeHtml(item.code)}">
 
-                            <div
-                                class="actions">
+                                Masuk
 
+                            </button>
 
-                                <button
-                                    class="btn btn-in"
-                                    data-action="in"
-                                    data-code="${escapeHtml(
-                                        item.code
-                                    )}">
+                            <button
+                                class="btn btn-out"
+                                data-action="out"
+                                data-code="${escapeHtml(item.code)}">
 
-                                    Masuk
+                                Keluar
 
-                                </button>
+                            </button>
 
+                            <button
+                                class="btn btn-edit"
+                                data-action="edit"
+                                data-code="${escapeHtml(item.code)}">
 
-                                <button
-                                    class="btn btn-out"
-                                    data-action="out"
-                                    data-code="${escapeHtml(
-                                        item.code
-                                    )}">
+                                Edit
 
-                                    Keluar
+                            </button>
 
-                                </button>
+                            <button
+                                class="btn btn-delete"
+                                data-action="delete"
+                                data-code="${escapeHtml(item.code)}">
 
+                                Hapus
 
-                                <button
-                                    class="btn btn-edit"
-                                    data-action="edit"
-                                    data-code="${escapeHtml(
-                                        item.code
-                                    )}">
+                            </button>
 
-                                    Edit
+                        </div>
 
-                                </button>
+                    </td>
 
-
-                                <button
-                                    class="btn btn-delete"
-                                    data-action="delete"
-                                    data-code="${escapeHtml(
-                                        item.code
-                                    )}">
-
-                                    Hapus
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
+                </tr>
 
                 `;
 
@@ -2608,9 +1987,9 @@ function renderTable(){
 }
 
 
-/* =========================================================
+/* =====================================================
    SELECT
-========================================================= */
+===================================================== */
 
 function updateSelects(){
 
@@ -2620,20 +1999,14 @@ function updateSelects(){
 
                 return `
 
-                    <option
-                        value="${escapeHtml(
-                            item.code
-                        )}">
+                <option
+                    value="${escapeHtml(item.code)}">
 
-                        ${escapeHtml(
-                            item.code
-                        )}
-                        -
-                        ${escapeHtml(
-                            item.name
-                        )}
+                    ${escapeHtml(item.code)}
+                    -
+                    ${escapeHtml(item.name)}
 
-                    </option>
+                </option>
 
                 `;
 
@@ -2655,98 +2028,64 @@ function updateSelects(){
         +
         options;
 
-
-    updateAvailableStock();
-
 }
 
 
-/* =========================================================
+/* =====================================================
    MODAL
-========================================================= */
+===================================================== */
 
 function openModal(id){
-
-    $(id)
-        .classList
-        .add("show");
-
+    $(id).classList.add("show");
 }
 
 
 function closeModal(id){
-
-    $(id)
-        .classList
-        .remove("show");
-
+    $(id).classList.remove("show");
 }
 
 
-/* =========================================================
+/* =====================================================
    ADD
-========================================================= */
+===================================================== */
 
 function openAdd(){
 
     editingCode = null;
 
-
     $("itemTitle")
         .textContent =
         "Tambah Sparepart";
 
+    $("itemCode").value = "";
 
-    $("itemCode")
-        .value = "";
+    $("itemName").value = "";
 
+    $("itemLocation").value = "";
 
-    $("itemName")
-        .value = "";
+    $("itemQty").value = 0;
 
+    $("itemMin").value = 0;
 
-    $("itemLocation")
-        .value = "";
+    $("itemCode").disabled = false;
 
-
-    $("itemQty")
-        .value = 0;
-
-
-    $("itemMin")
-        .value = 0;
-
-
-    $("itemCode")
-        .disabled = false;
-
-
-    openModal(
-        "itemModal"
-    );
+    openModal("itemModal");
 
 }
 
 
-/* =========================================================
+/* =====================================================
    EDIT
-========================================================= */
+===================================================== */
 
 function openEdit(code){
 
     const item =
         items.find(
-            function(x){
-
-                return String(
-                    x.code
-                )
+            x =>
+                String(x.code)
                 ===
-                String(
-                    code
-                );
-
-            }
+                String(code)
         );
 
 
@@ -2771,46 +2110,38 @@ function openEdit(code){
         "Edit Sparepart";
 
 
-    $("itemCode")
-        .value =
+    $("itemCode").value =
         item.code;
 
 
-    $("itemName")
-        .value =
+    $("itemName").value =
         item.name;
 
 
-    $("itemLocation")
-        .value =
+    $("itemLocation").value =
         item.lokasi;
 
 
-    $("itemQty")
-        .value =
+    $("itemQty").value =
         item.qty;
 
 
-    $("itemMin")
-        .value =
+    $("itemMin").value =
         item.minqty;
 
 
-    $("itemCode")
-        .disabled =
+    $("itemCode").disabled =
         true;
 
 
-    openModal(
-        "itemModal"
-    );
+    openModal("itemModal");
 
 }
 
 
-/* =========================================================
+/* =====================================================
    SAVE ITEM
-========================================================= */
+===================================================== */
 
 async function saveItem(){
 
@@ -2833,17 +2164,11 @@ async function saveItem(){
 
 
     const qty =
-        Number(
-            $("itemQty")
-            .value
-        );
+        Number($("itemQty").value);
 
 
     const minqty =
-        Number(
-            $("itemMin")
-            .value
-        );
+        Number($("itemMin").value);
 
 
     if(!code){
@@ -2870,10 +2195,7 @@ async function saveItem(){
     }
 
 
-    if(
-        qty < 0 ||
-        minqty < 0
-    ){
+    if(qty < 0 || minqty < 0){
 
         showMessage(
             "Stock tidak boleh negatif.",
@@ -2889,36 +2211,17 @@ async function saveItem(){
 
         if(editingCode){
 
-            const oldItem =
-                items.find(
-                    function(x){
-
-                        return String(
-                            x.code
-                        )
-                        ===
-                        String(
-                            editingCode
-                        );
-
-                    }
+            const safeId =
+                firestoreKey(
+                    editingCode
                 );
-
-
-            if(!oldItem){
-
-                throw new Error(
-                    "Data sparepart tidak ditemukan."
-                );
-
-            }
 
 
             await updateDoc(
                 doc(
                     db,
                     "spareparts",
-                    oldItem.firestoreId
+                    safeId
                 ),
                 {
 
@@ -2942,23 +2245,22 @@ async function saveItem(){
             );
 
         }
-
         else{
 
             const safeId =
-                firestoreKey(
-                    code
+                firestoreKey(code);
+
+
+            const ref =
+                doc(
+                    db,
+                    "spareparts",
+                    safeId
                 );
 
 
             const existing =
-                await getDoc(
-                    doc(
-                        db,
-                        "spareparts",
-                        safeId
-                    )
-                );
+                await getDoc(ref);
 
 
             if(existing.exists()){
@@ -2974,11 +2276,7 @@ async function saveItem(){
 
 
             await setDoc(
-                doc(
-                    db,
-                    "spareparts",
-                    safeId
-                ),
+                ref,
                 {
 
                     code:code,
@@ -3005,21 +2303,14 @@ async function saveItem(){
         }
 
 
-        closeModal(
-            "itemModal"
-        );
-
+        closeModal("itemModal");
 
         await loadItems();
 
     }
-
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         showMessage(
             "Gagal menyimpan: " +
@@ -3032,21 +2323,18 @@ async function saveItem(){
 }
 
 
-/* =========================================================
+/* =====================================================
    DELETE
-========================================================= */
+===================================================== */
 
 async function deleteItem(code){
 
-    const yakin =
-        confirm(
+    if(
+        !confirm(
             "Apakah Anda yakin ingin menghapus?\n\n" +
-            "Kode : " +
-            code
-        );
-
-
-    if(!yakin){
+            "Kode : " + code
+        )
+    ){
 
         return;
 
@@ -3058,7 +2346,6 @@ async function deleteItem(code){
         const q =
             query(
                 stockRef,
-
                 where(
                     "code",
                     "==",
@@ -3068,9 +2355,7 @@ async function deleteItem(code){
 
 
         const snap =
-            await getDocs(
-                q
-            );
+            await getDocs(q);
 
 
         if(!snap.empty){
@@ -3087,13 +2372,10 @@ async function deleteItem(code){
             }
 
         }
-
         else{
 
             const safeId =
-                firestoreKey(
-                    code
-                );
+                firestoreKey(code);
 
 
             const ref =
@@ -3105,15 +2387,13 @@ async function deleteItem(code){
 
 
             const check =
-                await getDoc(
-                    ref
-                );
+                await getDoc(ref);
 
 
             if(!check.exists()){
 
                 showMessage(
-                    "Data tidak ditemukan di Firebase.",
+                    "Data tidak ditemukan.",
                     "error"
                 );
 
@@ -3122,28 +2402,22 @@ async function deleteItem(code){
             }
 
 
-            await deleteDoc(
-                ref
-            );
+            await deleteDoc(ref);
 
         }
-
-
-        await loadItems();
 
 
         showMessage(
             "Sparepart berhasil dihapus."
         );
 
-    }
 
+        await loadItems();
+
+    }
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         showMessage(
             "Gagal menghapus: " +
@@ -3156,9 +2430,57 @@ async function deleteItem(code){
 }
 
 
-/* =========================================================
+/* =====================================================
    TRANSACTION
-========================================================= */
+===================================================== */
+
+function updateAvailableStock(){
+
+    const code =
+        $("transactionCode").value;
+
+
+    const item =
+        items.find(
+            x =>
+                String(x.code)
+                ===
+                String(code)
+        );
+
+
+    const stock =
+        item
+        ? Number(item.qty || 0)
+        : 0;
+
+
+    $("availableStockNumber")
+        .textContent =
+        stock;
+
+
+    if(
+        transactionMode === "out"
+    ){
+
+        $("availableStock")
+            .style.background =
+            stock <= 0
+            ? "#fee2e2"
+            : "#eff6ff";
+
+    }
+    else{
+
+        $("availableStock")
+            .style.background =
+            "#f0fdf4";
+
+    }
+
+}
+
 
 function openTransaction(
     mode,
@@ -3188,19 +2510,11 @@ function openTransaction(
     }
 
 
-    $("transactionQty")
-        .value =
-        1;
+    $("transactionQty").value = 1;
 
+    $("transactionOperator").value = "";
 
-    $("transactionOperator")
-        .value =
-        "";
-
-
-    $("transactionNote")
-        .value =
-        "";
+    $("transactionNote").value = "";
 
 
     updateAvailableStock();
@@ -3213,57 +2527,19 @@ function openTransaction(
 }
 
 
-/* =========================================================
-   AVAILABLE STOCK
-========================================================= */
-
-function updateAvailableStock(){
-
-    const code =
-        $("transactionCode")
-        ?.value;
-
-
-    const item =
-        items.find(
-            function(x){
-
-                return String(
-                    x.code
-                )
-                ===
-                String(
-                    code
-                );
-
-            }
-        );
-
-
-    $("availableStock")
-        .textContent =
-        item
-        ? item.qty
-        : 0;
-
-}
-
-
-/* =========================================================
+/* =====================================================
    SAVE TRANSACTION
-========================================================= */
+===================================================== */
 
 async function saveTransaction(){
 
     const code =
-        $("transactionCode")
-        .value;
+        $("transactionCode").value;
 
 
     const qty =
         Number(
-            $("transactionQty")
-            .value
+            $("transactionQty").value
         );
 
 
@@ -3317,36 +2593,15 @@ async function saveTransaction(){
 
     try{
 
-        const item =
-            items.find(
-                function(x){
-
-                    return String(
-                        x.code
-                    )
-                    ===
-                    String(
-                        code
-                    );
-
-                }
-            );
-
-
-        if(!item){
-
-            throw new Error(
-                "Sparepart tidak ditemukan."
-            );
-
-        }
+        const safeId =
+            firestoreKey(code);
 
 
         const itemRef =
             doc(
                 db,
                 "spareparts",
-                item.firestoreId
+                safeId
             );
 
 
@@ -3355,7 +2610,6 @@ async function saveTransaction(){
 
         await runTransaction(
             db,
-
             async function(transaction){
 
                 const snap =
@@ -3384,16 +2638,13 @@ async function saveTransaction(){
 
 
                 if(
-                    transactionMode
-                    ===
-                    "in"
+                    transactionMode === "in"
                 ){
 
                     newQty =
                         oldQty + qty;
 
                 }
-
                 else{
 
                     newQty =
@@ -3433,8 +2684,7 @@ async function saveTransaction(){
 
                 code:code,
 
-                type:
-                    transactionMode,
+                type:transactionMode,
 
                 qty:qty,
 
@@ -3464,13 +2714,9 @@ async function saveTransaction(){
         await loadItems();
 
     }
-
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         showMessage(
             "Gagal menyimpan transaksi: " +
@@ -3483,15 +2729,14 @@ async function saveTransaction(){
 }
 
 
-/* =========================================================
+/* =====================================================
    HISTORY
-========================================================= */
+===================================================== */
 
 async function loadHistory(){
 
     const code =
-        $("historyCode")
-        .value;
+        $("historyCode").value;
 
 
     if(!code){
@@ -3516,55 +2761,33 @@ async function loadHistory(){
         const data =
             snap.docs
             .map(
-                function(d){
-
-                    return {
-
-                        id:d.id,
-
-                        ...d.data()
-
-                    };
-
-                }
+                d => ({
+                    id:d.id,
+                    ...d.data()
+                })
             )
             .filter(
-                function(x){
-
-                    return String(
-                        x.code
-                    )
-                    ===
-                    String(
-                        code
-                    );
-
-                }
+                x =>
+                    x.code === code
             );
 
 
         data.sort(
             function(a,b){
 
-                const ta =
-                    a.createdAt?.seconds
-                    || 0;
+                const aTime =
+                    a.createdAt?.seconds || 0;
 
+                const bTime =
+                    b.createdAt?.seconds || 0;
 
-                const tb =
-                    b.createdAt?.seconds
-                    || 0;
-
-
-                return tb - ta;
+                return bTime - aTime;
 
             }
         );
 
 
-        if(
-            data.length === 0
-        ){
+        if(data.length === 0){
 
             $("historyContent")
                 .innerHTML =
@@ -3575,50 +2798,87 @@ async function loadHistory(){
         }
 
 
+        let masuk = 0;
+        let keluar = 0;
+
+
+        data.forEach(
+            function(x){
+
+                if(x.type === "in"){
+                    masuk += Number(x.qty || 0);
+                }
+                else{
+                    keluar += Number(x.qty || 0);
+                }
+
+            }
+        );
+
+
         let html = `
 
-            <div class="table-wrap">
+        <div class="history-summary">
 
-                <table>
+            <div class="history-box">
 
-                    <thead>
+                Total Transaksi
 
-                        <tr>
+                <strong>
+                    ${data.length}
+                </strong>
 
-                            <th>
-                                Tanggal
-                            </th>
+            </div>
 
-                            <th>
-                                Jenis
-                            </th>
+            <div class="history-box">
 
-                            <th>
-                                Jumlah
-                            </th>
+                Barang Masuk
 
-                            <th>
-                                Operator
-                            </th>
+                <strong>
+                    ${masuk}
+                </strong>
 
-                            <th>
-                                Keterangan
-                            </th>
+            </div>
 
-                        </tr>
+            <div class="history-box">
 
-                    </thead>
+                Barang Keluar
 
-                    <tbody>
+                <strong>
+                    ${keluar}
+                </strong>
 
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+        <table>
+
+        <thead>
+
+        <tr>
+
+        <th>Tanggal</th>
+        <th>Jenis</th>
+        <th>Jumlah</th>
+        <th>Operator</th>
+        <th>Keterangan</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
         `;
 
 
         data.forEach(
             function(item){
 
-                let date =
-                    "-";
+                let date = "-";
 
 
                 if(
@@ -3628,51 +2888,47 @@ async function loadHistory(){
 
                     date =
                         item.createdAt
-                            .toDate()
-                            .toLocaleString(
-                                "id-ID"
-                            );
+                        .toDate()
+                        .toLocaleString(
+                            "id-ID"
+                        );
 
                 }
 
 
                 html += `
 
-                    <tr>
+                <tr>
 
-                        <td>
-                            ${escapeHtml(
-                                date
-                            )}
-                        </td>
+                    <td>
+                        ${escapeHtml(date)}
+                    </td>
 
-                        <td>
+                    <td>
+                        ${
+                            item.type === "in"
+                            ? "MASUK"
+                            : "KELUAR"
+                        }
+                    </td>
 
-                            ${
-                                item.type === "in"
-                                ? "MASUK"
-                                : "KELUAR"
-                            }
+                    <td>
+                        ${item.qty}
+                    </td>
 
-                        </td>
+                    <td>
+                        ${escapeHtml(
+                            item.operator
+                        )}
+                    </td>
 
-                        <td>
-                            ${item.qty}
-                        </td>
+                    <td>
+                        ${escapeHtml(
+                            item.note || "-"
+                        )}
+                    </td>
 
-                        <td>
-                            ${escapeHtml(
-                                item.operator
-                            )}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                item.note || "-"
-                            )}
-                        </td>
-
-                    </tr>
+                </tr>
 
                 `;
 
@@ -3682,11 +2938,11 @@ async function loadHistory(){
 
         html += `
 
-                    </tbody>
+        </tbody>
 
-                </table>
+        </table>
 
-            </div>
+        </div>
 
         `;
 
@@ -3696,31 +2952,29 @@ async function loadHistory(){
             html;
 
     }
-
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         $("historyContent")
             .innerHTML =
-            "Gagal mengambil history.";
+            "Gagal mengambil history: " +
+            escapeHtml(
+                error.message
+            );
 
     }
 
 }
 
 
-/* =========================================================
-   EXCEL READ
-========================================================= */
+/* =====================================================
+   IMPORT EXCEL
+===================================================== */
 
 $("excelFile")
 .addEventListener(
     "change",
-
     async function(){
 
         const file =
@@ -3769,7 +3023,8 @@ $("excelFile")
 
 
             excelRows =
-                rows.map(
+                rows
+                .map(
                     function(row){
 
                         return {
@@ -3781,8 +3036,7 @@ $("excelFile")
                                     row["kode"]
                                     ??
                                     ""
-                                )
-                                .trim(),
+                                ).trim(),
 
                             name:
                                 String(
@@ -3791,8 +3045,7 @@ $("excelFile")
                                     row["Nama"]
                                     ??
                                     ""
-                                )
-                                .trim(),
+                                ).trim(),
 
                             lokasi:
                                 String(
@@ -3801,14 +3054,11 @@ $("excelFile")
                                     row["lokasi"]
                                     ??
                                     ""
-                                )
-                                .trim(),
+                                ).trim(),
 
                             qty:
                                 Number(
                                     row["Stock"]
-                                    ??
-                                    row["stock"]
                                     ??
                                     0
                                 ),
@@ -3819,8 +3069,6 @@ $("excelFile")
                                     ??
                                     row["Min Stock"]
                                     ??
-                                    row["minqty"]
-                                    ??
                                     0
                                 )
 
@@ -3829,67 +3077,32 @@ $("excelFile")
                     }
                 )
                 .filter(
-                    function(row){
-
-                        return row.code !== "";
-
-                    }
+                    x =>
+                        x.code !== ""
                 );
-
-
-            if(
-                excelRows.length === 0
-            ){
-
-                $("excelPreview")
-                    .innerHTML =
-                    "<p>Tidak ada data valid.</p>";
-
-                $("importButton")
-                    .disabled =
-                    true;
-
-                return;
-
-            }
 
 
             let html = `
 
-                <div class="excel-preview">
+            <div class="excel-preview">
 
-                    <table>
+            <table>
 
-                        <thead>
+            <thead>
 
-                            <tr>
+            <tr>
 
-                                <th>
-                                    Kode
-                                </th>
+            <th>Kode</th>
+            <th>Nama</th>
+            <th>Lokasi</th>
+            <th>Stock</th>
+            <th>Min. Stock</th>
 
-                                <th>
-                                    Nama
-                                </th>
+            </tr>
 
-                                <th>
-                                    Lokasi
-                                </th>
+            </thead>
 
-                                <th>
-                                    Stock
-                                </th>
-
-                                <th>
-                                    Min. Stock
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
+            <tbody>
             `;
 
 
@@ -3898,35 +3111,29 @@ $("excelFile")
 
                     html += `
 
-                        <tr>
+                    <tr>
 
-                            <td>
-                                ${escapeHtml(
-                                    row.code
-                                )}
-                            </td>
+                    <td>
+                        ${escapeHtml(row.code)}
+                    </td>
 
-                            <td>
-                                ${escapeHtml(
-                                    row.name
-                                )}
-                            </td>
+                    <td>
+                        ${escapeHtml(row.name)}
+                    </td>
 
-                            <td>
-                                ${escapeHtml(
-                                    row.lokasi
-                                )}
-                            </td>
+                    <td>
+                        ${escapeHtml(row.lokasi)}
+                    </td>
 
-                            <td>
-                                ${row.qty}
-                            </td>
+                    <td>
+                        ${row.qty}
+                    </td>
 
-                            <td>
-                                ${row.minqty}
-                            </td>
+                    <td>
+                        ${row.minqty}
+                    </td>
 
-                        </tr>
+                    </tr>
 
                     `;
 
@@ -3936,18 +3143,18 @@ $("excelFile")
 
             html += `
 
-                        </tbody>
+            </tbody>
 
-                    </table>
+            </table>
 
-                </div>
+            </div>
 
-                <p>
-                    Total data:
-                    <strong>
-                        ${excelRows.length}
-                    </strong>
-                </p>
+            <p>
+                Total data:
+                <strong>
+                    ${excelRows.length}
+                </strong>
+            </p>
 
             `;
 
@@ -3959,16 +3166,12 @@ $("excelFile")
 
             $("importButton")
                 .disabled =
-                false;
+                excelRows.length === 0;
 
         }
-
         catch(error){
 
-            console.error(
-                error
-            );
-
+            console.error(error);
 
             showMessage(
                 "Gagal membaca Excel.",
@@ -3981,30 +3184,25 @@ $("excelFile")
 );
 
 
-/* =========================================================
+/* =====================================================
    IMPORT FIREBASE
-========================================================= */
+===================================================== */
 
 $("importButton")
 .addEventListener(
     "click",
-
     async function(){
 
         if(
             excelRows.length === 0
         ){
-
             return;
-
         }
 
 
         try{
 
-            this.disabled =
-                true;
-
+            this.disabled = true;
 
             this.textContent =
                 "Mengimport...";
@@ -4033,33 +3231,24 @@ $("importButton")
 
 
                 const existing =
-                    await getDoc(
-                        ref
-                    );
+                    await getDoc(ref);
 
 
-                if(
-                    existing.exists()
-                ){
+                if(existing.exists()){
 
                     await updateDoc(
                         ref,
                         {
 
-                            code:
-                                row.code,
+                            code:row.code,
 
-                            name:
-                                row.name,
+                            name:row.name,
 
-                            lokasi:
-                                row.lokasi,
+                            lokasi:row.lokasi,
 
-                            qty:
-                                row.qty,
+                            qty:row.qty,
 
-                            minqty:
-                                row.minqty,
+                            minqty:row.minqty,
 
                             updatedAt:
                                 serverTimestamp()
@@ -4068,27 +3257,21 @@ $("importButton")
                     );
 
                 }
-
                 else{
 
                     await setDoc(
                         ref,
                         {
 
-                            code:
-                                row.code,
+                            code:row.code,
 
-                            name:
-                                row.name,
+                            name:row.name,
 
-                            lokasi:
-                                row.lokasi,
+                            lokasi:row.lokasi,
 
-                            qty:
-                                row.qty,
+                            qty:row.qty,
 
-                            minqty:
-                                row.minqty,
+                            minqty:row.minqty,
 
                             createdAt:
                                 serverTimestamp()
@@ -4112,24 +3295,13 @@ $("importButton")
 
             excelRows = [];
 
+            $("excelFile").value = "";
 
-            $("excelFile")
-                .value =
-                "";
+            $("excelPreview").innerHTML = "";
 
+            $("importButton").disabled = true;
 
-            $("excelPreview")
-                .innerHTML =
-                "";
-
-
-            $("importButton")
-                .disabled =
-                true;
-
-
-            $("importButton")
-                .textContent =
+            $("importButton").textContent =
                 "Import ke Firebase";
 
 
@@ -4141,17 +3313,11 @@ $("importButton")
             await loadItems();
 
         }
-
         catch(error){
 
-            console.error(
-                error
-            );
+            console.error(error);
 
-
-            this.disabled =
-                false;
-
+            this.disabled = false;
 
             this.textContent =
                 "Import ke Firebase";
@@ -4169,18 +3335,16 @@ $("importButton")
 );
 
 
-/* =========================================================
-   EXPORT EXCEL
-========================================================= */
+/* =====================================================
+   EXPORT
+===================================================== */
 
 function exportExcel(){
 
-    if(
-        items.length === 0
-    ){
+    if(items.length === 0){
 
         showMessage(
-            "Tidak ada data untuk diexport.",
+            "Tidak ada data.",
             "error"
         );
 
@@ -4211,9 +3375,7 @@ function exportExcel(){
                         item.minqty,
 
                     "Status":
-                        getStatus(
-                            item
-                        ).text
+                        getStatus(item).text
 
                 };
 
@@ -4251,14 +3413,13 @@ function exportExcel(){
 }
 
 
-/* =========================================================
+/* =====================================================
    TABLE ACTION
-========================================================= */
+===================================================== */
 
 $("stockBody")
 .addEventListener(
     "click",
-
     function(event){
 
         const button =
@@ -4268,9 +3429,7 @@ $("stockBody")
 
 
         if(!button){
-
             return;
-
         }
 
 
@@ -4282,212 +3441,119 @@ $("stockBody")
             button.dataset.code;
 
 
-        if(
-            action === "delete"
-        ){
-
-            deleteItem(
-                code
-            );
-
+        if(action === "delete"){
+            deleteItem(code);
         }
 
-        else if(
-            action === "edit"
-        ){
 
-            openEdit(
-                code
-            );
-
+        if(action === "edit"){
+            openEdit(code);
         }
 
-        else if(
-            action === "in"
-        ){
 
+        if(action === "in"){
             openTransaction(
                 "in",
                 code
             );
-
         }
 
-        else if(
-            action === "out"
-        ){
 
+        if(action === "out"){
             openTransaction(
                 "out",
                 code
             );
-
         }
 
     }
 );
 
 
-/* =========================================================
-   DASHBOARD ACTION
-========================================================= */
-
-$("lowCard")
-.addEventListener(
-    "click",
-    function(){
-
-        showStockList(
-            "low"
-        );
-
-    }
-);
-
-
-$("emptyCard")
-.addEventListener(
-    "click",
-    function(){
-
-        showStockList(
-            "empty"
-        );
-
-    }
-);
-
-
-$("restockCard")
-.addEventListener(
-    "click",
-    function(){
-
-        showStockList(
-            "restock"
-        );
-
-    }
-);
-
-
-/* =========================================================
-   STOCK LIST ACTION
-========================================================= */
-
-$("stockListContent")
-.addEventListener(
-    "click",
-
-    function(event){
-
-        const button =
-            event.target.closest(
-                "button[data-list-action]"
-            );
-
-
-        if(!button){
-
-            return;
-
-        }
-
-
-        const action =
-            button.dataset.listAction;
-
-
-        const code =
-            button.dataset.code;
-
-
-        closeModal(
-            "stockListModal"
-        );
-
-
-        if(
-            action === "in"
-        ){
-
-            openTransaction(
-                "in",
-                code
-            );
-
-        }
-
-        else if(
-            action === "out"
-        ){
-
-            openTransaction(
-                "out",
-                code
-            );
-
-        }
-
-        else if(
-            action === "edit"
-        ){
-
-            openEdit(
-                code
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
+/* =====================================================
    SEARCH
-========================================================= */
+===================================================== */
 
 $("search")
 .addEventListener(
     "input",
+    renderTable
+);
 
+
+/* =====================================================
+   DASHBOARD CLICK
+===================================================== */
+
+$("statOK")
+.addEventListener(
+    "click",
     function(){
 
-        renderTable();
+        setDashboardFilter("ok");
 
     }
 );
 
 
-/* =========================================================
-   TRANSACTION SELECT
-========================================================= */
-
-$("transactionCode")
+$("statLOW")
 .addEventListener(
-    "change",
-    updateAvailableStock
+    "click",
+    function(){
+
+        setDashboardFilter("low");
+
+    }
 );
 
 
-/* =========================================================
+$("statHABIS")
+.addEventListener(
+    "click",
+    function(){
+
+        setDashboardFilter("empty");
+
+    }
+);
+
+
+$("statRESTOCK")
+.addEventListener(
+    "click",
+    function(){
+
+        setDashboardFilter("restock");
+
+    }
+);
+
+
+$("clearFilter")
+.addEventListener(
+    "click",
+    function(){
+
+        setDashboardFilter("");
+
+    }
+);
+
+
+/* =====================================================
    MENU
-========================================================= */
+===================================================== */
 
 $("menuButton")
 .addEventListener(
     "click",
-
     function(){
 
         $("drawer")
-            .classList
-            .toggle("open");
-
+            .classList.toggle("open");
 
         $("overlay")
-            .classList
-            .toggle("show");
+            .classList.toggle("show");
 
     }
 );
@@ -4496,36 +3562,29 @@ $("menuButton")
 $("overlay")
 .addEventListener(
     "click",
-
     function(){
 
         $("drawer")
-            .classList
-            .remove("open");
-
+            .classList.remove("open");
 
         $("overlay")
-            .classList
-            .remove("show");
+            .classList.remove("show");
 
     }
 );
 
 
-/* =========================================================
+/* =====================================================
    MENU ITEMS
-========================================================= */
+===================================================== */
 
 document
-.querySelectorAll(
-    ".menu-item"
-)
+.querySelectorAll(".menu-item")
 .forEach(
     function(button){
 
         button.addEventListener(
             "click",
-
             function(){
 
                 const menu =
@@ -4533,18 +3592,13 @@ document
 
 
                 $("drawer")
-                    .classList
-                    .remove("open");
-
+                    .classList.remove("open");
 
                 $("overlay")
-                    .classList
-                    .remove("show");
+                    .classList.remove("show");
 
 
-                if(
-                    menu === "data"
-                ){
+                if(menu === "data"){
 
                     window.scrollTo({
                         top:0,
@@ -4553,17 +3607,15 @@ document
 
                 }
 
-                else if(
-                    menu === "add"
-                ){
+
+                if(menu === "add"){
 
                     openAdd();
 
                 }
 
-                else if(
-                    menu === "import"
-                ){
+
+                if(menu === "import"){
 
                     openModal(
                         "importModal"
@@ -4571,42 +3623,33 @@ document
 
                 }
 
-                else if(
-                    menu === "export"
-                ){
+
+                if(menu === "export"){
 
                     exportExcel();
 
                 }
 
-                else if(
-                    menu === "in"
-                ){
 
-                    openTransaction(
-                        "in"
-                    );
+                if(menu === "in"){
+
+                    openTransaction("in");
 
                 }
 
-                else if(
-                    menu === "out"
-                ){
 
-                    openTransaction(
-                        "out"
-                    );
+                if(menu === "out"){
+
+                    openTransaction("out");
 
                 }
 
-                else if(
-                    menu === "history"
-                ){
+
+                if(menu === "history"){
 
                     $("historyContent")
                         .innerHTML =
                         "Pilih sparepart.";
-
 
                     openModal(
                         "historyModal"
@@ -4621,20 +3664,15 @@ document
 );
 
 
-/* =========================================================
+/* =====================================================
    MODAL BUTTONS
-========================================================= */
+===================================================== */
 
 $("cancelItem")
 .addEventListener(
     "click",
-
     function(){
-
-        closeModal(
-            "itemModal"
-        );
-
+        closeModal("itemModal");
     }
 );
 
@@ -4642,13 +3680,8 @@ $("cancelItem")
 $("cancelTransaction")
 .addEventListener(
     "click",
-
     function(){
-
-        closeModal(
-            "transactionModal"
-        );
-
+        closeModal("transactionModal");
     }
 );
 
@@ -4656,13 +3689,8 @@ $("cancelTransaction")
 $("cancelImport")
 .addEventListener(
     "click",
-
     function(){
-
-        closeModal(
-            "importModal"
-        );
-
+        closeModal("importModal");
     }
 );
 
@@ -4670,27 +3698,8 @@ $("cancelImport")
 $("cancelHistory")
 .addEventListener(
     "click",
-
     function(){
-
-        closeModal(
-            "historyModal"
-        );
-
-    }
-);
-
-
-$("closeStockList")
-.addEventListener(
-    "click",
-
-    function(){
-
-        closeModal(
-            "stockListModal"
-        );
-
+        closeModal("historyModal");
     }
 );
 
@@ -4709,6 +3718,13 @@ $("saveTransaction")
 );
 
 
+$("transactionCode")
+.addEventListener(
+    "change",
+    updateAvailableStock
+);
+
+
 $("historyCode")
 .addEventListener(
     "change",
@@ -4716,28 +3732,26 @@ $("historyCode")
 );
 
 
-/* =========================================================
+/* =====================================================
    CLOSE MODAL OUTSIDE
-========================================================= */
+===================================================== */
 
 document
-.querySelectorAll(
-    ".modal"
-)
+.querySelectorAll(".modal")
 .forEach(
     function(modal){
 
         modal.addEventListener(
             "click",
-
             function(event){
 
                 if(
                     event.target === modal
                 ){
 
-                    modal.classList
-                        .remove("show");
+                    modal.classList.remove(
+                        "show"
+                    );
 
                 }
 
@@ -4748,9 +3762,9 @@ document
 );
 
 
-/* =========================================================
+/* =====================================================
    START
-========================================================= */
+===================================================== */
 
 loadItems();
 
