@@ -610,6 +610,59 @@ footer{
 }
 
 /* =====================================================
+   QR CODE
+===================================================== */
+
+.btn-qr{
+    background:#7c3aed;
+}
+
+.qr-code-box{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    margin:15px 0;
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+}
+
+.qr-detail{
+    text-align:center;
+    line-height:1.7;
+    color:#475569;
+}
+
+#qrReader{
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+}
+
+.scan-result{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:16px;
+    margin-top:15px;
+}
+
+.scan-row{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:8px 0;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.scan-row:last-child{border-bottom:0;}
+
+@media(max-width:700px){
+    .scan-row{flex-direction:column;gap:2px;}
+}
+
+/* =====================================================
    MOBILE
 ===================================================== */
 
@@ -795,6 +848,10 @@ footer{
 
     <button class="menu-item" data-menu="history">
         History Transaksi
+    </button>
+
+    <button class="menu-item" data-menu="scan">
+        Scan QR Code
     </button>
 
 </aside>
@@ -1289,6 +1346,60 @@ Data lainnya tidak dihapus.
 </div>
 </div>
 
+
+<!-- =====================================================
+     QR CODE MODAL
+===================================================== -->
+
+<div class="modal" id="qrModal">
+
+    <div class="modal-card small">
+
+        <h2 id="qrTitle">QR Code Sparepart</h2>
+
+        <div id="qrCode" class="qr-code-box"></div>
+
+        <div id="qrDetail" class="qr-detail"></div>
+
+        <div class="modal-actions">
+
+            <button class="btn-light" id="printQr">
+                Cetak QR
+            </button>
+
+            <button class="btn-light" id="cancelQr">
+                Tutup
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     SCAN QR MODAL
+===================================================== -->
+
+<div class="modal" id="scanModal">
+
+    <div class="modal-card small">
+
+        <h2>Scan QR Code</h2>
+
+        <p style="color:#64748b;">Arahkan kamera ke QR Code sparepart.</p>
+
+        <div id="qrReader"></div>
+
+        <div id="scanResult" class="scan-result" style="display:none;"></div>
+
+        <div class="modal-actions">
+            <button class="btn-light" id="cancelScan">Tutup</button>
+        </div>
+
+    </div>
+
+</div>
 
 <div
     class="message"
@@ -2012,6 +2123,15 @@ function renderTable(){
                                 data-code="${escapeHtml(item.code)}">
 
                                 Edit
+
+                            </button>
+
+                            <button
+                                class="btn btn-qr"
+                                data-action="qr"
+                                data-code="${escapeHtml(item.code)}">
+
+                                QR
 
                             </button>
 
@@ -3466,6 +3586,172 @@ function exportExcel(){
 
 
 /* =====================================================
+   QR CODE
+===================================================== */
+
+let qrScanner = null;
+let qrScannerRunning = false;
+let currentQrItem = null;
+
+function openQr(code){
+
+    const item = items.find(function(x){
+        return String(x.code) === String(code);
+    });
+
+    if(!item){
+        showMessage("Data sparepart tidak ditemukan.","error");
+        return;
+    }
+
+    currentQrItem = item;
+
+    $("qrTitle").textContent = "QR Code - " + item.code;
+    $("qrCode").innerHTML = "";
+    $("qrDetail").innerHTML = `
+        <strong>${escapeHtml(item.code)}</strong><br>
+        ${escapeHtml(item.name)}<br>
+        Lokasi: ${escapeHtml(item.lokasi || "-")}<br>
+        Stock: ${item.qty}<br>
+        Status: ${getStatus(item).text}
+    `;
+
+    openModal("qrModal");
+
+    setTimeout(function(){
+        new QRCode($("qrCode"),{
+            text:String(item.code),
+            width:220,
+            height:220,
+            correctLevel:QRCode.CorrectLevel.H
+        });
+    },100);
+}
+
+function stopQrScanner(){
+    if(qrScanner && qrScannerRunning){
+        qrScanner.stop().then(function(){
+            qrScanner.clear();
+            qrScannerRunning=false;
+        }).catch(function(error){
+            console.warn("QR scanner stop:",error);
+            qrScannerRunning=false;
+        });
+    }
+}
+
+function showScannedItem(code){
+
+    const scannedCode = String(code).trim();
+
+    const item = items.find(function(x){
+        return String(x.code).trim() === scannedCode;
+    });
+
+    $("scanResult").style.display="block";
+
+    if(!item){
+        $("scanResult").innerHTML = `
+            <strong style="color:#b91c1c;">Sparepart tidak ditemukan.</strong><br>
+            Kode QR: ${escapeHtml(scannedCode)}
+        `;
+        return;
+    }
+
+    stopQrScanner();
+
+    const status=getStatus(item);
+
+    $("scanResult").innerHTML = `
+        <div class="scan-row"><strong>Kode</strong><span>${escapeHtml(item.code)}</span></div>
+        <div class="scan-row"><strong>Nama</strong><span>${escapeHtml(item.name)}</span></div>
+        <div class="scan-row"><strong>Lokasi</strong><span>${escapeHtml(item.lokasi || "-")}</span></div>
+        <div class="scan-row"><strong>Stock tersedia</strong><span>${item.qty}</span></div>
+        <div class="scan-row"><strong>Min. Stock</strong><span>${item.minqty}</span></div>
+        <div class="scan-row"><strong>Status</strong><span class="${status.className}">${status.text}</span></div>
+        <div class="modal-actions">
+            <button class="btn btn-in" id="scanInButton">Barang Masuk</button>
+            <button class="btn btn-out" id="scanOutButton">Barang Keluar</button>
+        </div>
+    `;
+
+    $("scanInButton").addEventListener("click",function(){
+        closeModal("scanModal");
+        openTransaction("in",item.code);
+    });
+
+    $("scanOutButton").addEventListener("click",function(){
+        closeModal("scanModal");
+        openTransaction("out",item.code);
+    });
+}
+
+function startQrScanner(){
+
+    $("scanResult").style.display="none";
+    $("scanResult").innerHTML="";
+    openModal("scanModal");
+
+    setTimeout(function(){
+
+        if(qrScannerRunning) return;
+
+        if(typeof Html5Qrcode === "undefined"){
+            $("scanResult").style.display="block";
+            $("scanResult").innerHTML="Library scanner belum termuat. Refresh halaman lalu coba lagi.";
+            return;
+        }
+
+        qrScanner=new Html5Qrcode("qrReader");
+
+        qrScanner.start(
+            {facingMode:"environment"},
+            {fps:10,qrbox:{width:250,height:250}},
+            function(decodedText){showScannedItem(decodedText);},
+            function(){ }
+        ).then(function(){
+            qrScannerRunning=true;
+        }).catch(function(error){
+            console.error("QR CAMERA ERROR:",error);
+            $("scanResult").style.display="block";
+            $("scanResult").innerHTML=`
+                <strong style="color:#b91c1c;">Kamera tidak dapat dibuka.</strong><br><br>
+                Pastikan izin kamera diberikan dan website dibuka melalui HTTPS.
+            `;
+        });
+
+    },300);
+}
+
+function printQr(){
+
+    if(!currentQrItem) return;
+
+    const canvas=$("qrCode").querySelector("canvas");
+    const img=$("qrCode").querySelector("img");
+    const src=canvas ? canvas.toDataURL("image/png") : (img ? img.src : "");
+
+    if(!src){
+        showMessage("QR belum siap dicetak.","error");
+        return;
+    }
+
+    const item=currentQrItem;
+    const win=window.open("","_blank","width=500,height=650");
+
+    if(!win){
+        showMessage("Popup diblokir browser.","error");
+        return;
+    }
+
+    win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
+    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
+    </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p></body></html>`);
+    win.document.close();
+    setTimeout(function(){win.focus();win.print();},500);
+}
+
+/* =====================================================
    TABLE ACTION
 ===================================================== */
 
@@ -3516,6 +3802,10 @@ $("stockBody")
                 "out",
                 code
             );
+        }
+
+        if(action === "qr"){
+            openQr(code);
         }
 
     }
@@ -3785,6 +4075,21 @@ $("historyCode")
 
 
 /* =====================================================
+   QR BUTTONS
+===================================================== */
+
+$("cancelQr").addEventListener("click",function(){
+    closeModal("qrModal");
+});
+
+$("printQr").addEventListener("click",printQr);
+
+$("cancelScan").addEventListener("click",function(){
+    stopQrScanner();
+    closeModal("scanModal");
+});
+
+/* =====================================================
    CLOSE MODAL OUTSIDE
 ===================================================== */
 
@@ -3800,6 +4105,10 @@ document
                 if(
                     event.target === modal
                 ){
+
+                    if(modal.id === "scanModal"){
+                        stopQrScanner();
+                    }
 
                     modal.classList.remove(
                         "show"
