@@ -4,7 +4,9 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Stock Sparepart</title>
 
@@ -26,12 +28,120 @@ body{
     color:#222;
 }
 
-/* ================= HEADER ================= */
+/* =========================================================
+   LOGIN
+========================================================= */
+
+#loginScreen{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+
+    background:#1f2937;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+.login-box{
+    width:min(420px,100%);
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:0 10px 40px rgba(0,0,0,.3);
+}
+
+.login-box h2{
+    margin:0 0 8px;
+
+    color:#1f2937;
+
+    font-size:28px;
+}
+
+.login-box p{
+    margin:0 0 25px;
+
+    color:#64748b;
+
+    font-size:16px;
+}
+
+.login-box input{
+    width:100%;
+
+    padding:15px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:10px;
+
+    font-size:18px;
+
+    outline:none;
+
+    text-align:center;
+}
+
+.login-box input:focus{
+    border-color:#2563eb;
+}
+
+.login-button{
+    width:100%;
+
+    margin-top:15px;
+
+    padding:14px;
+
+    border:0;
+
+    border-radius:10px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.login-button:active{
+    transform:scale(.98);
+}
+
+.login-error{
+    min-height:22px;
+
+    margin-top:12px;
+
+    color:#dc2626;
+
+    font-weight:bold;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 header{
     background:#1f2937;
     color:white;
+
     padding:30px 70px;
+
     text-align:center;
 }
 
@@ -42,41 +152,55 @@ header h1{
 
 header p{
     margin:8px 0 0;
+
     color:#d1d5db;
+
     font-size:19px;
 }
 
-/* ================= MENU ================= */
+/* =========================================================
+   MENU
+========================================================= */
 
 .menu-button{
     position:fixed;
+
     top:16px;
     right:16px;
+
     z-index:1001;
 
     padding:13px 18px;
+
     border:0;
     border-radius:12px;
 
     background:white;
+
     color:#111827;
 
     font-size:16px;
+
     font-weight:bold;
 
     box-shadow:0 4px 15px rgba(0,0,0,.2);
+
+    cursor:pointer;
 }
 
 .drawer{
     position:fixed;
+
     top:0;
     right:-380px;
 
     width:350px;
     max-width:90%;
+
     height:100vh;
 
     background:white;
+
     z-index:1000;
 
     padding:25px 20px;
@@ -84,6 +208,7 @@ header p{
     box-shadow:-8px 0 25px rgba(0,0,0,.2);
 
     transition:.25s;
+
     overflow:auto;
 }
 
@@ -93,16 +218,19 @@ header p{
 
 .drawer h2{
     margin-top:0;
+
     color:#1f2937;
 }
 
 .menu-item{
     display:block;
+
     width:100%;
 
     padding:17px 10px;
 
     border:0;
+
     border-bottom:1px solid #e5e7eb;
 
     background:white;
@@ -110,7 +238,10 @@ header p{
     text-align:left;
 
     font-size:17px;
+
     color:#111827;
+
+    cursor:pointer;
 }
 
 .menu-item:hover{
@@ -119,7 +250,9 @@ header p{
 
 .overlay{
     display:none;
+
     position:fixed;
+
     inset:0;
 
     background:rgba(0,0,0,.45);
@@ -131,22 +264,29 @@ header p{
     display:block;
 }
 
-/* ================= CONTAINER ================= */
+/* =========================================================
+   CONTAINER
+========================================================= */
 
 .container{
     width:94%;
+
     max-width:1400px;
 
     margin:25px auto 50px;
 }
 
-/* ================= SEARCH ================= */
+/* =========================================================
+   SEARCH
+========================================================= */
 
 .search-box{
     background:white;
+
     padding:18px;
 
     border-radius:16px;
+
     margin-bottom:20px;
 
     box-shadow:0 4px 15px rgba(0,0,0,.07);
@@ -158,17 +298,27 @@ header p{
     padding:16px;
 
     border:1px solid #cbd5e1;
+
     border-radius:10px;
 
     font-size:18px;
+
+    outline:none;
 }
 
-/* ================= DASHBOARD ================= */
+.search-box input:focus{
+    border-color:#2563eb;
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
 
 .stats{
     display:grid;
 
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:
+        repeat(5,1fr);
 
     gap:15px;
 
@@ -193,7 +343,9 @@ header p{
 
 .stat.clickable:hover{
     transform:translateY(-2px);
-    box-shadow:0 7px 20px rgba(0,0,0,.12);
+
+    box-shadow:
+        0 7px 20px rgba(0,0,0,.12);
 }
 
 .stat.clickable:active{
@@ -202,6 +354,7 @@ header p{
 
 .stat-title{
     color:#64748b;
+
     font-size:17px;
 }
 
@@ -209,6 +362,7 @@ header p{
     margin-top:7px;
 
     font-size:34px;
+
     font-weight:bold;
 }
 
@@ -216,6 +370,7 @@ header p{
     margin-top:8px;
 
     font-size:13px;
+
     color:#94a3b8;
 }
 
@@ -231,7 +386,9 @@ header p{
     border-left:5px solid #f59e0b;
 }
 
-/* ================= TABLE ================= */
+/* =========================================================
+   TABLE
+========================================================= */
 
 .table-wrap{
     background:white;
@@ -269,20 +426,25 @@ td{
 
 .status-ok{
     color:#15803d;
+
     font-weight:bold;
 }
 
 .status-low{
     color:#d97706;
+
     font-weight:bold;
 }
 
 .status-empty{
     color:#dc2626;
+
     font-weight:bold;
 }
 
-/* ================= BUTTON ================= */
+/* =========================================================
+   BUTTON
+========================================================= */
 
 button{
     cursor:pointer;
@@ -290,7 +452,9 @@ button{
 
 .actions{
     display:flex;
+
     flex-wrap:wrap;
+
     gap:6px;
 }
 
@@ -364,7 +528,9 @@ button{
     font-weight:bold;
 }
 
-/* ================= MODAL ================= */
+/* =========================================================
+   MODAL
+========================================================= */
 
 .modal{
     display:none;
@@ -378,6 +544,7 @@ button{
     background:rgba(0,0,0,.5);
 
     align-items:center;
+
     justify-content:center;
 
     padding:15px;
@@ -434,6 +601,13 @@ button{
     border-radius:8px;
 
     font-size:16px;
+
+    outline:none;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#2563eb;
 }
 
 .modal-actions{
@@ -446,7 +620,9 @@ button{
     margin-top:18px;
 }
 
-/* ================= STOCK LIST ================= */
+/* =========================================================
+   STOCK LIST
+========================================================= */
 
 .stock-list{
     display:flex;
@@ -508,24 +684,27 @@ button{
     font-size:13px;
 
     font-weight:bold;
+
+    background:#e2e8f0;
+
+    color:#334155;
 }
 
 .badge-low{
     background:#fef3c7;
+
     color:#92400e;
 }
 
 .badge-empty{
     background:#fee2e2;
+
     color:#991b1b;
 }
 
-.badge-ok{
-    background:#dcfce7;
-    color:#166534;
-}
-
-/* ================= IMPORT ================= */
+/* =========================================================
+   IMPORT EXCEL
+========================================================= */
 
 .import-info{
     background:#f8fafc;
@@ -553,12 +732,15 @@ button{
     min-width:700px;
 }
 
-/* ================= MESSAGE ================= */
+/* =========================================================
+   MESSAGE
+========================================================= */
 
 .message{
     position:fixed;
 
     left:50%;
+
     bottom:20px;
 
     transform:translateX(-50%);
@@ -576,6 +758,8 @@ button{
     max-width:90%;
 
     text-align:center;
+
+    font-size:16px;
 }
 
 .message.show{
@@ -590,7 +774,9 @@ button{
     background:#b91c1c;
 }
 
-/* ================= FOOTER ================= */
+/* =========================================================
+   FOOTER
+========================================================= */
 
 footer{
     text-align:center;
@@ -602,12 +788,15 @@ footer{
     font-size:16px;
 }
 
-/* ================= MOBILE ================= */
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media(max-width:1000px){
 
     .stats{
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:
+            repeat(2,1fr);
     }
 
 }
@@ -615,7 +804,11 @@ footer{
 @media(max-width:700px){
 
     header{
-        padding:35px 70px 28px 20px;
+        padding:
+            35px
+            70px
+            28px
+            20px;
     }
 
     header h1{
@@ -644,10 +837,53 @@ footer{
 
 </head>
 
+
 <body>
 
 
-<!-- ================= HEADER ================= -->
+<!-- =========================================================
+     LOGIN
+========================================================= -->
+
+<div id="loginScreen">
+
+    <div class="login-box">
+
+        <h2>
+            INVENTORY DATABASE
+        </h2>
+
+        <p>
+            Masukkan password untuk melanjutkan
+        </p>
+
+        <input
+            id="loginPassword"
+            type="password"
+            placeholder="Password"
+            autocomplete="off">
+
+        <button
+            class="login-button"
+            id="loginButton">
+
+            MASUK
+
+        </button>
+
+        <div
+            class="login-error"
+            id="loginError">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
 
 <header>
 
@@ -662,7 +898,9 @@ footer{
 </header>
 
 
-<!-- ================= MENU ================= -->
+<!-- =========================================================
+     MENU
+========================================================= -->
 
 <button
     class="menu-button"
@@ -683,7 +921,10 @@ footer{
     class="drawer"
     id="drawer">
 
-    <h2>MENU</h2>
+    <h2>
+        MENU
+    </h2>
+
 
     <button
         class="menu-item"
@@ -693,6 +934,7 @@ footer{
 
     </button>
 
+
     <button
         class="menu-item"
         data-menu="add">
@@ -700,6 +942,7 @@ footer{
         Tambah Sparepart
 
     </button>
+
 
     <button
         class="menu-item"
@@ -709,6 +952,7 @@ footer{
 
     </button>
 
+
     <button
         class="menu-item"
         data-menu="export">
@@ -716,6 +960,7 @@ footer{
         Export Excel
 
     </button>
+
 
     <button
         class="menu-item"
@@ -725,6 +970,7 @@ footer{
 
     </button>
 
+
     <button
         class="menu-item"
         data-menu="out">
@@ -732,6 +978,7 @@ footer{
         Barang Keluar
 
     </button>
+
 
     <button
         class="menu-item"
@@ -744,7 +991,9 @@ footer{
 </aside>
 
 
-<!-- ================= MAIN ================= -->
+<!-- =========================================================
+     MAIN
+========================================================= -->
 
 <main class="container">
 
@@ -759,124 +1008,122 @@ footer{
 </section>
 
 
-<!-- ================= DASHBOARD ================= -->
+<!-- =========================================================
+     DASHBOARD
+========================================================= -->
 
 <section class="stats">
 
 
-    <div class="stat">
+<div class="stat">
 
-        <div class="stat-title">
-            Total Sparepart
-        </div>
-
-        <div
-            class="stat-value"
-            id="totalItems">
-
-            0
-
-        </div>
-
+    <div class="stat-title">
+        Total Sparepart
     </div>
-
-
-    <div class="stat">
-
-        <div class="stat-title">
-            Status OK
-        </div>
-
-        <div
-            class="stat-value"
-            id="okItems">
-
-            0
-
-        </div>
-
-    </div>
-
-
-    <!-- LOW -->
 
     <div
-        class="stat stat-low clickable"
-        id="lowCard">
+        class="stat-value"
+        id="totalItems">
 
-        <div class="stat-title">
-            Stock LOW
-        </div>
-
-        <div
-            class="stat-value"
-            id="lowStockItems">
-
-            0
-
-        </div>
-
-        <div class="stat-hint">
-            Ketuk untuk melihat
-        </div>
+        0
 
     </div>
 
+</div>
 
-    <!-- HABIS -->
+
+<div class="stat">
+
+    <div class="stat-title">
+        Status OK
+    </div>
 
     <div
-        class="stat stat-empty clickable"
-        id="emptyCard">
+        class="stat-value"
+        id="okItems">
 
-        <div class="stat-title">
-            Stock HABIS
-        </div>
-
-        <div
-            class="stat-value"
-            id="emptyStockItems">
-
-            0
-
-        </div>
-
-        <div class="stat-hint">
-            Ketuk untuk melihat
-        </div>
+        0
 
     </div>
 
+</div>
 
-    <!-- RESTOCK -->
+
+<div
+    class="stat stat-low clickable"
+    id="lowCard">
+
+    <div class="stat-title">
+        Stock LOW
+    </div>
 
     <div
-        class="stat stat-restock clickable"
-        id="restockCard">
+        class="stat-value"
+        id="lowStockItems">
 
-        <div class="stat-title">
-            Perlu Restock
-        </div>
-
-        <div
-            class="stat-value"
-            id="restockItems">
-
-            0
-
-        </div>
-
-        <div class="stat-hint">
-            Ketuk untuk melihat
-        </div>
+        0
 
     </div>
+
+    <div class="stat-hint">
+        Ketuk untuk melihat
+    </div>
+
+</div>
+
+
+<div
+    class="stat stat-empty clickable"
+    id="emptyCard">
+
+    <div class="stat-title">
+        Stock HABIS
+    </div>
+
+    <div
+        class="stat-value"
+        id="emptyStockItems">
+
+        0
+
+    </div>
+
+    <div class="stat-hint">
+        Ketuk untuk melihat
+    </div>
+
+</div>
+
+
+<div
+    class="stat stat-restock clickable"
+    id="restockCard">
+
+    <div class="stat-title">
+        Perlu Restock
+    </div>
+
+    <div
+        class="stat-value"
+        id="restockItems">
+
+        0
+
+    </div>
+
+    <div class="stat-hint">
+        Ketuk untuk melihat
+    </div>
+
+</div>
 
 
 </section>
 
 
-<!-- ================= TABLE ================= -->
+<!-- =========================================================
+     TABLE
+========================================================= -->
 
 <section class="table-wrap">
 
@@ -930,43 +1177,44 @@ Created by : Nugroho Kunto Aji
 
 
 <!-- =========================================================
-     MODAL DAFTAR STOCK
+     STOCK LIST MODAL
 ========================================================= -->
 
 <div
     class="modal"
     id="stockListModal">
 
-    <div class="modal-card">
+<div class="modal-card">
 
-        <h2 id="stockListTitle">
-            Daftar Sparepart
-        </h2>
-
-
-        <div id="stockListContent">
-
-        </div>
+<h2 id="stockListTitle">
+Daftar Sparepart
+</h2>
 
 
-        <div class="modal-actions">
+<div id="stockListContent">
+</div>
 
-            <button
-                class="btn-light"
-                id="closeStockList">
 
-                Tutup
+<div class="modal-actions">
 
-            </button>
+<button
+    class="btn-light"
+    id="closeStockList">
 
-        </div>
+Tutup
 
-    </div>
+</button>
+
+</div>
+
+</div>
 
 </div>
 
 
-<!-- ================= ADD / EDIT ================= -->
+<!-- =========================================================
+     ADD / EDIT MODAL
+========================================================= -->
 
 <div
     class="modal"
@@ -981,7 +1229,9 @@ Tambah Sparepart
 
 <div class="form-group">
 
-<label>Kode Sparepart</label>
+<label>
+Kode Sparepart
+</label>
 
 <input
     id="itemCode"
@@ -993,7 +1243,9 @@ Tambah Sparepart
 
 <div class="form-group">
 
-<label>Nama Sparepart</label>
+<label>
+Nama Sparepart
+</label>
 
 <input
     id="itemName"
@@ -1004,7 +1256,9 @@ Tambah Sparepart
 
 <div class="form-group">
 
-<label>Lokasi</label>
+<label>
+Lokasi
+</label>
 
 <input
     id="itemLocation"
@@ -1015,7 +1269,9 @@ Tambah Sparepart
 
 <div class="form-group">
 
-<label>Stock</label>
+<label>
+Stock
+</label>
 
 <input
     id="itemQty"
@@ -1028,7 +1284,9 @@ Tambah Sparepart
 
 <div class="form-group">
 
-<label>Minimum Stock</label>
+<label>
+Minimum Stock
+</label>
 
 <input
     id="itemMin"
@@ -1065,7 +1323,9 @@ Simpan
 </div>
 
 
-<!-- ================= TRANSACTION ================= -->
+<!-- =========================================================
+     TRANSACTION MODAL
+========================================================= -->
 
 <div
     class="modal"
@@ -1101,6 +1361,7 @@ Kode Sparepart
     font-weight:bold;">
 
 Stock tersedia:
+
 <span id="availableStock">
 0
 </span>
@@ -1175,7 +1436,9 @@ Simpan
 </div>
 
 
-<!-- ================= IMPORT ================= -->
+<!-- =========================================================
+     IMPORT EXCEL
+========================================================= -->
 
 <div
     class="modal"
@@ -1225,7 +1488,8 @@ Pilih File Excel
 </div>
 
 
-<div id="excelPreview"></div>
+<div id="excelPreview">
+</div>
 
 
 <div class="modal-actions">
@@ -1255,7 +1519,9 @@ Import ke Firebase
 </div>
 
 
-<!-- ================= HISTORY ================= -->
+<!-- =========================================================
+     HISTORY
+========================================================= -->
 
 <div
     class="modal"
@@ -1276,7 +1542,6 @@ Sparepart
 
 <select
     id="historyCode">
-
 </select>
 
 </div>
@@ -1306,16 +1571,152 @@ Tutup
 </div>
 
 
-<!-- ================= MESSAGE ================= -->
+<!-- =========================================================
+     MESSAGE
+========================================================= -->
 
 <div
     class="message"
     id="message">
-
 </div>
 
 
-<!-- ================= FIREBASE ================= -->
+<!-- =========================================================
+     LOGIN JAVASCRIPT
+========================================================= -->
+
+<script>
+
+const WEBSITE_PASSWORD =
+    "mtcgoahead";
+
+
+const loginScreen =
+    document.getElementById(
+        "loginScreen"
+    );
+
+
+const loginPassword =
+    document.getElementById(
+        "loginPassword"
+    );
+
+
+const loginButton =
+    document.getElementById(
+        "loginButton"
+    );
+
+
+const loginError =
+    document.getElementById(
+        "loginError"
+    );
+
+
+function checkLogin(){
+
+    const status =
+        sessionStorage.getItem(
+            "inventoryLogin"
+        );
+
+
+    if(status === "true"){
+
+        loginScreen.style.display =
+            "none";
+
+        document.body.style.overflow =
+            "";
+
+    }
+    else{
+
+        loginScreen.style.display =
+            "flex";
+
+        document.body.style.overflow =
+            "hidden";
+
+    }
+
+}
+
+
+function login(){
+
+    const password =
+        loginPassword.value;
+
+
+    if(password === WEBSITE_PASSWORD){
+
+        sessionStorage.setItem(
+            "inventoryLogin",
+            "true"
+        );
+
+
+        loginScreen.style.display =
+            "none";
+
+
+        document.body.style.overflow =
+            "";
+
+
+        loginPassword.value =
+            "";
+
+        loginError.textContent =
+            "";
+
+    }
+    else{
+
+        loginError.textContent =
+            "Password salah.";
+
+        loginPassword.value =
+            "";
+
+        loginPassword.focus();
+
+    }
+
+}
+
+
+loginButton.addEventListener(
+    "click",
+    login
+);
+
+
+loginPassword.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            login();
+
+        }
+
+    }
+);
+
+
+checkLogin();
+
+</script>
+
+
+<!-- =========================================================
+     FIREBASE
+========================================================= -->
 
 <script type="module">
 
@@ -1329,17 +1730,29 @@ from
 import {
 
     getFirestore,
+
     collection,
+
     getDocs,
+
     getDoc,
+
     doc,
+
     setDoc,
+
     updateDoc,
+
     deleteDoc,
+
     addDoc,
+
     query,
+
     where,
+
     serverTimestamp,
+
     runTransaction
 
 }
@@ -1347,7 +1760,9 @@ from
 "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 
-/* ================= FIREBASE CONFIG ================= */
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
 
 const firebaseConfig = {
 
@@ -1399,8 +1814,6 @@ const transactionRef =
     );
 
 
-/* ================= VARIABLES ================= */
-
 let items = [];
 
 let editingCode = null;
@@ -1410,7 +1823,9 @@ let transactionMode = "in";
 let excelRows = [];
 
 
-/* ================= HELPER ================= */
+/* =========================================================
+   HELPER
+========================================================= */
 
 function $(id){
 
@@ -1431,7 +1846,9 @@ function showMessage(
         text;
 
     el.className =
-        "message show " + type;
+        "message show " +
+        type;
+
 
     setTimeout(
         function(){
@@ -1451,16 +1868,34 @@ function escapeHtml(value){
     return String(
         value ?? ""
     )
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
 
 }
 
-
-/* ================= SAFE FIRESTORE ID ================= */
 
 function firestoreKey(code){
 
@@ -1471,7 +1906,9 @@ function firestoreKey(code){
 }
 
 
-/* ================= STATUS ================= */
+/* =========================================================
+   STATUS
+========================================================= */
 
 function getStatus(item){
 
@@ -1479,6 +1916,7 @@ function getStatus(item){
         Number(
             item.qty || 0
         );
+
 
     const min =
         Number(
@@ -1514,7 +1952,9 @@ function getStatus(item){
 }
 
 
-/* ================= LOAD DATA ================= */
+/* =========================================================
+   LOAD DATA
+========================================================= */
 
 async function loadItems(){
 
@@ -1533,6 +1973,7 @@ async function loadItems(){
                     const data =
                         d.data();
 
+
                     return {
 
                         firestoreId:
@@ -1540,7 +1981,9 @@ async function loadItems(){
 
                         code:
                             data.code ||
-                            decodeURIComponent(d.id),
+                            decodeURIComponent(
+                                d.id
+                            ),
 
                         name:
                             data.name || "",
@@ -1567,10 +2010,13 @@ async function loadItems(){
         items.sort(
             function(a,b){
 
-                return String(a.code)
-                    .localeCompare(
-                        String(b.code)
-                    );
+                return String(
+                    a.code
+                ).localeCompare(
+                    String(
+                        b.code
+                    )
+                );
 
             }
         );
@@ -1586,7 +2032,10 @@ async function loadItems(){
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         $("stockBody").innerHTML = `
 
@@ -1628,7 +2077,9 @@ function updateDashboard(){
         items.filter(
             function(item){
 
-                return getStatus(item).text === "OK";
+                return getStatus(
+                    item
+                ).text === "OK";
 
             }
         );
@@ -1638,7 +2089,9 @@ function updateDashboard(){
         items.filter(
             function(item){
 
-                return getStatus(item).text === "LOW";
+                return getStatus(
+                    item
+                ).text === "LOW";
 
             }
         );
@@ -1648,7 +2101,9 @@ function updateDashboard(){
         items.filter(
             function(item){
 
-                return getStatus(item).text === "HABIS";
+                return getStatus(
+                    item
+                ).text === "HABIS";
 
             }
         );
@@ -1658,7 +2113,9 @@ function updateDashboard(){
         items.filter(
             function(item){
 
-                return getStatus(item).text !== "OK";
+                return getStatus(
+                    item
+                ).text !== "OK";
 
             }
         );
@@ -1692,7 +2149,7 @@ function updateDashboard(){
 
 
 /* =========================================================
-   DASHBOARD CLICK
+   DASHBOARD STOCK LIST
 ========================================================= */
 
 function showStockList(type){
@@ -1708,10 +2165,13 @@ function showStockList(type){
             items.filter(
                 function(item){
 
-                    return getStatus(item).text === "LOW";
+                    return getStatus(
+                        item
+                    ).text === "LOW";
 
                 }
             );
+
 
         title =
             "Stock LOW";
@@ -1725,10 +2185,13 @@ function showStockList(type){
             items.filter(
                 function(item){
 
-                    return getStatus(item).text === "HABIS";
+                    return getStatus(
+                        item
+                    ).text === "HABIS";
 
                 }
             );
+
 
         title =
             "Stock HABIS";
@@ -1742,10 +2205,13 @@ function showStockList(type){
             items.filter(
                 function(item){
 
-                    return getStatus(item).text !== "OK";
+                    return getStatus(
+                        item
+                    ).text !== "OK";
 
                 }
             );
+
 
         title =
             "Perlu Restock";
@@ -1763,23 +2229,27 @@ function showStockList(type){
 
     if(list.length === 0){
 
-        $("stockListContent").innerHTML = `
+        $("stockListContent")
+            .innerHTML = `
 
-            <div
-                style="
-                text-align:center;
-                padding:30px;
-                color:#64748b">
+                <div
+                    style="
+                    text-align:center;
+                    padding:30px;
+                    color:#64748b">
 
-                Tidak ada sparepart dalam kategori ini.
+                    Tidak ada sparepart
+                    dalam kategori ini.
 
-            </div>
+                </div>
 
-        `;
+            `;
+
 
         openModal(
             "stockListModal"
         );
+
 
         return;
 
@@ -1794,7 +2264,9 @@ function showStockList(type){
         function(item){
 
             const status =
-                getStatus(item);
+                getStatus(
+                    item
+                );
 
 
             const badgeClass =
@@ -1807,7 +2279,8 @@ function showStockList(type){
 
                 <div class="stock-item">
 
-                    <div class="stock-item-header">
+                    <div
+                        class="stock-item-header">
 
                         <div>
 
@@ -1829,8 +2302,11 @@ function showStockList(type){
 
                         </div>
 
+
                         <span
-                            class="stock-badge ${badgeClass}">
+                            class="
+                            stock-badge
+                            ${badgeClass}">
 
                             ${status.text}
 
@@ -1877,7 +2353,9 @@ function showStockList(type){
                         <button
                             class="btn btn-in"
                             data-list-action="in"
-                            data-code="${escapeHtml(item.code)}">
+                            data-code="${escapeHtml(
+                                item.code
+                            )}">
 
                             Masuk
 
@@ -1887,7 +2365,9 @@ function showStockList(type){
                         <button
                             class="btn btn-out"
                             data-list-action="out"
-                            data-code="${escapeHtml(item.code)}">
+                            data-code="${escapeHtml(
+                                item.code
+                            )}">
 
                             Keluar
 
@@ -1897,12 +2377,13 @@ function showStockList(type){
                         <button
                             class="btn btn-edit"
                             data-list-action="edit"
-                            data-code="${escapeHtml(item.code)}">
+                            data-code="${escapeHtml(
+                                item.code
+                            )}">
 
                             Edit
 
                         </button>
-
 
                     </div>
 
@@ -1930,7 +2411,9 @@ function showStockList(type){
 }
 
 
-/* ================= TABLE ================= */
+/* =========================================================
+   TABLE
+========================================================= */
 
 function renderTable(){
 
@@ -1947,21 +2430,33 @@ function renderTable(){
 
                 return (
 
-                    String(item.code)
-                        .toLowerCase()
-                        .includes(search)
+                    String(
+                        item.code
+                    )
+                    .toLowerCase()
+                    .includes(
+                        search
+                    )
 
                     ||
 
-                    String(item.name)
-                        .toLowerCase()
-                        .includes(search)
+                    String(
+                        item.name
+                    )
+                    .toLowerCase()
+                    .includes(
+                        search
+                    )
 
                     ||
 
-                    String(item.lokasi)
-                        .toLowerCase()
-                        .includes(search)
+                    String(
+                        item.lokasi
+                    )
+                    .toLowerCase()
+                    .includes(
+                        search
+                    )
 
                 );
 
@@ -1971,36 +2466,41 @@ function renderTable(){
 
     if(filtered.length === 0){
 
-        $("stockBody").innerHTML = `
+        $("stockBody")
+            .innerHTML = `
 
-            <tr>
+                <tr>
 
-                <td
-                    colspan="7"
-                    style="
-                    text-align:center;
-                    padding:30px">
+                    <td
+                        colspan="7"
+                        style="
+                        text-align:center;
+                        padding:30px">
 
-                    Tidak ada data sparepart.
+                        Tidak ada data sparepart.
 
-                </td>
+                    </td>
 
-            </tr>
+                </tr>
 
-        `;
+            `;
+
 
         return;
 
     }
 
 
-    $("stockBody").innerHTML =
+    $("stockBody")
+        .innerHTML =
 
         filtered.map(
             function(item){
 
                 const status =
-                    getStatus(item);
+                    getStatus(
+                        item
+                    );
 
 
                 return `
@@ -2008,15 +2508,21 @@ function renderTable(){
                     <tr>
 
                         <td>
-                            ${escapeHtml(item.code)}
+                            ${escapeHtml(
+                                item.code
+                            )}
                         </td>
 
                         <td>
-                            ${escapeHtml(item.name)}
+                            ${escapeHtml(
+                                item.name
+                            )}
                         </td>
 
                         <td>
-                            ${escapeHtml(item.lokasi)}
+                            ${escapeHtml(
+                                item.lokasi
+                            )}
                         </td>
 
                         <td>
@@ -2027,18 +2533,25 @@ function renderTable(){
                             ${item.minqty}
                         </td>
 
-                        <td class="${status.className}">
+                        <td
+                            class="${status.className}">
+
                             ${status.text}
+
                         </td>
 
                         <td>
 
-                            <div class="actions">
+                            <div
+                                class="actions">
+
 
                                 <button
                                     class="btn btn-in"
                                     data-action="in"
-                                    data-code="${escapeHtml(item.code)}">
+                                    data-code="${escapeHtml(
+                                        item.code
+                                    )}">
 
                                     Masuk
 
@@ -2048,7 +2561,9 @@ function renderTable(){
                                 <button
                                     class="btn btn-out"
                                     data-action="out"
-                                    data-code="${escapeHtml(item.code)}">
+                                    data-code="${escapeHtml(
+                                        item.code
+                                    )}">
 
                                     Keluar
 
@@ -2058,7 +2573,9 @@ function renderTable(){
                                 <button
                                     class="btn btn-edit"
                                     data-action="edit"
-                                    data-code="${escapeHtml(item.code)}">
+                                    data-code="${escapeHtml(
+                                        item.code
+                                    )}">
 
                                     Edit
 
@@ -2068,7 +2585,9 @@ function renderTable(){
                                 <button
                                     class="btn btn-delete"
                                     data-action="delete"
-                                    data-code="${escapeHtml(item.code)}">
+                                    data-code="${escapeHtml(
+                                        item.code
+                                    )}">
 
                                     Hapus
 
@@ -2083,12 +2602,15 @@ function renderTable(){
                 `;
 
             }
-        ).join("");
+        )
+        .join("");
 
 }
 
 
-/* ================= SELECT ================= */
+/* =========================================================
+   SELECT
+========================================================= */
 
 function updateSelects(){
 
@@ -2099,18 +2621,25 @@ function updateSelects(){
                 return `
 
                     <option
-                        value="${escapeHtml(item.code)}">
+                        value="${escapeHtml(
+                            item.code
+                        )}">
 
-                        ${escapeHtml(item.code)}
+                        ${escapeHtml(
+                            item.code
+                        )}
                         -
-                        ${escapeHtml(item.name)}
+                        ${escapeHtml(
+                            item.name
+                        )}
 
                     </option>
 
                 `;
 
             }
-        ).join("");
+        )
+        .join("");
 
 
     $("transactionCode")
@@ -2132,7 +2661,9 @@ function updateSelects(){
 }
 
 
-/* ================= MODAL ================= */
+/* =========================================================
+   MODAL
+========================================================= */
 
 function openModal(id){
 
@@ -2152,28 +2683,43 @@ function closeModal(id){
 }
 
 
-/* ================= ADD ================= */
+/* =========================================================
+   ADD
+========================================================= */
 
 function openAdd(){
 
     editingCode = null;
+
 
     $("itemTitle")
         .textContent =
         "Tambah Sparepart";
 
 
-    $("itemCode").value = "";
+    $("itemCode")
+        .value = "";
 
-    $("itemName").value = "";
 
-    $("itemLocation").value = "";
+    $("itemName")
+        .value = "";
 
-    $("itemQty").value = 0;
 
-    $("itemMin").value = 0;
+    $("itemLocation")
+        .value = "";
 
-    $("itemCode").disabled = false;
+
+    $("itemQty")
+        .value = 0;
+
+
+    $("itemMin")
+        .value = 0;
+
+
+    $("itemCode")
+        .disabled = false;
+
 
     openModal(
         "itemModal"
@@ -2182,7 +2728,9 @@ function openAdd(){
 }
 
 
-/* ================= EDIT ================= */
+/* =========================================================
+   EDIT
+========================================================= */
 
 function openEdit(code){
 
@@ -2190,7 +2738,13 @@ function openEdit(code){
         items.find(
             function(x){
 
-                return String(x.code) === String(code);
+                return String(
+                    x.code
+                )
+                ===
+                String(
+                    code
+                );
 
             }
         );
@@ -2254,7 +2808,9 @@ function openEdit(code){
 }
 
 
-/* ================= SAVE ITEM ================= */
+/* =========================================================
+   SAVE ITEM
+========================================================= */
 
 async function saveItem(){
 
@@ -2278,13 +2834,15 @@ async function saveItem(){
 
     const qty =
         Number(
-            $("itemQty").value
+            $("itemQty")
+            .value
         );
 
 
     const minqty =
         Number(
-            $("itemMin").value
+            $("itemMin")
+            .value
         );
 
 
@@ -2312,7 +2870,10 @@ async function saveItem(){
     }
 
 
-    if(qty < 0 || minqty < 0){
+    if(
+        qty < 0 ||
+        minqty < 0
+    ){
 
         showMessage(
             "Stock tidak boleh negatif.",
@@ -2332,9 +2893,13 @@ async function saveItem(){
                 items.find(
                     function(x){
 
-                        return String(x.code)
-                            ===
-                            String(editingCode);
+                        return String(
+                            x.code
+                        )
+                        ===
+                        String(
+                            editingCode
+                        );
 
                     }
                 );
@@ -2358,9 +2923,13 @@ async function saveItem(){
                 {
 
                     name:name,
+
                     lokasi:lokasi,
+
                     qty:qty,
+
                     minqty:minqty,
+
                     updatedAt:
                         serverTimestamp()
 
@@ -2377,7 +2946,9 @@ async function saveItem(){
         else{
 
             const safeId =
-                firestoreKey(code);
+                firestoreKey(
+                    code
+                );
 
 
             const existing =
@@ -2411,9 +2982,13 @@ async function saveItem(){
                 {
 
                     code:code,
+
                     name:name,
+
                     lokasi:lokasi,
+
                     qty:qty,
+
                     minqty:minqty,
 
                     createdAt:
@@ -2441,7 +3016,10 @@ async function saveItem(){
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         showMessage(
             "Gagal menyimpan: " +
@@ -2454,7 +3032,9 @@ async function saveItem(){
 }
 
 
-/* ================= DELETE ================= */
+/* =========================================================
+   DELETE
+========================================================= */
 
 async function deleteItem(code){
 
@@ -2478,6 +3058,7 @@ async function deleteItem(code){
         const q =
             query(
                 stockRef,
+
                 where(
                     "code",
                     "==",
@@ -2487,7 +3068,9 @@ async function deleteItem(code){
 
 
         const snap =
-            await getDocs(q);
+            await getDocs(
+                q
+            );
 
 
         if(!snap.empty){
@@ -2508,7 +3091,9 @@ async function deleteItem(code){
         else{
 
             const safeId =
-                firestoreKey(code);
+                firestoreKey(
+                    code
+                );
 
 
             const ref =
@@ -2520,7 +3105,9 @@ async function deleteItem(code){
 
 
             const check =
-                await getDoc(ref);
+                await getDoc(
+                    ref
+                );
 
 
             if(!check.exists()){
@@ -2535,7 +3122,9 @@ async function deleteItem(code){
             }
 
 
-            await deleteDoc(ref);
+            await deleteDoc(
+                ref
+            );
 
         }
 
@@ -2551,7 +3140,10 @@ async function deleteItem(code){
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         showMessage(
             "Gagal menghapus: " +
@@ -2564,7 +3156,9 @@ async function deleteItem(code){
 }
 
 
-/* ================= TRANSACTION ================= */
+/* =========================================================
+   TRANSACTION
+========================================================= */
 
 function openTransaction(
     mode,
@@ -2619,7 +3213,9 @@ function openTransaction(
 }
 
 
-/* ================= STOCK AVAILABLE ================= */
+/* =========================================================
+   AVAILABLE STOCK
+========================================================= */
 
 function updateAvailableStock(){
 
@@ -2632,9 +3228,13 @@ function updateAvailableStock(){
         items.find(
             function(x){
 
-                return String(x.code)
-                    ===
-                    String(code);
+                return String(
+                    x.code
+                )
+                ===
+                String(
+                    code
+                );
 
             }
         );
@@ -2649,7 +3249,9 @@ function updateAvailableStock(){
 }
 
 
-/* ================= SAVE TRANSACTION ================= */
+/* =========================================================
+   SAVE TRANSACTION
+========================================================= */
 
 async function saveTransaction(){
 
@@ -2660,7 +3262,8 @@ async function saveTransaction(){
 
     const qty =
         Number(
-            $("transactionQty").value
+            $("transactionQty")
+            .value
         );
 
 
@@ -2718,9 +3321,13 @@ async function saveTransaction(){
             items.find(
                 function(x){
 
-                    return String(x.code)
-                        ===
-                        String(code);
+                    return String(
+                        x.code
+                    )
+                    ===
+                    String(
+                        code
+                    );
 
                 }
             );
@@ -2743,8 +3350,12 @@ async function saveTransaction(){
             );
 
 
+        let newQty = 0;
+
+
         await runTransaction(
             db,
+
             async function(transaction){
 
                 const snap =
@@ -2772,10 +3383,11 @@ async function saveTransaction(){
                     );
 
 
-                let newQty;
-
-
-                if(transactionMode === "in"){
+                if(
+                    transactionMode
+                    ===
+                    "in"
+                ){
 
                     newQty =
                         oldQty + qty;
@@ -2855,7 +3467,10 @@ async function saveTransaction(){
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         showMessage(
             "Gagal menyimpan transaksi: " +
@@ -2868,7 +3483,9 @@ async function saveTransaction(){
 }
 
 
-/* ================= HISTORY ================= */
+/* =========================================================
+   HISTORY
+========================================================= */
 
 async function loadHistory(){
 
@@ -2902,8 +3519,11 @@ async function loadHistory(){
                 function(d){
 
                     return {
+
                         id:d.id,
+
                         ...d.data()
+
                     };
 
                 }
@@ -2911,9 +3531,13 @@ async function loadHistory(){
             .filter(
                 function(x){
 
-                    return String(x.code)
-                        ===
-                        String(code);
+                    return String(
+                        x.code
+                    )
+                    ===
+                    String(
+                        code
+                    );
 
                 }
             );
@@ -2923,10 +3547,14 @@ async function loadHistory(){
             function(a,b){
 
                 const ta =
-                    a.createdAt?.seconds || 0;
+                    a.createdAt?.seconds
+                    || 0;
+
 
                 const tb =
-                    b.createdAt?.seconds || 0;
+                    b.createdAt?.seconds
+                    || 0;
+
 
                 return tb - ta;
 
@@ -2934,7 +3562,9 @@ async function loadHistory(){
         );
 
 
-        if(data.length === 0){
+        if(
+            data.length === 0
+        ){
 
             $("historyContent")
                 .innerHTML =
@@ -2955,11 +3585,25 @@ async function loadHistory(){
 
                         <tr>
 
-                            <th>Tanggal</th>
-                            <th>Jenis</th>
-                            <th>Jumlah</th>
-                            <th>Operator</th>
-                            <th>Keterangan</th>
+                            <th>
+                                Tanggal
+                            </th>
+
+                            <th>
+                                Jenis
+                            </th>
+
+                            <th>
+                                Jumlah
+                            </th>
+
+                            <th>
+                                Operator
+                            </th>
+
+                            <th>
+                                Keterangan
+                            </th>
 
                         </tr>
 
@@ -2973,7 +3617,8 @@ async function loadHistory(){
         data.forEach(
             function(item){
 
-                let date = "-";
+                let date =
+                    "-";
 
 
                 if(
@@ -2996,15 +3641,19 @@ async function loadHistory(){
                     <tr>
 
                         <td>
-                            ${escapeHtml(date)}
+                            ${escapeHtml(
+                                date
+                            )}
                         </td>
 
                         <td>
+
                             ${
                                 item.type === "in"
                                 ? "MASUK"
                                 : "KELUAR"
                             }
+
                         </td>
 
                         <td>
@@ -3050,7 +3699,10 @@ async function loadHistory(){
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         $("historyContent")
             .innerHTML =
@@ -3061,11 +3713,14 @@ async function loadHistory(){
 }
 
 
-/* ================= EXCEL ================= */
+/* =========================================================
+   EXCEL READ
+========================================================= */
 
 $("excelFile")
 .addEventListener(
     "change",
+
     async function(){
 
         const file =
@@ -3126,7 +3781,8 @@ $("excelFile")
                                     row["kode"]
                                     ??
                                     ""
-                                ).trim(),
+                                )
+                                .trim(),
 
                             name:
                                 String(
@@ -3135,7 +3791,8 @@ $("excelFile")
                                     row["Nama"]
                                     ??
                                     ""
-                                ).trim(),
+                                )
+                                .trim(),
 
                             lokasi:
                                 String(
@@ -3144,7 +3801,8 @@ $("excelFile")
                                     row["lokasi"]
                                     ??
                                     ""
-                                ).trim(),
+                                )
+                                .trim(),
 
                             qty:
                                 Number(
@@ -3179,7 +3837,9 @@ $("excelFile")
                 );
 
 
-            if(excelRows.length === 0){
+            if(
+                excelRows.length === 0
+            ){
 
                 $("excelPreview")
                     .innerHTML =
@@ -3204,11 +3864,25 @@ $("excelFile")
 
                             <tr>
 
-                                <th>Kode</th>
-                                <th>Nama</th>
-                                <th>Lokasi</th>
-                                <th>Stock</th>
-                                <th>Min. Stock</th>
+                                <th>
+                                    Kode
+                                </th>
+
+                                <th>
+                                    Nama
+                                </th>
+
+                                <th>
+                                    Lokasi
+                                </th>
+
+                                <th>
+                                    Stock
+                                </th>
+
+                                <th>
+                                    Min. Stock
+                                </th>
 
                             </tr>
 
@@ -3227,15 +3901,21 @@ $("excelFile")
                         <tr>
 
                             <td>
-                                ${escapeHtml(row.code)}
+                                ${escapeHtml(
+                                    row.code
+                                )}
                             </td>
 
                             <td>
-                                ${escapeHtml(row.name)}
+                                ${escapeHtml(
+                                    row.name
+                                )}
                             </td>
 
                             <td>
-                                ${escapeHtml(row.lokasi)}
+                                ${escapeHtml(
+                                    row.lokasi
+                                )}
                             </td>
 
                             <td>
@@ -3285,7 +3965,10 @@ $("excelFile")
 
         catch(error){
 
-            console.error(error);
+            console.error(
+                error
+            );
+
 
             showMessage(
                 "Gagal membaca Excel.",
@@ -3298,11 +3981,14 @@ $("excelFile")
 );
 
 
-/* ================= IMPORT FIREBASE ================= */
+/* =========================================================
+   IMPORT FIREBASE
+========================================================= */
 
 $("importButton")
 .addEventListener(
     "click",
+
     async function(){
 
         if(
@@ -3318,6 +4004,7 @@ $("importButton")
 
             this.disabled =
                 true;
+
 
             this.textContent =
                 "Mengimport...";
@@ -3346,20 +4033,34 @@ $("importButton")
 
 
                 const existing =
-                    await getDoc(ref);
+                    await getDoc(
+                        ref
+                    );
 
 
-                if(existing.exists()){
+                if(
+                    existing.exists()
+                ){
 
                     await updateDoc(
                         ref,
                         {
 
-                            code:row.code,
-                            name:row.name,
-                            lokasi:row.lokasi,
-                            qty:row.qty,
-                            minqty:row.minqty,
+                            code:
+                                row.code,
+
+                            name:
+                                row.name,
+
+                            lokasi:
+                                row.lokasi,
+
+                            qty:
+                                row.qty,
+
+                            minqty:
+                                row.minqty,
+
                             updatedAt:
                                 serverTimestamp()
 
@@ -3374,11 +4075,21 @@ $("importButton")
                         ref,
                         {
 
-                            code:row.code,
-                            name:row.name,
-                            lokasi:row.lokasi,
-                            qty:row.qty,
-                            minqty:row.minqty,
+                            code:
+                                row.code,
+
+                            name:
+                                row.name,
+
+                            lokasi:
+                                row.lokasi,
+
+                            qty:
+                                row.qty,
+
+                            minqty:
+                                row.minqty,
+
                             createdAt:
                                 serverTimestamp()
 
@@ -3403,11 +4114,13 @@ $("importButton")
 
 
             $("excelFile")
-                .value = "";
+                .value =
+                "";
 
 
             $("excelPreview")
-                .innerHTML = "";
+                .innerHTML =
+                "";
 
 
             $("importButton")
@@ -3431,10 +4144,14 @@ $("importButton")
 
         catch(error){
 
-            console.error(error);
+            console.error(
+                error
+            );
+
 
             this.disabled =
                 false;
+
 
             this.textContent =
                 "Import ke Firebase";
@@ -3452,11 +4169,15 @@ $("importButton")
 );
 
 
-/* ================= EXPORT ================= */
+/* =========================================================
+   EXPORT EXCEL
+========================================================= */
 
 function exportExcel(){
 
-    if(items.length === 0){
+    if(
+        items.length === 0
+    ){
 
         showMessage(
             "Tidak ada data untuk diexport.",
@@ -3490,7 +4211,9 @@ function exportExcel(){
                         item.minqty,
 
                     "Status":
-                        getStatus(item).text
+                        getStatus(
+                            item
+                        ).text
 
                 };
 
@@ -3529,12 +4252,13 @@ function exportExcel(){
 
 
 /* =========================================================
-   TABLE BUTTON
+   TABLE ACTION
 ========================================================= */
 
 $("stockBody")
 .addEventListener(
     "click",
+
     function(event){
 
         const button =
@@ -3558,19 +4282,29 @@ $("stockBody")
             button.dataset.code;
 
 
-        if(action === "delete"){
+        if(
+            action === "delete"
+        ){
 
-            deleteItem(code);
-
-        }
-
-        else if(action === "edit"){
-
-            openEdit(code);
+            deleteItem(
+                code
+            );
 
         }
 
-        else if(action === "in"){
+        else if(
+            action === "edit"
+        ){
+
+            openEdit(
+                code
+            );
+
+        }
+
+        else if(
+            action === "in"
+        ){
 
             openTransaction(
                 "in",
@@ -3579,7 +4313,9 @@ $("stockBody")
 
         }
 
-        else if(action === "out"){
+        else if(
+            action === "out"
+        ){
 
             openTransaction(
                 "out",
@@ -3593,7 +4329,7 @@ $("stockBody")
 
 
 /* =========================================================
-   DASHBOARD BUTTON
+   DASHBOARD ACTION
 ========================================================= */
 
 $("lowCard")
@@ -3601,7 +4337,9 @@ $("lowCard")
     "click",
     function(){
 
-        showStockList("low");
+        showStockList(
+            "low"
+        );
 
     }
 );
@@ -3612,7 +4350,9 @@ $("emptyCard")
     "click",
     function(){
 
-        showStockList("empty");
+        showStockList(
+            "empty"
+        );
 
     }
 );
@@ -3623,19 +4363,22 @@ $("restockCard")
     "click",
     function(){
 
-        showStockList("restock");
+        showStockList(
+            "restock"
+        );
 
     }
 );
 
 
 /* =========================================================
-   STOCK LIST BUTTON
+   STOCK LIST ACTION
 ========================================================= */
 
 $("stockListContent")
 .addEventListener(
     "click",
+
     function(event){
 
         const button =
@@ -3664,7 +4407,9 @@ $("stockListContent")
         );
 
 
-        if(action === "in"){
+        if(
+            action === "in"
+        ){
 
             openTransaction(
                 "in",
@@ -3673,7 +4418,9 @@ $("stockListContent")
 
         }
 
-        else if(action === "out"){
+        else if(
+            action === "out"
+        ){
 
             openTransaction(
                 "out",
@@ -3682,9 +4429,13 @@ $("stockListContent")
 
         }
 
-        else if(action === "edit"){
+        else if(
+            action === "edit"
+        ){
 
-            openEdit(code);
+            openEdit(
+                code
+            );
 
         }
 
@@ -3692,11 +4443,14 @@ $("stockListContent")
 );
 
 
-/* ================= SEARCH ================= */
+/* =========================================================
+   SEARCH
+========================================================= */
 
 $("search")
 .addEventListener(
     "input",
+
     function(){
 
         renderTable();
@@ -3705,7 +4459,9 @@ $("search")
 );
 
 
-/* ================= TRANSACTION SELECT ================= */
+/* =========================================================
+   TRANSACTION SELECT
+========================================================= */
 
 $("transactionCode")
 .addEventListener(
@@ -3714,16 +4470,20 @@ $("transactionCode")
 );
 
 
-/* ================= MENU ================= */
+/* =========================================================
+   MENU
+========================================================= */
 
 $("menuButton")
 .addEventListener(
     "click",
+
     function(){
 
         $("drawer")
             .classList
             .toggle("open");
+
 
         $("overlay")
             .classList
@@ -3736,11 +4496,13 @@ $("menuButton")
 $("overlay")
 .addEventListener(
     "click",
+
     function(){
 
         $("drawer")
             .classList
             .remove("open");
+
 
         $("overlay")
             .classList
@@ -3750,15 +4512,20 @@ $("overlay")
 );
 
 
-/* ================= MENU ITEMS ================= */
+/* =========================================================
+   MENU ITEMS
+========================================================= */
 
 document
-.querySelectorAll(".menu-item")
+.querySelectorAll(
+    ".menu-item"
+)
 .forEach(
     function(button){
 
         button.addEventListener(
             "click",
+
             function(){
 
                 const menu =
@@ -3775,7 +4542,9 @@ document
                     .remove("show");
 
 
-                if(menu === "data"){
+                if(
+                    menu === "data"
+                ){
 
                     window.scrollTo({
                         top:0,
@@ -3784,13 +4553,17 @@ document
 
                 }
 
-                else if(menu === "add"){
+                else if(
+                    menu === "add"
+                ){
 
                     openAdd();
 
                 }
 
-                else if(menu === "import"){
+                else if(
+                    menu === "import"
+                ){
 
                     openModal(
                         "importModal"
@@ -3798,13 +4571,17 @@ document
 
                 }
 
-                else if(menu === "export"){
+                else if(
+                    menu === "export"
+                ){
 
                     exportExcel();
 
                 }
 
-                else if(menu === "in"){
+                else if(
+                    menu === "in"
+                ){
 
                     openTransaction(
                         "in"
@@ -3812,7 +4589,9 @@ document
 
                 }
 
-                else if(menu === "out"){
+                else if(
+                    menu === "out"
+                ){
 
                     openTransaction(
                         "out"
@@ -3820,11 +4599,14 @@ document
 
                 }
 
-                else if(menu === "history"){
+                else if(
+                    menu === "history"
+                ){
 
                     $("historyContent")
                         .innerHTML =
                         "Pilih sparepart.";
+
 
                     openModal(
                         "historyModal"
@@ -3839,11 +4621,14 @@ document
 );
 
 
-/* ================= MODAL BUTTONS ================= */
+/* =========================================================
+   MODAL BUTTONS
+========================================================= */
 
 $("cancelItem")
 .addEventListener(
     "click",
+
     function(){
 
         closeModal(
@@ -3857,6 +4642,7 @@ $("cancelItem")
 $("cancelTransaction")
 .addEventListener(
     "click",
+
     function(){
 
         closeModal(
@@ -3870,6 +4656,7 @@ $("cancelTransaction")
 $("cancelImport")
 .addEventListener(
     "click",
+
     function(){
 
         closeModal(
@@ -3883,6 +4670,7 @@ $("cancelImport")
 $("cancelHistory")
 .addEventListener(
     "click",
+
     function(){
 
         closeModal(
@@ -3896,6 +4684,7 @@ $("cancelHistory")
 $("closeStockList")
 .addEventListener(
     "click",
+
     function(){
 
         closeModal(
@@ -3927,15 +4716,20 @@ $("historyCode")
 );
 
 
-/* ================= CLICK OUTSIDE MODAL ================= */
+/* =========================================================
+   CLOSE MODAL OUTSIDE
+========================================================= */
 
 document
-.querySelectorAll(".modal")
+.querySelectorAll(
+    ".modal"
+)
 .forEach(
     function(modal){
 
         modal.addEventListener(
             "click",
+
             function(event){
 
                 if(
@@ -3954,7 +4748,9 @@ document
 );
 
 
-/* ================= START ================= */
+/* =========================================================
+   START
+========================================================= */
 
 loadItems();
 
