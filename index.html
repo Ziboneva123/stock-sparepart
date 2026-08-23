@@ -12,7 +12,7 @@ content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
@@ -4688,6 +4688,61 @@ async function createAllQrCanvas(code){
 }
 
 
+
+async function loadJSZip(){
+
+    if(typeof JSZip !== "undefined"){
+        return;
+    }
+
+    const urls = [
+        "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js",
+        "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js",
+        "https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"
+    ];
+
+    for(const url of urls){
+
+        try{
+
+            await new Promise(function(resolve,reject){
+
+                const script =
+                    document.createElement("script");
+
+                script.src = url;
+                script.onload = function(){
+                    resolve();
+                };
+
+                script.onerror = function(){
+                    reject(
+                        new Error(
+                            "Gagal memuat " + url
+                        )
+                    );
+                };
+
+                document.head.appendChild(script);
+            });
+
+            if(typeof JSZip !== "undefined"){
+                return;
+            }
+
+        }
+        catch(error){
+            console.warn(
+                "JSZip CDN gagal:",
+                url,
+                error
+            );
+        }
+    }
+
+    throw new Error("JSZip tidak tersedia.");
+}
+
 async function downloadAllQR(){
 
     if(typeof items === "undefined" || items.length === 0){
@@ -4701,8 +4756,22 @@ async function downloadAllQR(){
     }
 
     if(typeof JSZip === "undefined"){
-        showMessage("Komponen ZIP belum termuat. Refresh halaman.","error");
-        return;
+        showMessage(
+            "Library ZIP belum termuat. Mencoba memuat ulang...",
+            "error"
+        );
+
+        try{
+            await loadJSZip();
+        }
+        catch(error){
+            console.error("JSZIP LOAD ERROR:",error);
+            showMessage(
+                "Library ZIP tidak dapat dimuat. Pastikan internet aktif lalu refresh.",
+                "error"
+            );
+            return;
+        }
     }
 
     const progress = document.getElementById("qrPdfProgress");
