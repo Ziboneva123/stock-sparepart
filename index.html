@@ -1372,6 +1372,39 @@ Data lainnya tidak dihapus.
 
 
 <!-- =====================================================
+     SEARCH QR SCANNER
+===================================================== -->
+
+<div class="modal" id="searchScanModal">
+
+    <div class="modal-card small">
+
+        <h2>Scan QR untuk Pencarian</h2>
+
+        <p style="color:#64748b;">
+            Arahkan kamera ke QR Code sparepart.
+        </p>
+
+        <div id="searchQrReader"></div>
+
+        <div id="searchScanMessage"
+             style="margin-top:15px;text-align:center;color:#64748b;">
+        </div>
+
+        <div class="modal-actions">
+
+            <button class="btn-light" id="cancelSearchScan">
+                Tutup
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
      QR CODE MODAL
 ===================================================== -->
 
@@ -3610,6 +3643,154 @@ function exportExcel(){
 
 
 /* =====================================================
+   SEARCH BAR QR SCANNER
+===================================================== */
+
+let searchQrScanner = null;
+let searchQrScannerRunning = false;
+let searchQrScanHandled = false;
+
+function stopSearchQrScanner(){
+
+    if(searchQrScanner && searchQrScannerRunning){
+
+        searchQrScanner.stop()
+        .then(function(){
+
+            searchQrScanner.clear();
+            searchQrScannerRunning=false;
+
+        })
+        .catch(function(){
+
+            searchQrScannerRunning=false;
+
+        });
+
+    }
+
+}
+
+function closeSearchQrModal(){
+
+    stopSearchQrScanner();
+    closeModal("searchScanModal");
+
+}
+
+function startSearchQrScanner(){
+
+    searchQrScanHandled=false;
+
+    $("searchScanMessage").textContent =
+        "Memulai kamera...";
+
+    openModal("searchScanModal");
+
+    setTimeout(function(){
+
+        if(searchQrScannerRunning){
+            return;
+        }
+
+        if(typeof Html5Qrcode === "undefined"){
+
+            $("searchScanMessage").innerHTML = `
+                <strong style="color:#b91c1c;">
+                    Scanner QR belum termuat.
+                </strong>
+                <br><br>
+                Refresh halaman lalu coba lagi.
+            `;
+
+            return;
+        }
+
+        searchQrScanner =
+            new Html5Qrcode("searchQrReader");
+
+        searchQrScanner.start(
+            {
+                facingMode:{
+                    ideal:"environment"
+                }
+            },
+            {
+                fps:10,
+                qrbox:{
+                    width:250,
+                    height:250
+                }
+            },
+            function(decodedText){
+
+                if(searchQrScanHandled){
+                    return;
+                }
+
+                searchQrScanHandled=true;
+
+                const code =
+                    String(decodedText).trim();
+
+                $("search").value=code;
+
+                renderTable();
+
+                closeSearchQrModal();
+
+                const found =
+                    items.some(function(item){
+
+                        return String(item.code).trim() === code;
+
+                    });
+
+                showMessage(
+                    found
+                    ? "QR terbaca: " + code
+                    : "QR terbaca, tetapi kode " + code +
+                      " tidak ditemukan.",
+                    found ? "ok" : "error"
+                );
+
+            },
+            function(){
+                /* scan progress ignored */
+            }
+        )
+        .then(function(){
+
+            searchQrScannerRunning=true;
+
+            $("searchScanMessage").textContent =
+                "Arahkan kamera ke QR Code sparepart.";
+
+        })
+        .catch(function(error){
+
+            console.error(
+                "SEARCH QR CAMERA ERROR:",
+                error
+            );
+
+            $("searchScanMessage").innerHTML = `
+                <strong style="color:#b91c1c;">
+                    Kamera tidak dapat dibuka.
+                </strong>
+                <br><br>
+                Izinkan akses kamera dan pastikan website
+                dibuka menggunakan HTTPS.
+            `;
+
+        });
+
+    },300);
+
+}
+
+
+/* =====================================================
    QR CODE
 ===================================================== */
 
@@ -4095,6 +4276,47 @@ $("historyCode")
 .addEventListener(
     "change",
     loadHistory
+);
+
+
+/* =====================================================
+   SEARCH QR BUTTON
+===================================================== */
+
+$("searchScanQrButton")
+.addEventListener(
+    "click",
+    function(){
+
+        startSearchQrScanner();
+
+    }
+);
+
+
+$("cancelSearchScan")
+.addEventListener(
+    "click",
+    function(){
+
+        closeSearchQrModal();
+
+    }
+);
+
+
+$("searchScanModal")
+.addEventListener(
+    "click",
+    function(event){
+
+        if(event.target === $("searchScanModal")){
+
+            closeSearchQrModal();
+
+        }
+
+    }
 );
 
 
