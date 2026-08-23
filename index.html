@@ -4631,109 +4631,150 @@ function setQrPdfProgress(text){
     if(el) el.textContent = text;
 }
 
-async function createAllQrCanvas(code){
+async function createAllQrCanvas(item){
 
     /*
-     * Buat QR dengan QUIET ZONE (bingkai putih) yang cukup.
-     * Ini penting supaya kamera HP lebih mudah mengenali QR,
-     * terutama QR hasil download/print.
+     * QR FINAL:
+     * Isi QR = KODE BARANG SAJA.
+     * Nama barang ditulis DI LUAR QR, di bawah QR.
+     * Quiet zone putih tetap dipertahankan agar mudah discan.
      */
 
-    const box = document.getElementById("allQrGenerator");
+    const box =
+        document.getElementById("allQrGenerator");
 
     box.innerHTML = "";
-    box.style.width = "360px";
-    box.style.height = "360px";
+
+    box.style.width = "600px";
+    box.style.height = "680px";
     box.style.background = "#ffffff";
 
     new QRCode(box,{
-        text:String(code),
-        width:360,
-        height:360,
+        text:String(item.code),
+        width:420,
+        height:420,
         colorDark:"#000000",
         colorLight:"#ffffff",
-        correctLevel:QRCode.CorrectLevel.H
+        correctLevel:QRCode.CorrectLevel.M
     });
 
-    await qrPdfSleep(150);
+    await qrPdfSleep(250);
 
-    const sourceCanvas = box.querySelector("canvas");
-    const sourceImg = box.querySelector("img");
+    const sourceCanvas =
+        box.querySelector("canvas");
+
+    const sourceImg =
+        box.querySelector("img");
 
     /*
-     * Output 400x400 dengan border putih 20px di semua sisi.
-     * QR aktual tetap 360x360 sehingga tidak kehilangan detail.
+     * PNG final:
+     * 600 x 600 QR area + label di bawah.
+     * QR tidak disentuh oleh tulisan.
      */
+    const result =
+        document.createElement("canvas");
 
-    const result = document.createElement("canvas");
-    result.width = 400;
-    result.height = 400;
+    result.width = 600;
+    result.height = 560;
 
-    const ctx = result.getContext("2d");
+    const ctx =
+        result.getContext("2d");
+
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0,0,400,400);
+    ctx.fillRect(0,0,600,560);
+
+    ctx.imageSmoothingEnabled = false;
 
     if(sourceCanvas){
 
         ctx.drawImage(
             sourceCanvas,
-            20,
-            20,
-            360,
-            360
+            90,
+            30,
+            420,
+            420
         );
 
-        return result;
     }
-
-    if(sourceImg){
+    else if(sourceImg){
 
         await new Promise(function(resolve,reject){
 
-            if(sourceImg.complete && sourceImg.naturalWidth > 0){
-
+            function draw(){
+                ctx.imageSmoothingEnabled = false;
                 ctx.drawImage(
                     sourceImg,
-                    20,
-                    20,
-                    360,
-                    360
+                    90,
+                    30,
+                    420,
+                    420
                 );
-
                 resolve();
+            }
 
+            if(
+                sourceImg.complete &&
+                sourceImg.naturalWidth > 0
+            ){
+                draw();
             }
             else{
-
-                sourceImg.onload=function(){
-
-                    ctx.drawImage(
-                        sourceImg,
-                        20,
-                        20,
-                        360,
-                        360
-                    );
-
-                    resolve();
-
-                };
-
-                sourceImg.onerror=function(){
+                sourceImg.onload = draw;
+                sourceImg.onerror = function(){
                     reject(new Error("Gambar QR gagal dimuat."));
                 };
-
             }
-
         });
 
-        return result;
+    }
+    else{
+        throw new Error("QR Code gagal dibuat.");
     }
 
-    throw new Error("QR Code gagal dibuat.");
+    /* =================================================
+       NAMA BARANG DI LUAR QR
+       QR tetap bersih sehingga tetap mudah discan.
+    ================================================= */
+
+    const name = String(item.name || "TANPA NAMA");
+    const code = String(item.code || "");
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillStyle = "#000000";
+    ctx.font = "bold 28px Arial, sans-serif";
+
+    ctx.fillText(
+        code,
+        300,
+        485
+    );
+
+    ctx.font = "24px Arial, sans-serif";
+
+    /* Potong nama jika terlalu panjang agar tidak keluar halaman. */
+    let displayName = name;
+    const maxWidth = 540;
+
+    if(ctx.measureText(displayName).width > maxWidth){
+        while(
+            displayName.length > 3 &&
+            ctx.measureText(displayName + "...").width > maxWidth
+        ){
+            displayName = displayName.slice(0,-1);
+        }
+        displayName += "...";
+    }
+
+    ctx.fillText(
+        displayName,
+        300,
+        525
+    );
+
+    return result;
 }
-
-
 
 async function loadJSZip(){
 
@@ -4857,7 +4898,7 @@ async function downloadAllQR(){
             );
 
             const canvas =
-                await createAllQrCanvas(item.code);
+                await createAllQrCanvas(item);
 
             const blob =
                 await new Promise(function(resolve){
@@ -4919,7 +4960,7 @@ async function downloadAllQR(){
         const a = document.createElement("a");
 
         a.href = url;
-        a.download = "Stock_Barang_QR.zip";
+        a.download = "Stock_Barang_QR_NAMA.zip";
 
         document.body.appendChild(a);
         a.click();
@@ -4933,7 +4974,7 @@ async function downloadAllQR(){
 
         showMessage(
             items.length +
-            " QR Code berhasil dimasukkan ke Stock_Barang_QR.zip"
+            " QR Code berhasil dimasukkan ke Stock_Barang_QR_NAMA.zip"
         );
 
     }
