@@ -29,14 +29,12 @@ body{
 }
 
 body{
-
     background:#1f2937;
-
 }
 
 
 /* =====================================================
-   LOGIN PAGE
+   LOGIN
 ===================================================== */
 
 .login-page{
@@ -53,10 +51,6 @@ body{
 
 }
 
-
-/* =====================================================
-   LOGIN CARD
-===================================================== */
 
 .login-card{
 
@@ -163,7 +157,7 @@ body{
 
 
 /* =====================================================
-   PASSWORD EYE BUTTON
+   EYE BUTTON
 ===================================================== */
 
 .toggle-password{
@@ -270,7 +264,7 @@ body{
 
 
 /* =====================================================
-   DEVELOPER INFO
+   DEVELOPER
 ===================================================== */
 
 .developer-info{
@@ -299,11 +293,101 @@ body{
 }
 
 
-.developer-link{
+/* =====================================================
+   INVENTORY
+===================================================== */
 
-    color:#2563eb;
+#inventoryContent{
 
-    font-weight:bold;
+    display:none;
+
+    min-height:100vh;
+
+    background:#f4f6f8;
+
+    color:#222;
+
+}
+
+
+/* =====================================================
+   INVENTORY HEADER
+===================================================== */
+
+.inventory-header{
+
+    background:#1f2937;
+
+    color:white;
+
+    padding:30px;
+
+    text-align:center;
+
+}
+
+
+.inventory-header h1{
+
+    margin:0;
+
+    font-size:34px;
+
+}
+
+
+.inventory-header p{
+
+    margin:8px 0 0;
+
+    color:#d1d5db;
+
+    font-size:18px;
+
+}
+
+
+/* =====================================================
+   INVENTORY MESSAGE
+===================================================== */
+
+.inventory-message{
+
+    width:94%;
+
+    max-width:1200px;
+
+    margin:30px auto;
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:30px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0,0,0,.07);
+
+    text-align:center;
+
+}
+
+
+.inventory-message h2{
+
+    margin-top:0;
+
+    color:#1f2937;
+
+}
+
+
+.inventory-message p{
+
+    color:#64748b;
+
+    font-size:17px;
 
 }
 
@@ -439,7 +523,7 @@ body{
         </div>
 
 
-        <!-- LOGIN BUTTON -->
+        <!-- MASUK -->
 
         <button
             type="button"
@@ -483,6 +567,33 @@ body{
 </div>
 
 
+<!-- =====================================================
+     INVENTORY CONTENT
+     
+     LETAKKAN CODING INVENTORY ANDA
+     DI DALAM BAGIAN INI
+===================================================== -->
+
+<div
+    id="inventoryContent">
+
+
+    <!-- =================================================
+         INVENTORY ANDA
+         
+         Semua coding inventory Firebase
+         yang sudah berhasil harus berada
+         di sini.
+    ================================================== -->
+
+
+</div>
+
+
+<!-- =====================================================
+     LOGIN SCRIPT
+===================================================== -->
+
 <script>
 
 /* =====================================================
@@ -496,6 +607,18 @@ const CORRECT_PASSWORD =
 /* =====================================================
    ELEMENT
 ===================================================== */
+
+const loginPage =
+    document.getElementById(
+        "loginPage"
+    );
+
+
+const inventoryContent =
+    document.getElementById(
+        "inventoryContent"
+    );
+
 
 const loginPassword =
     document.getElementById(
@@ -522,7 +645,31 @@ const togglePassword =
 
 
 /* =====================================================
-   SHOW / HIDE PASSWORD
+   CEK SESSION
+===================================================== */
+
+if(
+    sessionStorage.getItem(
+        "inventoryLogin"
+    )
+    ===
+    "true"
+){
+
+    loginPage.style.display =
+        "none";
+
+    inventoryContent.style.display =
+        "block";
+
+    document.body.style.background =
+        "#f4f6f8";
+
+}
+
+
+/* =====================================================
+   LIHAT / SEMBUNYIKAN PASSWORD
 ===================================================== */
 
 togglePassword.addEventListener(
@@ -537,10 +684,8 @@ togglePassword.addEventListener(
             loginPassword.type =
                 "text";
 
-
             togglePassword.textContent =
                 "🙈";
-
 
             togglePassword.setAttribute(
                 "aria-label",
@@ -553,10 +698,8 @@ togglePassword.addEventListener(
             loginPassword.type =
                 "password";
 
-
             togglePassword.textContent =
                 "👁";
-
 
             togglePassword.setAttribute(
                 "aria-label",
@@ -576,7 +719,7 @@ togglePassword.addEventListener(
 function login(){
 
     const password =
-        loginPassword.value;
+        loginPassword.value.trim();
 
 
     loginError.textContent =
@@ -588,27 +731,22 @@ function login(){
         CORRECT_PASSWORD
     ){
 
-        /*
-         * Simpan status login
-         * selama browser/session masih aktif.
-         */
-
         sessionStorage.setItem(
             "inventoryLogin",
             "true"
         );
 
 
-        /*
-         * Masuk ke halaman inventory.
-         *
-         * GANTI "inventory.html"
-         * jika nama file inventory
-         * Anda berbeda.
-         */
+        loginPage.style.display =
+            "none";
 
-        window.location.href =
-            "inventory.html";
+
+        inventoryContent.style.display =
+            "block";
+
+
+        document.body.style.background =
+            "#f4f6f8";
 
     }
     else{
@@ -627,7 +765,7 @@ function login(){
 
 
 /* =====================================================
-   BUTTON MASUK
+   TOMBOL MASUK
 ===================================================== */
 
 loginButton.addEventListener(
@@ -657,6 +795,7 @@ loginPassword.addEventListener(
 );
 
 </script>
+
 
 </body>
 
