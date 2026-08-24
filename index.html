@@ -916,6 +916,10 @@ footer{
         History Transaksi
     </button>
 
+    <button class="menu-item" data-menu="exportHistory">
+        Export History Excel
+    </button>
+
     <button class="menu-item" data-menu="scan">
         Scan QR Code
     </button>
@@ -3681,6 +3685,174 @@ $("importButton")
 
 
 /* =====================================================
+   EXPORT HISTORY TRANSAKSI KE EXCEL
+===================================================== */
+
+async function exportHistoryExcel(){
+
+    try{
+
+        showMessage(
+            "Menyiapkan History Transaksi...",
+            "ok"
+        );
+
+        const snap =
+            await getDocs(
+                transactionRef
+            );
+
+        if(snap.empty){
+
+            showMessage(
+                "Belum ada history transaksi.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const itemMap = {};
+
+        items.forEach(
+            function(item){
+
+                itemMap[
+                    String(item.code)
+                ] = item;
+
+            }
+        );
+
+        const data =
+            snap.docs
+            .map(
+                function(d){
+
+                    const x =
+                        d.data();
+
+                    const item =
+                        itemMap[
+                            String(x.code)
+                        ];
+
+                    let tanggal = "";
+
+                    if(
+                        x.createdAt &&
+                        x.createdAt.toDate
+                    ){
+
+                        tanggal =
+                            x.createdAt
+                            .toDate()
+                            .toLocaleString(
+                                "id-ID"
+                            );
+
+                    }
+
+                    return {
+
+                        "Tanggal":
+                            tanggal,
+
+                        "Kode":
+                            x.code || "",
+
+                        "Nama Sparepart":
+                            item
+                            ? item.name
+                            : "",
+
+                        "Lokasi":
+                            item
+                            ? item.lokasi
+                            : "",
+
+                        "Jenis":
+                            x.type === "in"
+                            ? "MASUK"
+                            : "KELUAR",
+
+                        "Jumlah":
+                            Number(x.qty || 0),
+
+                        "Operator":
+                            x.operator || "",
+
+                        "Keterangan":
+                            x.note || ""
+
+                    };
+
+                }
+            );
+
+        data.sort(
+            function(a,b){
+
+                return String(a.Tanggal)
+                    .localeCompare(
+                        String(b.Tanggal)
+                    );
+
+            }
+        );
+
+        const worksheet =
+            XLSX.utils.json_to_sheet(
+                data
+            );
+
+        worksheet["!cols"] = [
+            {wch:22},
+            {wch:18},
+            {wch:30},
+            {wch:18},
+            {wch:12},
+            {wch:12},
+            {wch:22},
+            {wch:35}
+        ];
+
+        const workbook =
+            XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            "History Transaksi"
+        );
+
+        XLSX.writeFile(
+            workbook,
+            "History_Transaksi.xlsx"
+        );
+
+        showMessage(
+            "History Transaksi berhasil diekspor ke Excel."
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal export history: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
    EXPORT
 ===================================================== */
 
@@ -4441,6 +4613,12 @@ document
                     openModal(
                         "historyModal"
                     );
+
+                }
+
+                if(menu === "exportHistory"){
+
+                    exportHistoryExcel();
 
                 }
 
