@@ -546,6 +546,48 @@ td{
 }
 
 /* =====================================================
+   HISTORY FILTER
+===================================================== */
+
+.history-filter{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin:15px 0;
+}
+
+.history-filter label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.history-filter input{
+    width:100%;
+    padding:13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    font-size:16px;
+}
+
+.history-buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+.history-buttons button{
+    min-height:46px;
+}
+
+@media(max-width:600px){
+    .history-filter{
+        grid-template-columns:1fr;
+    }
+}
+
+/* =====================================================
    HISTORY
 ===================================================== */
 
@@ -921,7 +963,7 @@ footer{
     </button>
 
     <button class="menu-item" data-menu="refresh">
-        ðŸ”„ Refresh Halaman
+        Refresh Halaman
     </button>
 
     <button class="menu-item" data-menu="scan">
@@ -1397,36 +1439,49 @@ Data lainnya tidak dihapus.
 
 <div class="modal-card">
 
-<h2>
-    History Transaksi
-</h2>
+<h2>ðŸ“‹ History Transaksi</h2>
 
+<div class="history-filter">
 
-<div class="form-group">
+    <div>
+        <label for="historyDateFrom">Dari Tanggal</label>
+        <input id="historyDateFrom" type="date">
+    </div>
 
-<label>
-    Sparepart
-</label>
-
-<select id="historyCode"></select>
+    <div>
+        <label for="historyDateTo">Sampai Tanggal</label>
+        <input id="historyDateTo" type="date">
+    </div>
 
 </div>
 
+<div class="history-buttons">
+
+    <button class="btn-primary" id="showHistoryButton">
+        ðŸ”Ž Tampilkan
+    </button>
+
+    <button class="btn-light" id="resetHistoryButton">
+        â†º Semua Tanggal
+    </button>
+
+</div>
+
+<div id="historySummary"
+     style="margin:10px 0 15px;font-weight:bold;">
+</div>
 
 <div id="historyContent">
-    Pilih sparepart.
+    Pilih tanggal lalu tekan Tampilkan.
 </div>
-
 
 <div class="modal-actions">
 
-<button
-    class="btn-light"
-    id="cancelHistory">
-
-    Tutup
-
-</button>
+    <button
+        class="btn-light"
+        id="cancelHistory">
+        Tutup
+    </button>
 
 </div>
 
@@ -2599,7 +2654,6 @@ async function saveItem(){
 
         await loadItems();
 
-        // Refresh otomatis setelah simpan sparepart.
         setTimeout(
             function(){
                 location.reload();
@@ -3074,7 +3128,6 @@ async function saveTransaction(){
 
         await loadItems();
 
-        // Refresh otomatis setelah simpan transaksi.
         setTimeout(
             function(){
                 location.reload();
@@ -3099,238 +3152,205 @@ async function saveTransaction(){
 
 
 /* =====================================================
+   HISTORY FILTER
+===================================================== */
+
+.history-filter{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin:15px 0;
+}
+
+.history-filter label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.history-filter input{
+    width:100%;
+    padding:13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    font-size:16px;
+}
+
+.history-buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+.history-buttons button{
+    min-height:46px;
+}
+
+@media(max-width:600px){
+    .history-filter{
+        grid-template-columns:1fr;
+    }
+}
+
+/* =====================================================
    HISTORY
 ===================================================== */
 
 async function loadHistory(){
 
-    const code =
-        $("historyCode").value;
+    const from = $("historyDateFrom").value;
+    const to   = $("historyDateTo").value;
 
-
-    if(!code){
-
-        $("historyContent")
-            .innerHTML =
-            "Pilih sparepart.";
-
+    if(from && to && from > to){
+        showMessage("Tanggal mulai tidak boleh lebih besar dari tanggal sampai.", "error");
         return;
-
     }
 
+    $("historyContent").innerHTML =
+        "Memuat history transaksi...";
 
     try{
 
-        const snap =
-            await getDocs(
-                transactionRef
-            );
+        const snap = await getDocs(transactionRef);
 
+        const itemMap = {};
 
-        const data =
-            snap.docs
-            .map(
-                d => ({
-                    id:d.id,
-                    ...d.data()
-                })
-            )
-            .filter(
-                x =>
-                    x.code === code
-            );
+        items.forEach(function(item){
+            itemMap[String(item.code)] = item;
+        });
 
+        let data = snap.docs.map(function(d){
+            return {
+                id:d.id,
+                ...d.data()
+            };
+        });
 
-        data.sort(
-            function(a,b){
+        data = data.filter(function(x){
 
-                const aTime =
-                    a.createdAt?.seconds || 0;
-
-                const bTime =
-                    b.createdAt?.seconds || 0;
-
-                return bTime - aTime;
-
+            if(!x.createdAt || !x.createdAt.toDate){
+                return false;
             }
-        );
 
+            const dt = x.createdAt.toDate();
+
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth()+1).padStart(2,"0");
+            const d = String(dt.getDate()).padStart(2,"0");
+
+            const key = y + "-" + m + "-" + d;
+
+            return (!from || key >= from) &&
+                   (!to   || key <= to);
+
+        });
+
+        data.sort(function(a,b){
+
+            const at = a.createdAt?.seconds || 0;
+            const bt = b.createdAt?.seconds || 0;
+
+            return bt - at;
+
+        });
 
         if(data.length === 0){
 
-            $("historyContent")
-                .innerHTML =
-                "<p>Belum ada transaksi.</p>";
+            $("historySummary").textContent =
+                "0 event transaksi";
+
+            $("historyContent").innerHTML =
+                "<p>Tidak ada transaksi pada tanggal yang dipilih.</p>";
 
             return;
 
         }
 
-
         let masuk = 0;
         let keluar = 0;
 
+        data.forEach(function(x){
 
-        data.forEach(
-            function(x){
-
-                if(x.type === "in"){
-                    masuk += Number(x.qty || 0);
-                }
-                else{
-                    keluar += Number(x.qty || 0);
-                }
-
+            if(x.type === "in"){
+                masuk += Number(x.qty || 0);
+            }else{
+                keluar += Number(x.qty || 0);
             }
-        );
 
+        });
 
-        let html = `
+        $("historySummary").textContent =
+            "Total event: " + data.length +
+            " | Masuk: " + masuk +
+            " | Keluar: " + keluar;
 
-        <div class="history-summary">
-
-            <div class="history-box">
-
-                Total Transaksi
-
-                <strong>
-                    ${data.length}
-                </strong>
-
-            </div>
-
-            <div class="history-box">
-
-                Barang Masuk
-
-                <strong>
-                    ${masuk}
-                </strong>
-
-            </div>
-
-            <div class="history-box">
-
-                Barang Keluar
-
-                <strong>
-                    ${keluar}
-                </strong>
-
-            </div>
-
-        </div>
-
-
+        let htmlTable = `
         <div class="table-wrap">
-
         <table>
-
         <thead>
-
         <tr>
-
-        <th>Tanggal</th>
-        <th>Jenis</th>
-        <th>Jumlah</th>
-        <th>Operator</th>
-        <th>Keterangan</th>
-
+            <th>Tanggal</th>
+            <th>Kode</th>
+            <th>Nama Barang</th>
+            <th>Jenis</th>
+            <th>Jumlah</th>
+            <th>Operator</th>
+            <th>Keterangan</th>
         </tr>
-
         </thead>
-
         <tbody>
         `;
 
+        data.forEach(function(x){
 
-        data.forEach(
-            function(item){
+            const item =
+                itemMap[String(x.code)] || {};
 
-                let date = "-";
+            let tanggal = "-";
 
-
-                if(
-                    item.createdAt &&
-                    item.createdAt.toDate
-                ){
-
-                    date =
-                        item.createdAt
-                        .toDate()
-                        .toLocaleString(
-                            "id-ID"
-                        );
-
-                }
-
-
-                html += `
-
-                <tr>
-
-                    <td>
-                        ${escapeHtml(date)}
-                    </td>
-
-                    <td>
-                        ${
-                            item.type === "in"
-                            ? "MASUK"
-                            : "KELUAR"
-                        }
-                    </td>
-
-                    <td>
-                        ${item.qty}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(
-                            item.operator
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHtml(
-                            item.note || "-"
-                        )}
-                    </td>
-
-                </tr>
-
-                `;
-
+            if(x.createdAt && x.createdAt.toDate){
+                tanggal =
+                    x.createdAt
+                    .toDate()
+                    .toLocaleString("id-ID");
             }
-        );
 
+            htmlTable += `
+            <tr>
+                <td>${escapeHtml(tanggal)}</td>
+                <td>${escapeHtml(x.code || "-")}</td>
+                <td>${escapeHtml(item.name || "-")}</td>
+                <td>
+                    <strong>
+                        ${x.type === "in" ? "MASUK" : "KELUAR"}
+                    </strong>
+                </td>
+                <td>${Number(x.qty || 0)}</td>
+                <td>${escapeHtml(x.operator || "-")}</td>
+                <td>${escapeHtml(x.note || "-")}</td>
+            </tr>
+            `;
 
-        html += `
+        });
 
+        htmlTable += `
         </tbody>
-
         </table>
-
         </div>
-
         `;
 
-
-        $("historyContent")
-            .innerHTML =
-            html;
+        $("historyContent").innerHTML =
+            htmlTable;
 
     }
     catch(error){
 
         console.error(error);
 
-        $("historyContent")
-            .innerHTML =
+        $("historyContent").innerHTML =
             "Gagal mengambil history: " +
-            escapeHtml(
-                error.message
-            );
+            escapeHtml(error.message);
 
     }
 
@@ -4626,13 +4646,19 @@ document
 
                 if(menu === "history"){
 
-                    $("historyContent")
-                        .innerHTML =
-                        "Pilih sparepart.";
+                    $("historyDateFrom").value = "";
+                    $("historyDateTo").value = "";
+
+                    $("historySummary").textContent = "";
+
+                    $("historyContent").innerHTML =
+                        "Memuat history transaksi...";
 
                     openModal(
                         "historyModal"
                     );
+
+                    loadHistory();
 
                 }
 
@@ -4644,8 +4670,6 @@ document
 
 
                 if(menu === "refresh"){
-
-                    closeMenu();
 
                     location.reload();
 
@@ -4719,10 +4743,23 @@ $("transactionCode")
 );
 
 
-$("historyCode")
+$("showHistoryButton")
 .addEventListener(
-    "change",
+    "click",
     loadHistory
+);
+
+$("resetHistoryButton")
+.addEventListener(
+    "click",
+    function(){
+
+        $("historyDateFrom").value = "";
+        $("historyDateTo").value = "";
+
+        loadHistory();
+
+    }
 );
 
 
