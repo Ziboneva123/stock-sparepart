@@ -920,6 +920,10 @@ footer{
         Export History Excel
     </button>
 
+    <button class="menu-item" data-menu="refresh">
+        ðŸ”„ Refresh Halaman
+    </button>
+
     <button class="menu-item" data-menu="scan">
         Scan QR Code
     </button>
@@ -2595,6 +2599,14 @@ async function saveItem(){
 
         await loadItems();
 
+        // Refresh otomatis setelah simpan sparepart.
+        setTimeout(
+            function(){
+                location.reload();
+            },
+            500
+        );
+
     }
     catch(error){
 
@@ -3061,6 +3073,14 @@ async function saveTransaction(){
 
 
         await loadItems();
+
+        // Refresh otomatis setelah simpan transaksi.
+        setTimeout(
+            function(){
+                location.reload();
+            },
+            500
+        );
 
     }
     catch(error){
@@ -4619,6 +4639,15 @@ document
                 if(menu === "exportHistory"){
 
                     exportHistoryExcel();
+
+                }
+
+
+                if(menu === "refresh"){
+
+                    closeMenu();
+
+                    location.reload();
 
                 }
 
