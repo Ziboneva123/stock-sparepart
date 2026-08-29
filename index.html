@@ -2530,6 +2530,38 @@ Data lainnya tidak dihapus.
      JAVASCRIPT
 ===================================================== -->
 
+<script>
+/* LOGIN - independent from Firebase */
+(function(){
+    const PASSWORD = "mtcgoahead";
+    const loginScreen = document.getElementById("loginScreen");
+    const websiteContent = document.getElementById("websiteContent");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginButton = document.getElementById("loginButton");
+    const loginError = document.getElementById("loginError");
+    const togglePassword = document.getElementById("togglePassword");
+    function showWebsite(){
+        if(loginScreen) loginScreen.style.display="none";
+        if(websiteContent) websiteContent.style.display="block";
+    }
+    function login(){
+        if(loginPassword && loginPassword.value.trim()===PASSWORD){
+            try{localStorage.setItem("inventoryLogin","true");}catch(e){}
+            showWebsite();
+        }else{
+            if(loginError) loginError.textContent="Password salah.";
+            if(loginPassword){loginPassword.value="";loginPassword.focus();}
+        }
+    }
+    try{if(localStorage.getItem("inventoryLogin")==="true") showWebsite();}catch(e){}
+    if(loginButton) loginButton.addEventListener("click",login);
+    if(loginPassword) loginPassword.addEventListener("keydown",function(e){if(e.key==="Enter") login();});
+    if(togglePassword) togglePassword.addEventListener("click",function(){
+        if(loginPassword.type==="password"){loginPassword.type="text";togglePassword.textContent="Tutup";togglePassword.setAttribute("aria-label","Tutup password");}
+        else{loginPassword.type="password";togglePassword.textContent="Buka";togglePassword.setAttribute("aria-label","Buka password");}
+    });
+})();
+</script>
 <script type="module">
 
 import {
@@ -2558,161 +2590,6 @@ import {
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-const PASSWORD =
-    "mtcgoahead";
-
-
-const loginScreen =
-    document.getElementById(
-        "loginScreen"
-    );
-
-
-const websiteContent =
-    document.getElementById(
-        "websiteContent"
-    );
-
-
-const loginPassword =
-    document.getElementById(
-        "loginPassword"
-    );
-
-
-const loginButton =
-    document.getElementById(
-        "loginButton"
-    );
-
-
-const loginError =
-    document.getElementById(
-        "loginError"
-    );
-
-
-
-function isInventoryLoggedIn(){
-
-    try{
-
-        return (
-            localStorage.getItem(
-                "inventoryLogin"
-            ) === "true"
-        );
-
-    }
-    catch(error){
-
-        console.warn(
-            "localStorage tidak tersedia:",
-            error
-        );
-
-        return false;
-
-    }
-
-}
-
-function setInventoryLoggedIn(){
-
-    try{
-        localStorage.setItem(
-            "inventoryLogin",
-            "true"
-        );
-    }
-    catch(error){
-        console.warn("Gagal menyimpan login:",error);
-    }
-
-}
-
-function login(){
-
-    if(
-        loginPassword.value.trim() === PASSWORD
-    ){
-
-        setInventoryLoggedIn();
-
-        loginScreen.style.display =
-            "none";
-
-        websiteContent.style.display =
-            "block";
-
-    }
-    else{
-
-        loginError.textContent =
-            "Password salah.";
-
-        loginPassword.value = "";
-
-        loginPassword.focus();
-
-    }
-
-}
-
-
-loginButton.addEventListener(
-    "click",
-    login
-);
-
-/* =====================================================
-   SESSION LOGIN
-===================================================== */
-
-if(
-    isInventoryLoggedIn()
-){
-    loginScreen.style.display = "none";
-    websiteContent.style.display = "block";
-}
-
-/* =====================================================
-   LIHAT / SEMBUNYIKAN PASSWORD
-===================================================== */
-
-const togglePassword = document.getElementById("togglePassword");
-
-if(togglePassword){
-    togglePassword.addEventListener("click", function(){
-        if(loginPassword.type === "password"){
-            loginPassword.type = "text";
-            togglePassword.textContent = "Tutup";
-            togglePassword.setAttribute("aria-label", "Tutup password");
-        }else{
-            loginPassword.type = "password";
-            togglePassword.textContent = "Buka";
-            togglePassword.setAttribute("aria-label", "Buka password");
-        }
-    });
-}
-
-
-loginPassword.addEventListener(
-    "keydown",
-    function(e){
-
-        if(e.key === "Enter"){
-            login();
-        }
-
-    }
-);
 
 
 /* =====================================================
