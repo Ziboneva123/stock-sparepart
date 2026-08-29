@@ -5736,18 +5736,26 @@ function printQr(){
     <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}
 
 /* =====================================================
-   EMPTY STATE ILLUSTRATION
+   EMPTY STATE ILLUSTRATION - RESPONSIVE MOBILE + WEB
 ===================================================== */
 .stock-empty-illustration{
-    width:min(100%, 680px);
-    margin:8px auto 18px;
-    text-align:center;
+    box-sizing:border-box;
+    width:100%;
+    max-width:760px;
+    margin:14px auto 24px;
+    padding:0 10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     overflow:hidden;
     border-radius:24px;
     opacity:1;
     transform:translateY(0) scale(1);
-    transition:opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1),
-               max-height .65s ease, margin .65s ease;
+    transition:
+        opacity .45s ease,
+        transform .55s cubic-bezier(.2,.8,.2,1),
+        max-height .6s ease,
+        margin .6s ease;
     max-height:900px;
     pointer-events:auto;
 }
@@ -5755,21 +5763,21 @@ function printQr(){
 .stock-empty-illustration img{
     display:block;
     width:100%;
+    max-width:740px;
     height:auto;
-    border-radius:24px;
-    filter:saturate(1.03);
-}
-
-.stock-data-panel:not(.is-visible) + .stock-empty-illustration{
-    animation:emptyStateFloat 4s ease-in-out infinite;
+    margin:0 auto;
+    border-radius:22px;
+    object-fit:contain;
 }
 
 .stock-empty-illustration.is-hidden{
     opacity:0;
-    transform:translateY(-22px) scale(.96);
+    transform:translateY(-24px) scale(.96);
     max-height:0;
     margin-top:0;
     margin-bottom:0;
+    padding-top:0;
+    padding-bottom:0;
     pointer-events:none;
 }
 
@@ -5778,13 +5786,56 @@ function printQr(){
     50%{transform:translateY(-5px);}
 }
 
+.stock-empty-illustration:not(.is-hidden){animation:emptyStateFloat 4.5s ease-in-out infinite;}
+
+/* WEB / DESKTOP */
+@media(min-width:801px){
+    .stock-empty-illustration{
+        max-width:760px;
+        margin-top:18px;
+        margin-bottom:28px;
+    }
+    .stock-empty-illustration img{
+        max-width:740px;
+    }
+}
+
+/* TABLET */
+@media(min-width:601px) and (max-width:800px){
+    .stock-empty-illustration{
+        max-width:650px;
+        margin-top:14px;
+        margin-bottom:24px;
+    }
+}
+
+/* MOBILE */
 @media(max-width:600px){
     .stock-empty-illustration{
-        width:calc(100% - 12px);
+        width:100%;
+        max-width:430px;
+        padding:0 6px;
+        margin:10px auto 18px;
         border-radius:18px;
-        margin-top:6px;
+        max-height:620px;
     }
-    .stock-empty-illustration img{border-radius:18px;}
+
+    .stock-empty-illustration img{
+        width:100%;
+        max-width:418px;
+        border-radius:18px;
+    }
+}
+
+/* HP sangat kecil */
+@media(max-width:380px){
+    .stock-empty-illustration{
+        max-width:360px;
+        padding:0 4px;
+    }
+    .stock-empty-illustration img{
+        max-width:352px;
+    }
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -5795,29 +5846,6 @@ function printQr(){
     }
 }
 
-
-/* V8 - ILUSTRASI CENTER */
-.stock-empty-illustration{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    width:100%;
-    max-width:760px;
-    margin:10px auto 20px;
-}
-.stock-empty-illustration img{
-    width:100%;
-    max-width:760px;
-    margin:0 auto;
-    display:block;
-}
-@media(max-width:600px){
-    .stock-empty-illustration{
-        width:calc(100% - 10px);
-        margin-left:auto;
-        margin-right:auto;
-    }
-}
 
 </style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
