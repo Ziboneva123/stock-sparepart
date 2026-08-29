@@ -2,7 +2,6 @@
 <html lang="id">
 
 <head>
-<!-- ASCII SAFE MAINTENANCE THEME -->
 
 <meta charset="UTF-8">
 
@@ -1331,7 +1330,7 @@ footer{
 
 
 /* =========================================================
-   MAINTENANCE THEME - INDUSTRIAL / ENGINEERING
+   MAINTENANCE THEME â€” INDUSTRIAL / ENGINEERING
    Visual-only theme override: functionality preserved.
    ========================================================= */
 :root{
@@ -1366,7 +1365,7 @@ header{
     box-shadow:0 5px 18px rgba(15,23,42,.24);
 }
 header::before{
-    content:"M";
+    content:"âš™";
     position:absolute;
     left:22px;
     top:50%;
@@ -1376,7 +1375,7 @@ header::before{
     animation:maintGear 9s linear infinite;
 }
 header::after{
-    content:"MAINTENANCE - SPAREPART - INVENTORY";
+    content:"MAINTENANCE â€¢ SPAREPART â€¢ INVENTORY";
     position:absolute;
     right:22px;
     bottom:8px;
@@ -1448,7 +1447,7 @@ header p{
     overflow:hidden;
 }
 .stat::after{
-    content:"M";
+    content:"âš™";
     position:absolute;
     right:12px;
     bottom:-10px;
@@ -1511,7 +1510,7 @@ table tbody tr:hover{background:#ecfdf5;}
     background-size:20px 20px;
 }
 .login-card::before{
-    content:"M";
+    content:"âš™";
     display:block;
     margin:0 auto 8px;
     width:64px;height:64px;
@@ -1569,97 +1568,6 @@ footer{
 @media(max-width:800px){
     header::before{left:8px;font-size:42px;}
     header::after{display:none;}
-}
-
-
-/* =====================================================
-   MAINTENANCE THEME - HEADER ANIMATIF
-   ===================================================== */
-header{
-    position:relative;
-    overflow:hidden;
-    background:
-        linear-gradient(135deg,rgba(6,24,42,.97),rgba(15,23,42,.98)),
-        repeating-linear-gradient(0deg,transparent 0 19px,rgba(34,197,94,.055) 20px),
-        repeating-linear-gradient(90deg,transparent 0 19px,rgba(34,197,94,.055) 20px);
-    border-bottom:5px solid #16a34a;
-    box-shadow:0 8px 28px rgba(0,0,0,.20);
-}
-
-header::before{
-    content:"M";
-    position:absolute;
-    left:5%;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:92px;
-    color:rgba(234,179,8,.14);
-    animation:maintenanceGear 12s linear infinite;
-    pointer-events:none;
-}
-
-header::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(
-        120deg,
-        transparent 0%,
-        rgba(34,197,94,.08) 45%,
-        rgba(234,179,8,.12) 50%,
-        rgba(34,197,94,.08) 55%,
-        transparent 100%
-    );
-    transform:translateX(-100%);
-    animation:maintenanceScan 5s ease-in-out infinite;
-    pointer-events:none;
-}
-
-header h1,
-header p{
-    position:relative;
-    z-index:1;
-}
-
-header h1{
-    letter-spacing:1px;
-    text-shadow:0 0 18px rgba(34,197,94,.22);
-    animation:titleMaintenance 2.8s ease-in-out infinite;
-}
-
-header p{
-    color:#dbeafe;
-    animation:subtitleMaintenance 3.2s ease-in-out infinite;
-}
-
-@keyframes maintenanceGear{
-    from{transform:translateY(-50%) rotate(0deg);}
-    to{transform:translateY(-50%) rotate(360deg);}
-}
-
-@keyframes maintenanceScan{
-    0%,25%{transform:translateX(-100%);}
-    55%,100%{transform:translateX(100%);}
-}
-
-@keyframes titleMaintenance{
-    0%,100%{transform:translateY(0);text-shadow:0 0 18px rgba(34,197,94,.20);}
-    50%{transform:translateY(-2px);text-shadow:0 0 28px rgba(34,197,94,.48);}
-}
-
-@keyframes subtitleMaintenance{
-    0%,100%{opacity:.82;}
-    50%{opacity:1;}
-}
-
-
-/* Login title maintenance animation */
-.login-card h1{
-    animation:loginTitlePulse 2.6s ease-in-out infinite;
-}
-@keyframes loginTitlePulse{
-    0%,100%{transform:scale(1);text-shadow:none;}
-    50%{transform:scale(1.015);text-shadow:0 0 18px rgba(34,197,94,.20);}
 }
 
 </style>
@@ -1746,11 +1654,11 @@ header p{
 <header>
 
     <h1>
-        MAINTENANCE &amp; STOCK SPAREPART
+        MAINTENANCE â€¢ STOCK SPAREPART
     </h1>
 
     <p>
-        Sistem Sparepart - Maintenance - Inventory
+        Sistem Sparepart â€¢ Maintenance â€¢ Inventory
     </p>
 
 </header>
@@ -2398,9 +2306,9 @@ Data lainnya tidak dihapus.
 
         <div class="ai-status-row">
             <span><span class="ai-dot"></span>Online</span>
-            <span><span class="ai-check">OK</span> Data Real-time</span>
-            <span><span class="ai-check">OK</span> Cepat</span>
-            <span><span class="ai-check">OK</span> Akurat</span>
+            <span><span class="ai-check">âœ“</span> Data Real-time</span>
+            <span><span class="ai-check">âœ“</span> Cepat</span>
+            <span><span class="ai-check">âœ“</span> Akurat</span>
         </div>
 
         <div class="ai-quick-actions">
@@ -2531,37 +2439,15 @@ Data lainnya tidak dihapus.
 ===================================================== -->
 
 <script>
-/* LOGIN - independent from Firebase */
-(function(){
-    const PASSWORD = "mtcgoahead";
-    const loginScreen = document.getElementById("loginScreen");
-    const websiteContent = document.getElementById("websiteContent");
-    const loginPassword = document.getElementById("loginPassword");
-    const loginButton = document.getElementById("loginButton");
-    const loginError = document.getElementById("loginError");
-    const togglePassword = document.getElementById("togglePassword");
-    function showWebsite(){
-        if(loginScreen) loginScreen.style.display="none";
-        if(websiteContent) websiteContent.style.display="block";
-    }
-    function login(){
-        if(loginPassword && loginPassword.value.trim()===PASSWORD){
-            try{localStorage.setItem("inventoryLogin","true");}catch(e){}
-            showWebsite();
-        }else{
-            if(loginError) loginError.textContent="Password salah.";
-            if(loginPassword){loginPassword.value="";loginPassword.focus();}
-        }
-    }
-    try{if(localStorage.getItem("inventoryLogin")==="true") showWebsite();}catch(e){}
-    if(loginButton) loginButton.addEventListener("click",login);
-    if(loginPassword) loginPassword.addEventListener("keydown",function(e){if(e.key==="Enter") login();});
-    if(togglePassword) togglePassword.addEventListener("click",function(){
-        if(loginPassword.type==="password"){loginPassword.type="text";togglePassword.textContent="Tutup";togglePassword.setAttribute("aria-label","Tutup password");}
-        else{loginPassword.type="password";togglePassword.textContent="Buka";togglePassword.setAttribute("aria-label","Buka password");}
-    });
-})();
+/* GitHub Pages / production error guard */
+window.addEventListener("error", function(event){
+    console.error("Application error:", event.error || event.message);
+});
+window.addEventListener("unhandledrejection", function(event){
+    console.error("Unhandled promise rejection:", event.reason);
+});
 </script>
+
 <script type="module">
 
 import {
@@ -2590,6 +2476,161 @@ import {
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+const PASSWORD =
+    "mtcgoahead";
+
+
+const loginScreen =
+    document.getElementById(
+        "loginScreen"
+    );
+
+
+const websiteContent =
+    document.getElementById(
+        "websiteContent"
+    );
+
+
+const loginPassword =
+    document.getElementById(
+        "loginPassword"
+    );
+
+
+const loginButton =
+    document.getElementById(
+        "loginButton"
+    );
+
+
+const loginError =
+    document.getElementById(
+        "loginError"
+    );
+
+
+
+function isInventoryLoggedIn(){
+
+    try{
+
+        return (
+            localStorage.getItem(
+                "inventoryLogin"
+            ) === "true"
+        );
+
+    }
+    catch(error){
+
+        console.warn(
+            "localStorage tidak tersedia:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+function setInventoryLoggedIn(){
+
+    try{
+        localStorage.setItem(
+            "inventoryLogin",
+            "true"
+        );
+    }
+    catch(error){
+        console.warn("Gagal menyimpan login:",error);
+    }
+
+}
+
+function login(){
+
+    if(
+        loginPassword.value.trim() === PASSWORD
+    ){
+
+        setInventoryLoggedIn();
+
+        loginScreen.style.display =
+            "none";
+
+        websiteContent.style.display =
+            "block";
+
+    }
+    else{
+
+        loginError.textContent =
+            "Password salah.";
+
+        loginPassword.value = "";
+
+        loginPassword.focus();
+
+    }
+
+}
+
+
+loginButton.addEventListener(
+    "click",
+    login
+);
+
+/* =====================================================
+   SESSION LOGIN
+===================================================== */
+
+if(
+    isInventoryLoggedIn()
+){
+    loginScreen.style.display = "none";
+    websiteContent.style.display = "block";
+}
+
+/* =====================================================
+   LIHAT / SEMBUNYIKAN PASSWORD
+===================================================== */
+
+const togglePassword = document.getElementById("togglePassword");
+
+if(togglePassword){
+    togglePassword.addEventListener("click", function(){
+        if(loginPassword.type === "password"){
+            loginPassword.type = "text";
+            togglePassword.textContent = "Tutup";
+            togglePassword.setAttribute("aria-label", "Tutup password");
+        }else{
+            loginPassword.type = "password";
+            togglePassword.textContent = "Buka";
+            togglePassword.setAttribute("aria-label", "Buka password");
+        }
+    });
+}
+
+
+loginPassword.addEventListener(
+    "keydown",
+    function(e){
+
+        if(e.key === "Enter"){
+            login();
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -5573,9 +5614,9 @@ function aiNormalize(text){
 
 function aiStatusLabel(item){
     const s = getStatus(item);
-    if(s.type === "empty") return "[HABIS] HABIS";
-    if(s.type === "low") return "[LOW] LOW";
-    return "[OK] OK";
+    if(s.type === "empty") return "ðŸ”´ HABIS";
+    if(s.type === "low") return "ðŸŸ  LOW";
+    return "ðŸŸ¢ OK";
 }
 
 function aiFindItems(question){
@@ -5679,7 +5720,7 @@ function aiAnswerStockQuestion(question){
     const q = aiNormalize(question);
 
     if(!q){
-        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>"berapa stok A0001?"</strong>.";
+        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>â€œberapa stok A0001?â€</strong>.";
     }
 
     if(items.length === 0){
@@ -5700,10 +5741,10 @@ function aiAnswerStockQuestion(question){
 
         return `
             <strong>Ringkasan Stock</strong><br>
-            [OK] OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
-            [LOW] LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
-            [HABIS] HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
-            [RESTOCK] Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
+            ðŸŸ¢ OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
+            ðŸŸ  LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
+            ðŸ”´ HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
+            ðŸŸ£ Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
         `;
     }
 
@@ -5717,12 +5758,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "empty");
 
         if(!list.length){
-            return "[OK] Saat ini tidak ada sparepart dengan stock HABIS.";
+            return "ðŸŸ¢ Saat ini tidak ada sparepart dengan stock HABIS.";
         }
 
         return aiRenderItemTable(
             list,
-            "[HABIS] Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
+            "ðŸ”´ Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
         );
     }
 
@@ -5736,12 +5777,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "low");
 
         if(!list.length){
-            return "[OK] Saat ini tidak ada sparepart berstatus LOW.";
+            return "ðŸŸ¢ Saat ini tidak ada sparepart berstatus LOW.";
         }
 
         return aiRenderItemTable(
             list,
-            "[LOW] Ditemukan " + aiFormatNumber(list.length) + " item LOW."
+            "ðŸŸ  Ditemukan " + aiFormatNumber(list.length) + " item LOW."
         );
     }
 
@@ -5759,12 +5800,12 @@ function aiAnswerStockQuestion(question){
             });
 
         if(!list.length){
-            return "[OK] Tidak ada item yang perlu direstock.";
+            return "ðŸŸ¢ Tidak ada item yang perlu direstock.";
         }
 
         return aiRenderItemTable(
             list,
-            "[RESTOCK] Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
+            "ðŸŸ£ Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
         );
     }
 
@@ -5791,13 +5832,13 @@ function aiAnswerStockQuestion(question){
         const status = getStatus(item);
 
         return `
-            <strong>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</strong><br>
+            <strong>${escapeHtml(item.code)} â€“ ${escapeHtml(item.name)}</strong><br>
             Lokasi: <strong>${escapeHtml(item.lokasi || "-")}</strong><br>
             Stock: <strong>${aiFormatNumber(item.qty)}</strong> unit<br>
             Minimum Stock: <strong>${aiFormatNumber(item.minqty)}</strong> unit<br>
             Status: <strong>${aiStatusLabel(item)}</strong>
             ${status.type !== "ok"
-                ? "<br>[WARNING] Item ini perlu diperhatikan."
+                ? "<br>âš ï¸ Item ini perlu diperhatikan."
                 : ""}
         `;
     }
@@ -5829,11 +5870,11 @@ function aiAnswerStockQuestion(question){
     return `
         Saya belum yakin dengan pertanyaannya.<br><br>
         Coba contoh:<br>
-        - <strong>Berapa stok A0001?</strong><br>
-        - <strong>Apa saja barang yang habis?</strong><br>
-        - <strong>Apa saja yang perlu direstock?</strong><br>
-        - <strong>Berapa total stok semua barang?</strong><br>
-        - <strong>Apa status stok di lokasi A?</strong>
+        â€¢ <strong>Berapa stok A0001?</strong><br>
+        â€¢ <strong>Apa saja barang yang habis?</strong><br>
+        â€¢ <strong>Apa saja yang perlu direstock?</strong><br>
+        â€¢ <strong>Berapa total stok semua barang?</strong><br>
+        â€¢ <strong>Apa status stok di lokasi A?</strong>
     `;
 }
 
@@ -6454,7 +6495,19 @@ document
    START
 ===================================================== */
 
-loadItems();
+loadItems().catch(function(error){
+    console.error("Initial Firebase load failed:", error);
+    const body = document.getElementById("stockBody");
+    if(body){
+        body.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center;padding:30px;color:#b91c1c">
+            Gagal memuat data.
+            <br><small>${escapeHtml(error && error.message ? error.message : "Periksa koneksi, Firebase Rules, dan URL GitHub Pages.")}</small>
+          </td>
+        </tr>`;
+    }
+});
 
 
 /* =========================================================
