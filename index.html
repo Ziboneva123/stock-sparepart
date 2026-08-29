@@ -1570,6 +1570,97 @@ footer{
     header::after{display:none;}
 }
 
+
+/* =====================================================
+   MAINTENANCE THEME - HEADER ANIMATIF
+   ===================================================== */
+header{
+    position:relative;
+    overflow:hidden;
+    background:
+        linear-gradient(135deg,rgba(6,24,42,.97),rgba(15,23,42,.98)),
+        repeating-linear-gradient(0deg,transparent 0 19px,rgba(34,197,94,.055) 20px),
+        repeating-linear-gradient(90deg,transparent 0 19px,rgba(34,197,94,.055) 20px);
+    border-bottom:5px solid #16a34a;
+    box-shadow:0 8px 28px rgba(0,0,0,.20);
+}
+
+header::before{
+    content:"âš™";
+    position:absolute;
+    left:5%;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:92px;
+    color:rgba(234,179,8,.14);
+    animation:maintenanceGear 12s linear infinite;
+    pointer-events:none;
+}
+
+header::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(34,197,94,.08) 45%,
+        rgba(234,179,8,.12) 50%,
+        rgba(34,197,94,.08) 55%,
+        transparent 100%
+    );
+    transform:translateX(-100%);
+    animation:maintenanceScan 5s ease-in-out infinite;
+    pointer-events:none;
+}
+
+header h1,
+header p{
+    position:relative;
+    z-index:1;
+}
+
+header h1{
+    letter-spacing:1px;
+    text-shadow:0 0 18px rgba(34,197,94,.22);
+    animation:titleMaintenance 2.8s ease-in-out infinite;
+}
+
+header p{
+    color:#dbeafe;
+    animation:subtitleMaintenance 3.2s ease-in-out infinite;
+}
+
+@keyframes maintenanceGear{
+    from{transform:translateY(-50%) rotate(0deg);}
+    to{transform:translateY(-50%) rotate(360deg);}
+}
+
+@keyframes maintenanceScan{
+    0%,25%{transform:translateX(-100%);}
+    55%,100%{transform:translateX(100%);}
+}
+
+@keyframes titleMaintenance{
+    0%,100%{transform:translateY(0);text-shadow:0 0 18px rgba(34,197,94,.20);}
+    50%{transform:translateY(-2px);text-shadow:0 0 28px rgba(34,197,94,.48);}
+}
+
+@keyframes subtitleMaintenance{
+    0%,100%{opacity:.82;}
+    50%{opacity:1;}
+}
+
+
+/* Login title maintenance animation */
+.login-card h1{
+    animation:loginTitlePulse 2.6s ease-in-out infinite;
+}
+@keyframes loginTitlePulse{
+    0%,100%{transform:scale(1);text-shadow:none;}
+    50%{transform:scale(1.015);text-shadow:0 0 18px rgba(34,197,94,.20);}
+}
+
 </style>
 
 </head>
