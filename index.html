@@ -2204,32 +2204,46 @@ Data lainnya tidak dihapus.
 
 <script type="module">
 
-import {
-    initializeApp
+let initializeApp;
+let getFirestore, collection, getDocs, getDoc, doc, setDoc, updateDoc;
+let deleteDoc, addDoc, query, where, serverTimestamp, runTransaction;
+
+try {
+    ({ initializeApp } = await import(
+        "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"
+    ));
+
+    ({
+        getFirestore,
+        collection,
+        getDocs,
+        getDoc,
+        doc,
+        setDoc,
+        updateDoc,
+        deleteDoc,
+        addDoc,
+        query,
+        where,
+        serverTimestamp,
+        runTransaction
+    } = await import(
+        "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"
+    ));
+} catch (firebaseLoadError) {
+    console.error("Firebase library gagal dimuat:", firebaseLoadError);
+
+    const body = document.getElementById("stockBody");
+    if (body) {
+        body.innerHTML =
+            '<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">' +
+            'Gagal memuat Firebase.<br><br>' +
+            String(firebaseLoadError.message || firebaseLoadError) +
+            '</td></tr>';
+    }
+
+    throw firebaseLoadError;
 }
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-
-import {
-
-    getFirestore,
-    collection,
-    getDocs,
-    getDoc,
-    doc,
-    setDoc,
-    updateDoc,
-    deleteDoc,
-    addDoc,
-    query,
-    where,
-    serverTimestamp,
-    runTransaction
-
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 
 /* =====================================================
@@ -2539,95 +2553,70 @@ function getStatus(item){
 
 async function loadItems(){
 
+    const body = document.getElementById("stockBody");
+
+    if (body) {
+        body.innerHTML =
+            '<tr><td colspan="7" style="text-align:center;padding:30px">' +
+            'Memuat data dari Firebase...' +
+            '</td></tr>';
+    }
+
+    const timeoutPromise = new Promise(function(_, reject){
+        setTimeout(function(){
+            reject(new Error(
+                "Firebase tidak merespons dalam 15 detik. " +
+                "Periksa koneksi internet, Firebase Rules, dan project Firebase."
+            ));
+        }, 15000);
+    });
+
     try{
 
-        const snap =
-            await getDocs(
-                stockRef
-            );
+        const snap = await Promise.race([
+            getDocs(stockRef),
+            timeoutPromise
+        ]);
 
+        items = snap.docs.map(function(d){
 
-        items =
-            snap.docs.map(
-                function(d){
+            const data = d.data();
 
-                    const data =
-                        d.data();
+            return {
+                firestoreId: d.id,
+                code: data.code || decodeURIComponent(d.id),
+                name: data.name || "",
+                lokasi: data.lokasi || "",
+                qty: Number(data.qty || 0),
+                minqty: Number(data.minqty || 0)
+            };
 
-                    return {
+        });
 
-                        firestoreId:d.id,
-
-                        code:
-                            data.code ||
-                            decodeURIComponent(d.id),
-
-                        name:
-                            data.name || "",
-
-                        lokasi:
-                            data.lokasi || "",
-
-                        qty:
-                            Number(data.qty || 0),
-
-                        minqty:
-                            Number(data.minqty || 0)
-
-                    };
-
-                }
-            );
-
-
-        items.sort(
-            function(a,b){
-
-                return String(a.code)
-                    .localeCompare(
-                        String(b.code)
-                    );
-
-            }
-        );
-
+        items.sort(function(a,b){
+            return String(a.code).localeCompare(String(b.code));
+        });
 
         updateDashboard();
-
         renderTable();
-
         updateSelects();
 
     }
     catch(error){
 
-        console.error(error);
+        console.error("LOAD ITEMS ERROR:", error);
 
-        $("stockBody").innerHTML = `
-
-        <tr>
-
-        <td
-            colspan="7"
-            style="
-            text-align:center;
-            color:#b91c1c;
-            padding:30px">
-
-            Gagal mengambil data Firebase.
-
-            <br><br>
-
-            ${escapeHtml(error.message)}
-
-        </td>
-
-        </tr>
-
-        `;
-
+        if (body) {
+            body.innerHTML =
+                '<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">' +
+                '<b>Gagal mengambil data Firebase.</b><br><br>' +
+                escapeHtml(error.message || String(error)) +
+                '<br><br><button type="button" onclick="location.reload()" ' +
+                'style="padding:9px 16px;border:0;border-radius:8px;background:#2563eb;color:white">' +
+                'Coba Lagi</button>' +
+                '</td></tr>';
+        }
     }
-
 }
 
 
@@ -6237,7 +6226,9 @@ document
    START
 ===================================================== */
 
-loadItems();
+loadItems().catch(function(error){
+    console.error("START LOAD ERROR:", error);
+});
 
 
 /* =========================================================
