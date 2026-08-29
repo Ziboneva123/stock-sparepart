@@ -1161,8 +1161,24 @@ footer{
     display:inline-block;
 }
 .ai-check{
-    font-weight:900;
-    color:#16a34a;
+    position:relative;
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    background:#dcfce7;
+    display:inline-block;
+    flex:0 0 auto;
+}
+.ai-check::after{
+    content:"";
+    position:absolute;
+    left:4px;
+    top:3px;
+    width:5px;
+    height:3px;
+    border-left:2px solid #16a34a;
+    border-bottom:2px solid #16a34a;
+    transform:rotate(-45deg);
 }
 .ai-bulb{
     width:18px;
@@ -1939,9 +1955,9 @@ Data lainnya tidak dihapus.
 
         <div class="ai-status-row">
             <span><span class="ai-dot"></span>Online</span>
-            <span><span class="ai-check">âœ“</span> Data Real-time</span>
-            <span><span class="ai-check">âœ“</span> Cepat</span>
-            <span><span class="ai-check">âœ“</span> Akurat</span>
+            <span><span class="ai-check" aria-hidden="true"></span>Data Real-time</span>
+            <span><span class="ai-check" aria-hidden="true"></span>Cepat</span>
+            <span><span class="ai-check" aria-hidden="true"></span>Akurat</span>
         </div>
 
         <div class="ai-quick-actions">
@@ -5191,7 +5207,21 @@ function printQr(){
     }
 
     win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
-    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
+    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}
+/* FINAL AI MOJIBAKE FIX - ASCII/CSS ONLY */
+.ai-status-row span{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+}
+.ai-status-row{
+    gap:8px;
+}
+.ai-check{
+    vertical-align:middle;
+}
+
+</style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
 </body></html>`);
     win.document.close();
@@ -5237,9 +5267,9 @@ function aiNormalize(text){
 
 function aiStatusLabel(item){
     const s = getStatus(item);
-    if(s.type === "empty") return "ðŸ”´ HABIS";
-    if(s.type === "low") return "ðŸŸ  LOW";
-    return "ðŸŸ¢ OK";
+    if(s.type === "empty") return "[HABIS] HABIS";
+    if(s.type === "low") return "[LOW] LOW";
+    return "[OK] OK";
 }
 
 function aiFindItems(question){
@@ -5343,7 +5373,7 @@ function aiAnswerStockQuestion(question){
     const q = aiNormalize(question);
 
     if(!q){
-        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>â€œberapa stok A0001?â€</strong>.";
+        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>"berapa stok A0001?"</strong>.";
     }
 
     if(items.length === 0){
@@ -5364,10 +5394,10 @@ function aiAnswerStockQuestion(question){
 
         return `
             <strong>Ringkasan Stock</strong><br>
-            ðŸŸ¢ OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
-            ðŸŸ  LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
-            ðŸ”´ HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
-            ðŸŸ£ Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
+            [OK] OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
+            [LOW] LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
+            [HABIS] HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
+            [RESTOCK] Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
         `;
     }
 
@@ -5381,12 +5411,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "empty");
 
         if(!list.length){
-            return "ðŸŸ¢ Saat ini tidak ada sparepart dengan stock HABIS.";
+            return "[OK] Saat ini tidak ada sparepart dengan stock HABIS.";
         }
 
         return aiRenderItemTable(
             list,
-            "ðŸ”´ Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
+            "[HABIS] Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
         );
     }
 
@@ -5400,12 +5430,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "low");
 
         if(!list.length){
-            return "ðŸŸ¢ Saat ini tidak ada sparepart berstatus LOW.";
+            return "[OK] Saat ini tidak ada sparepart berstatus LOW.";
         }
 
         return aiRenderItemTable(
             list,
-            "ðŸŸ  Ditemukan " + aiFormatNumber(list.length) + " item LOW."
+            "[LOW] Ditemukan " + aiFormatNumber(list.length) + " item LOW."
         );
     }
 
@@ -5423,12 +5453,12 @@ function aiAnswerStockQuestion(question){
             });
 
         if(!list.length){
-            return "ðŸŸ¢ Tidak ada item yang perlu direstock.";
+            return "[OK] Tidak ada item yang perlu direstock.";
         }
 
         return aiRenderItemTable(
             list,
-            "ðŸŸ£ Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
+            "[RESTOCK] Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
         );
     }
 
@@ -5455,13 +5485,13 @@ function aiAnswerStockQuestion(question){
         const status = getStatus(item);
 
         return `
-            <strong>${escapeHtml(item.code)} â€“ ${escapeHtml(item.name)}</strong><br>
+            <strong>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</strong><br>
             Lokasi: <strong>${escapeHtml(item.lokasi || "-")}</strong><br>
             Stock: <strong>${aiFormatNumber(item.qty)}</strong> unit<br>
             Minimum Stock: <strong>${aiFormatNumber(item.minqty)}</strong> unit<br>
             Status: <strong>${aiStatusLabel(item)}</strong>
             ${status.type !== "ok"
-                ? "<br>âš ï¸ Item ini perlu diperhatikan."
+                ? "<br>PERHATIAN: Item ini perlu diperhatikan."
                 : ""}
         `;
     }
@@ -5493,11 +5523,11 @@ function aiAnswerStockQuestion(question){
     return `
         Saya belum yakin dengan pertanyaannya.<br><br>
         Coba contoh:<br>
-        â€¢ <strong>Berapa stok A0001?</strong><br>
-        â€¢ <strong>Apa saja barang yang habis?</strong><br>
-        â€¢ <strong>Apa saja yang perlu direstock?</strong><br>
-        â€¢ <strong>Berapa total stok semua barang?</strong><br>
-        â€¢ <strong>Apa status stok di lokasi A?</strong>
+        - <strong>Berapa stok A0001?</strong><br>
+        - <strong>Apa saja barang yang habis?</strong><br>
+        - <strong>Apa saja yang perlu direstock?</strong><br>
+        - <strong>Berapa total stok semua barang?</strong><br>
+        - <strong>Apa status stok di lokasi A?</strong>
     `;
 }
 
