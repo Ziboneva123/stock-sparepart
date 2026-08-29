@@ -1884,6 +1884,24 @@ footer{
 </div>
 
 
+<div class="stock-data-toggle-wrap">
+
+    <button
+        type="button"
+        id="toggleStockData"
+        aria-expanded="false"
+        aria-controls="stockDataPanel">
+        TAMPILKAN DATA SPAREPART
+    </button>
+
+</div>
+
+<div class="stock-data-hidden-note" id="stockDataHiddenNote">
+    Data sparepart disembunyikan. Tekan tombol untuk menampilkan.
+</div>
+
+<div class="stock-data-panel" id="stockDataPanel">
+
 <section class="table-wrap">
 
 <table>
@@ -1923,6 +1941,8 @@ footer{
 </table>
 
 </section>
+
+</div>
 
 </main>
 
@@ -5559,7 +5579,87 @@ function printQr(){
     }
 
     win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
-    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
+    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}
+/* =====================================================
+   TOGGLE DATA SPAREPART
+===================================================== */
+.stock-data-toggle-wrap{
+    display:flex;
+    justify-content:center;
+    margin:14px 0 10px;
+}
+
+#toggleStockData{
+    position:relative;
+    border:0;
+    border-radius:12px;
+    padding:11px 18px;
+    min-height:44px;
+    background:linear-gradient(135deg,#16a34a,#15803d);
+    color:#fff;
+    font-weight:800;
+    letter-spacing:.3px;
+    cursor:pointer;
+    box-shadow:0 5px 14px rgba(22,163,74,.25);
+    transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+    overflow:hidden;
+}
+
+#toggleStockData::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-90px;
+    width:55px;
+    height:100%;
+    background:rgba(255,255,255,.35);
+    transform:skewX(-20deg);
+    animation:stockToggleShine 2.2s ease-in-out infinite;
+}
+
+#toggleStockData:hover{
+    transform:translateY(-1px);
+    box-shadow:0 7px 18px rgba(22,163,74,.32);
+}
+
+#toggleStockData:active{
+    transform:scale(.97);
+}
+
+.stock-data-panel{
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transform:translateY(-8px);
+    transition:max-height .7s ease, opacity .35s ease, transform .45s ease;
+}
+
+.stock-data-panel.is-visible{
+    max-height:100000px;
+    opacity:1;
+    transform:translateY(0);
+}
+
+.stock-data-hidden-note{
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+    margin:4px 0 12px;
+}
+
+@keyframes stockToggleShine{
+    0%{left:-90px;opacity:0;}
+    15%{opacity:1;}
+    45%{left:110%;opacity:0;}
+    100%{left:110%;opacity:0;}
+}
+
+@media (prefers-reduced-motion:reduce){
+    #toggleStockData::after{animation:none;}
+    .stock-data-panel{transition:none;}
+}
+
+</style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
 </body></html>`);
     win.document.close();
@@ -5960,6 +6060,40 @@ async function aiAsk(){
     chat.scrollTop = chat.scrollHeight;
 }
 
+
+
+/* =====================================================
+   TOGGLE DATA SPAREPART
+===================================================== */
+
+const toggleStockData = $("toggleStockData");
+const stockDataPanel = $("stockDataPanel");
+const stockDataHiddenNote = $("stockDataHiddenNote");
+
+if(toggleStockData && stockDataPanel){
+
+    toggleStockData.addEventListener("click", function(){
+
+        const visible =
+            stockDataPanel.classList.toggle("is-visible");
+
+        toggleStockData.setAttribute(
+            "aria-expanded",
+            visible ? "true" : "false"
+        );
+
+        toggleStockData.textContent =
+            visible
+            ? "SEMBUNYIKAN DATA SPAREPART"
+            : "TAMPILKAN DATA SPAREPART";
+
+        if(stockDataHiddenNote){
+            stockDataHiddenNote.style.display =
+                visible ? "none" : "block";
+        }
+
+    });
+}
 
 /* =====================================================
    TABLE ACTION
