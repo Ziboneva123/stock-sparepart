@@ -2165,32 +2165,34 @@ Data lainnya tidak dihapus.
 
 <script type="module">
 
-import {
-    initializeApp
+let initializeApp;
+let getFirestore, collection, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, addDoc, query, where, serverTimestamp, runTransaction;
+
+try {
+    ({ initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"));
+    ({
+        getFirestore,
+        collection,
+        getDocs,
+        getDoc,
+        doc,
+        setDoc,
+        updateDoc,
+        deleteDoc,
+        addDoc,
+        query,
+        where,
+        serverTimestamp,
+        runTransaction
+    } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"));
+} catch (firebaseLoadError) {
+    console.error("Firebase library gagal dimuat:", firebaseLoadError);
+    const body = document.getElementById("stockBody");
+    if (body) {
+        body.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">Gagal memuat Firebase.<br><br>${String(firebaseLoadError.message || firebaseLoadError)}</td></tr>`;
+    }
+    throw firebaseLoadError;
 }
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-
-import {
-
-    getFirestore,
-    collection,
-    getDocs,
-    getDoc,
-    doc,
-    setDoc,
-    updateDoc,
-    deleteDoc,
-    addDoc,
-    query,
-    where,
-    serverTimestamp,
-    runTransaction
-
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 
 /* =====================================================
@@ -5423,7 +5425,7 @@ function aiAnswerStockQuestion(question){
     const q = aiNormalize(question);
 
     if(!q){
-        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>"berapa stok A0001?"</strong>.";
+        return 'Silakan tulis pertanyaan mengenai stok, misalnya <strong>"berapa stok A0001?"</strong>.';
     }
 
     if(items.length === 0){
@@ -6198,7 +6200,13 @@ document
    START
 ===================================================== */
 
-loadItems();
+loadItems().catch(function(error){
+    console.error("LOAD ITEMS ERROR:", error);
+    const body = document.getElementById("stockBody");
+    if(body){
+        body.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">Gagal mengambil data Firebase.<br><br>${escapeHtml(error.message || error)}</td></tr>`;
+    }
+});
 
 
 /* =========================================================
