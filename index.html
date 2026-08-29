@@ -2210,10 +2210,13 @@ import {
 from
 "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
+
 import {
+
     getFirestore,
     collection,
     getDocs,
+    getDocsFromServer,
     getDoc,
     doc,
     setDoc,
@@ -2224,6 +2227,7 @@ import {
     where,
     serverTimestamp,
     runTransaction
+
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
@@ -2538,27 +2542,35 @@ async function loadItems(){
 
     const body = document.getElementById("stockBody");
 
-    if (body) {
-        body.innerHTML =
-            '<tr><td colspan="7" style="text-align:center;padding:30px">' +
-            'Memuat data...' +
-            '</td></tr>';
+    if(body){
+        body.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align:center;padding:30px;">
+                    <strong>Menghubungkan ke Firebase...</strong><br><br>
+                    <span style="color:#64748b;">Mengambil data sparepart.</span>
+                </td>
+            </tr>`;
     }
-
-    const timeoutPromise = new Promise(function(_, reject){
-        setTimeout(function(){
-            reject(new Error(
-                "Firebase tidak merespons dalam 15 detik. " +
-                "Periksa koneksi internet, Firebase Rules, dan project Firebase."
-            ));
-        }, 15000);
-    });
 
     try{
 
+        /*
+         * Paksa pembacaan dari server agar halaman tidak
+         * tertahan pada cache/offline state browser.
+         */
+        const serverRequest = getDocsFromServer(stockRef);
+
+        const timeout = new Promise(function(_, reject){
+            setTimeout(function(){
+                reject(new Error(
+                    "Koneksi Firebase timeout. Pastikan internet aktif dan Firebase Firestore dapat diakses."
+                ));
+            }, 12000);
+        });
+
         const snap = await Promise.race([
-            getDocs(stockRef),
-            timeoutPromise
+            serverRequest,
+            timeout
         ]);
 
         items = snap.docs.map(function(d){
@@ -2587,18 +2599,24 @@ async function loadItems(){
     }
     catch(error){
 
-        console.error("LOAD ITEMS ERROR:", error);
+        console.error("FIREBASE LOAD ERROR:", error);
 
-        if (body) {
-            body.innerHTML =
-                '<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">' +
-                '<b>Gagal mengambil data Firebase.</b><br><br>' +
-                escapeHtml(error.message || String(error)) +
-                '<br><br><button type="button" onclick="location.reload()" ' +
-                'style="padding:9px 16px;border:0;border-radius:8px;background:#2563eb;color:white">' +
-                'Coba Lagi</button>' +
-                '</td></tr>';
+        if(body){
+            body.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align:center;padding:30px;color:#b91c1c;">
+                        <strong>DATA FIREBASE TIDAK DAPAT DIMUAT</strong>
+                        <br><br>
+                        ${escapeHtml(error?.message || String(error))}
+                        <br><br>
+                        <button type="button" onclick="location.reload()"
+                            style="border:0;border-radius:8px;padding:10px 16px;background:#2563eb;color:white;font-weight:bold;">
+                            Coba Lagi
+                        </button>
+                    </td>
+                </tr>`;
         }
+
     }
 }
 
@@ -6209,18 +6227,7 @@ document
    START
 ===================================================== */
 
-loadItems().catch(function(error){
-    console.error("START LOAD ERROR:", error);
-
-    const body = document.getElementById("stockBody");
-    if(body && body.innerHTML.includes("Memuat data")){
-        body.innerHTML =
-            '<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">' +
-            '<b>Gagal memuat data.</b><br><br>' +
-            escapeHtml(error.message || String(error)) +
-            '</td></tr>';
-    }
-});
+loadItems();
 
 
 /* =========================================================
