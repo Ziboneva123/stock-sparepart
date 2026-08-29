@@ -1268,6 +1268,70 @@ footer{
     }
 }
 
+
+/* =====================================================
+   MENU HIJAU + IKON SCAN QR ANIMATIF
+   ===================================================== */
+.menu-button{
+    background:#16a34a !important;
+    color:#ffffff !important;
+    font-weight:800 !important;
+    border:2px solid #15803d !important;
+    box-shadow:0 4px 15px rgba(22,163,74,.30) !important;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.menu-button:hover{
+    background:#15803d !important;
+    transform:translateY(-1px) scale(1.03);
+    box-shadow:0 6px 20px rgba(22,163,74,.42) !important;
+}
+.menu-button:active{
+    transform:scale(.96);
+}
+
+/* Tombol SCAN QR tetap sama, ikon kameranya lebih hidup */
+.search-scan-button .camera-svg{
+    width:25px !important;
+    height:21px !important;
+    transform-origin:center;
+    animation:cameraPulse 1.35s ease-in-out infinite;
+    filter:drop-shadow(0 0 3px rgba(124,58,237,.25));
+}
+.search-scan-button .camera-svg circle{
+    transform-box:fill-box;
+    transform-origin:center;
+    animation:cameraLens 1.15s ease-in-out infinite;
+}
+.search-scan-button .camera-svg rect{
+    transform-origin:center;
+    animation:cameraBody 1.8s ease-in-out infinite;
+}
+.search-scan-button:hover .camera-svg{
+    animation:cameraShake .45s ease-in-out infinite;
+}
+.search-scan-button:active .camera-svg{
+    transform:scale(.90);
+}
+
+@keyframes cameraPulse{
+    0%,100%{transform:scale(1) rotate(0deg);}
+    45%{transform:scale(1.10) rotate(-2deg);}
+    70%{transform:scale(1.04) rotate(2deg);}
+}
+@keyframes cameraLens{
+    0%,100%{transform:scale(1);opacity:1;}
+    50%{transform:scale(.68);opacity:.65;}
+}
+@keyframes cameraBody{
+    0%,100%{opacity:1;}
+    50%{opacity:.78;}
+}
+@keyframes cameraShake{
+    0%,100%{transform:translateX(0) rotate(0deg);}
+    25%{transform:translateX(-2px) rotate(-3deg);}
+    75%{transform:translateX(2px) rotate(3deg);}
+}
+
 </style>
 
 </head>
