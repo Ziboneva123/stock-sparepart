@@ -1129,6 +1129,102 @@ footer{
     .ai-bottom-actions{padding-left:14px;padding-right:14px;}
 }
 
+
+/* --- AI visual cleanup --- */
+.ai-assistant-card{
+    border-radius:18px!important;
+    box-shadow:0 18px 50px rgba(0,0,0,.22);
+}
+.ai-header{
+    min-height:104px;
+}
+.ai-close{
+    font-family:Arial,sans-serif;
+    font-size:34px;
+    font-weight:300;
+}
+.ai-status-row{
+    align-items:center;
+    padding-top:12px;
+    padding-bottom:12px;
+}
+.ai-status-row span{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+}
+.ai-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+    display:inline-block;
+}
+.ai-check{
+    font-weight:900;
+    color:#16a34a;
+}
+.ai-bulb{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:#e2e8f0;
+    color:#475569;
+    font-weight:800;
+    font-size:12px;
+}
+.ai-chat{
+    background:#f8fafc;
+}
+.ai-message.bot .ai-bubble{
+    font-size:16px;
+}
+.ai-send{
+    font-family:Arial,sans-serif;
+}
+@media(max-width:600px){
+    .ai-assistant-card{
+        width:calc(100vw - 24px);
+        max-height:calc(100vh - 28px);
+        border-radius:18px!important;
+    }
+    .ai-header{
+        min-height:92px;
+        padding:14px 14px;
+    }
+    .ai-avatar{
+        width:62px;
+        height:62px;
+        font-size:27px;
+    }
+    .ai-name{
+        font-size:19px;
+    }
+    .ai-role{
+        font-size:14px;
+    }
+    .ai-tagline{
+        font-size:12px;
+    }
+    .ai-status-row{
+        gap:6px;
+    }
+    .ai-status-row span{
+        font-size:11px;
+        padding:6px 8px;
+    }
+    .ai-quick{
+        font-size:14px;
+        padding:8px 11px;
+    }
+    .ai-chat{
+        height:300px;
+    }
+}
+
 </style>
 
 </head>
@@ -1838,14 +1934,14 @@ Data lainnya tidak dihapus.
                     <div class="ai-tagline">Tanya stok, jawabannya ada di sini</div>
                 </div>
             </div>
-            <button type="button" class="ai-close" id="cancelAiStock" aria-label="Tutup">Ã—</button>
+            <button type="button" class="ai-close" id="cancelAiStock" aria-label="Tutup">&times;</button>
         </div>
 
         <div class="ai-status-row">
-            <span>â— Online</span>
-            <span>âœ“ Data Real-time</span>
-            <span>âœ“ Cepat</span>
-            <span>âœ“ Akurat</span>
+            <span><span class="ai-dot"></span>Online</span>
+            <span><span class="ai-check">âœ“</span> Data Real-time</span>
+            <span><span class="ai-check">âœ“</span> Cepat</span>
+            <span><span class="ai-check">âœ“</span> Akurat</span>
         </div>
 
         <div class="ai-quick-actions">
@@ -1860,11 +1956,11 @@ Data lainnya tidak dihapus.
         <div class="ai-input-row">
             <input id="aiQuestion" type="text" autocomplete="off"
                    placeholder="Tulis pertanyaan tentang stok...">
-            <button id="aiAskButton" type="button" class="ai-send" aria-label="Kirim">âž¤</button>
+            <button id="aiAskButton" type="button" class="ai-send" aria-label="Kirim">&#10148;</button>
         </div>
 
         <div class="ai-footer-note">
-            <span>ðŸ’¡ Data dibaca dari Firebase</span>
+            <span><span class="ai-bulb">i</span> Data dibaca dari Firebase</span>
             <span>Stock Sparepart</span>
         </div>
 
@@ -5451,7 +5547,7 @@ function openAiStock(){
     if(!aiInitialized){
         $("aiChat").innerHTML = "";
         aiAddMessage(
-            "Halo ðŸ‘‹ Saya <strong>FITRIYANI NUR CAHYATI</strong>.<br>" +
+            "Halo, saya <strong>FITRIYANI NUR CAHYATI</strong>.<br>" +
             "Saya bisa membantu mencari stok, status HABIS/LOW/OK, lokasi, kebutuhan restock, " +
             "dan traffic transaksi dari data yang tersedia.",
             "bot"
