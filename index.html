@@ -2087,6 +2087,82 @@ Data lainnya tidak dihapus.
      JAVASCRIPT
 ===================================================== -->
 
+
+<script>
+(function(){
+    const INVENTORY_PASSWORD = "mtcgoahead";
+
+    function bootLogin(){
+        const loginScreen = document.getElementById("loginScreen");
+        const websiteContent = document.getElementById("websiteContent");
+        const password = document.getElementById("loginPassword");
+        const button = document.getElementById("loginButton");
+        const error = document.getElementById("loginError");
+        const toggle = document.getElementById("togglePassword");
+
+        if(!loginScreen || !websiteContent || !password || !button) return;
+
+        function loggedIn(){
+            try{
+                return localStorage.getItem("inventoryLogin") === "true";
+            }catch(e){
+                return false;
+            }
+        }
+
+        function showWebsite(){
+            loginScreen.style.display = "none";
+            websiteContent.style.display = "block";
+        }
+
+        function doLogin(){
+            if(password.value.trim() === INVENTORY_PASSWORD){
+                try{
+                    localStorage.setItem("inventoryLogin","true");
+                }catch(e){}
+                error.textContent = "";
+                showWebsite();
+            }else{
+                error.textContent = "Password salah.";
+                password.value = "";
+                password.focus();
+            }
+        }
+
+        // Prevent duplicate handlers.
+        if(button.dataset.loginGuard !== "1"){
+            button.dataset.loginGuard = "1";
+            button.addEventListener("click", doLogin);
+        }
+
+        if(password.dataset.loginGuard !== "1"){
+            password.dataset.loginGuard = "1";
+            password.addEventListener("keydown", function(e){
+                if(e.key === "Enter") doLogin();
+            });
+        }
+
+        if(toggle && toggle.dataset.loginGuard !== "1"){
+            toggle.dataset.loginGuard = "1";
+            toggle.addEventListener("click", function(){
+                const hidden = password.type === "password";
+                password.type = hidden ? "text" : "password";
+                toggle.textContent = hidden ? "Tutup" : "Buka";
+                toggle.setAttribute("aria-label", hidden ? "Tutup password" : "Buka password");
+            });
+        }
+
+        if(loggedIn()) showWebsite();
+    }
+
+    if(document.readyState === "loading"){
+        document.addEventListener("DOMContentLoaded", bootLogin);
+    }else{
+        bootLogin();
+    }
+})();
+</script>
+
 <script type="module">
 
 import {
@@ -2223,10 +2299,7 @@ function login(){
 }
 
 
-loginButton.addEventListener(
-    "click",
-    login
-);
+/* Login handled by the non-module login guard above. */
 
 /* =====================================================
    SESSION LOGIN
@@ -2243,33 +2316,10 @@ if(
    LIHAT / SEMBUNYIKAN PASSWORD
 ===================================================== */
 
-const togglePassword = document.getElementById("togglePassword");
-
-if(togglePassword){
-    togglePassword.addEventListener("click", function(){
-        if(loginPassword.type === "password"){
-            loginPassword.type = "text";
-            togglePassword.textContent = "Tutup";
-            togglePassword.setAttribute("aria-label", "Tutup password");
-        }else{
-            loginPassword.type = "password";
-            togglePassword.textContent = "Buka";
-            togglePassword.setAttribute("aria-label", "Buka password");
-        }
-    });
-}
+/* Password visibility handled by the non-module login guard above. */
 
 
-loginPassword.addEventListener(
-    "keydown",
-    function(e){
-
-        if(e.key === "Enter"){
-            login();
-        }
-
-    }
-);
+/* Enter key handled by the non-module login guard above. */
 
 
 /* =====================================================
