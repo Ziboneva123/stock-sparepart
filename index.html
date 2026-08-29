@@ -2204,46 +2204,29 @@ Data lainnya tidak dihapus.
 
 <script type="module">
 
-let initializeApp;
-let getFirestore, collection, getDocs, getDoc, doc, setDoc, updateDoc;
-let deleteDoc, addDoc, query, where, serverTimestamp, runTransaction;
-
-try {
-    ({ initializeApp } = await import(
-        "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"
-    ));
-
-    ({
-        getFirestore,
-        collection,
-        getDocs,
-        getDoc,
-        doc,
-        setDoc,
-        updateDoc,
-        deleteDoc,
-        addDoc,
-        query,
-        where,
-        serverTimestamp,
-        runTransaction
-    } = await import(
-        "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"
-    ));
-} catch (firebaseLoadError) {
-    console.error("Firebase library gagal dimuat:", firebaseLoadError);
-
-    const body = document.getElementById("stockBody");
-    if (body) {
-        body.innerHTML =
-            '<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">' +
-            'Gagal memuat Firebase.<br><br>' +
-            String(firebaseLoadError.message || firebaseLoadError) +
-            '</td></tr>';
-    }
-
-    throw firebaseLoadError;
+import {
+    initializeApp
 }
+from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    getDoc,
+    doc,
+    setDoc,
+    updateDoc,
+    deleteDoc,
+    addDoc,
+    query,
+    where,
+    serverTimestamp,
+    runTransaction
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 
 /* =====================================================
@@ -2558,7 +2541,7 @@ async function loadItems(){
     if (body) {
         body.innerHTML =
             '<tr><td colspan="7" style="text-align:center;padding:30px">' +
-            'Memuat data dari Firebase...' +
+            'Memuat data...' +
             '</td></tr>';
     }
 
@@ -6228,6 +6211,15 @@ document
 
 loadItems().catch(function(error){
     console.error("START LOAD ERROR:", error);
+
+    const body = document.getElementById("stockBody");
+    if(body && body.innerHTML.includes("Memuat data")){
+        body.innerHTML =
+            '<tr><td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">' +
+            '<b>Gagal memuat data.</b><br><br>' +
+            escapeHtml(error.message || String(error)) +
+            '</td></tr>';
+    }
 });
 
 
