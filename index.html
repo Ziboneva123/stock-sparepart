@@ -1765,6 +1765,67 @@ footer{
 
         <div id="loginError"></div>
 
+<script>
+/* =====================================================
+   FALLBACK LOGIN - TIDAK BERGANTUNG FIREBASE
+   Dipasang agar tombol MASUK tetap bekerja walaupun
+   script Firebase/module gagal dimuat.
+===================================================== */
+(function(){
+    const LOGIN_PASSWORD_FALLBACK = "mtcgoahead";
+    const lsKey = "inventoryLogin";
+
+    function showMain(){
+        const login = document.getElementById("loginScreen");
+        const main = document.getElementById("websiteContent");
+        if(login) login.style.display = "none";
+        if(main) main.style.display = "block";
+    }
+
+    function loggedIn(){
+        try { return localStorage.getItem(lsKey) === "true"; }
+        catch(e) { return false; }
+    }
+
+    function saveLogin(){
+        try { localStorage.setItem(lsKey, "true"); }
+        catch(e) { console.warn("Sesi login tidak dapat disimpan:", e); }
+    }
+
+    function doLoginFallback(){
+        const input = document.getElementById("loginPassword");
+        const error = document.getElementById("loginError");
+        if(!input) return;
+
+        if(input.value.trim() === LOGIN_PASSWORD_FALLBACK){
+            saveLogin();
+            if(error) error.textContent = "";
+            showMain();
+        } else {
+            if(error) error.textContent = "Password salah.";
+            input.value = "";
+            input.focus();
+        }
+    }
+
+    function initFallbackLogin(){
+        const btn = document.getElementById("loginButton");
+        const input = document.getElementById("loginPassword");
+        if(btn) btn.addEventListener("click", doLoginFallback, true);
+        if(input) input.addEventListener("keydown", function(e){
+            if(e.key === "Enter") {
+                e.preventDefault();
+                doLoginFallback();
+            }
+        }, true);
+
+        if(loggedIn()) showMain();
+    }
+
+    initFallbackLogin();
+})();
+</script>
+
         <div class="developer-contact">
 
             Belum punya Password ?<br>
@@ -2636,8 +2697,7 @@ import {
     query,
     where,
     serverTimestamp,
-    runTransaction,
-    onSnapshot
+    runTransaction
 
 }
 from
@@ -2853,22 +2913,7 @@ const transactionRef =
     );
 
 
-/*
- * RINGKASAN DASHBOARD
- * Hanya 1 dokumen yang dipantau realtime.
- * Tabel sparepart tidak dibaca saat halaman pertama dibuka.
- */
-const dashboardSummaryRef =
-    doc(
-        db,
-        "inventoryMeta",
-        "summary"
-    );
-
-
 let items = [];
-let itemsLoaded = false;
-let itemsLoading = null;
 
 let editingCode = null;
 
@@ -2992,233 +3037,139 @@ function getStatus(item){
 
 async function loadItems(){
 
-    if(itemsLoading){
-        return itemsLoading;
-    }
+    try{
 
-    itemsLoading = (async function(){
-
-        try{
-
-            const snap =
-                await getDocs(
-                    stockRef
-                );
+        const snap =
+            await getDocs(
+                stockRef
+            );
 
 
-            items =
-                snap.docs.map(
-                    function(d){
+        items =
+            snap.docs.map(
+                function(d){
 
-                        const data =
-                            d.data();
+                    const data =
+                        d.data();
 
-                        return {
+                    return {
 
-                            firestoreId:d.id,
+                        firestoreId:d.id,
 
-                            code:
-                                data.code ||
-                                decodeURIComponent(d.id),
+                        code:
+                            data.code ||
+                            decodeURIComponent(d.id),
 
-                            name:
-                                data.name || "",
+                        name:
+                            data.name || "",
 
-                            lokasi:
-                                data.lokasi || "",
+                        lokasi:
+                            data.lokasi || "",
 
-                            qty:
-                                Number(data.qty || 0),
+                        qty:
+                            Number(data.qty || 0),
 
-                            minqty:
-                                Number(data.minqty || 0)
+                        minqty:
+                            Number(data.minqty || 0)
 
-                        };
-
-                    }
-                );
-
-
-            items.sort(
-                function(a,b){
-
-                    return String(a.code)
-                        .localeCompare(
-                            String(b.code)
-                        );
+                    };
 
                 }
             );
 
 
-            itemsLoaded = true;
+        items.sort(
+            function(a,b){
 
-            updateDashboard();
+                return String(a.code)
+                    .localeCompare(
+                        String(b.code)
+                    );
 
-            renderTable();
-
-            updateSelects();
-
-
-            /*
-             * Simpan ringkasan agar pembukaan halaman berikutnya
-             * cukup membaca 1 dokumen, bukan seluruh sparepart.
-             */
-            const summary = calculateDashboardSummary(items);
-
-            await setDoc(
-                dashboardSummaryRef,
-                {
-                    ok:summary.ok,
-                    low:summary.low,
-                    empty:summary.empty,
-                    restock:summary.restock,
-                    updatedAt:serverTimestamp()
-                },
-                {merge:true}
-            );
-
-
-            return items;
-
-        }
-        catch(error){
-
-            console.error(error);
-
-            const body = $("stockBody");
-
-            if(body){
-                body.innerHTML = `
-
-                <tr>
-
-                <td
-                    colspan="7"
-                    style="
-                    text-align:center;
-                    color:#b91c1c;
-                    padding:30px">
-
-                    Gagal mengambil data Firebase.
-
-                    <br><br>
-
-                    ${escapeHtml(error.message)}
-
-                </td>
-
-                </tr>
-
-                `;
             }
-
-            throw error;
-
-        }
-        finally{
-            itemsLoading = null;
-        }
-
-    })();
-
-    return itemsLoading;
-
-}
+        );
 
 
-function calculateDashboardSummary(list){
+        updateDashboard();
 
-    const summary = {
-        ok:0,
-        low:0,
-        empty:0,
-        restock:0
-    };
+        renderTable();
 
-    list.forEach(function(item){
-
-        const status = getStatus(item);
-
-        if(status.type === "ok") summary.ok++;
-        if(status.type === "low") summary.low++;
-        if(status.type === "empty") summary.empty++;
-
-        if(
-            Number(item.qty || 0)
-            <=
-            Number(item.minqty || 0)
-        ){
-            summary.restock++;
-        }
-
-    });
-
-    return summary;
-
-}
-
-
-async function startDashboardSummary(){
-
-    try{
-
-        const snap =
-            await getDoc(
-                dashboardSummaryRef
-            );
-
-        if(snap.exists()){
-
-            applyDashboardSummary(
-                snap.data()
-            );
-
-        }
-        else{
-
-            /*
-             * Hanya terjadi saat ringkasan belum pernah dibuat.
-             * Setelah ini halaman tidak perlu lagi membaca seluruh tabel
-             * saat startup.
-             */
-            await loadItems();
-
-        }
+        updateSelects();
 
     }
     catch(error){
 
-        console.error(
-            "Dashboard summary gagal:",
-            error
-        );
+        console.error(error);
 
-        /* Jika summary belum tersedia, jangan membuat halaman macet. */
-        if(!itemsLoaded){
-            try{
-                await loadItems();
-            }catch(e){
-                console.error(e);
-            }
-        }
+        $("stockBody").innerHTML = `
+
+        <tr>
+
+        <td
+            colspan="7"
+            style="
+            text-align:center;
+            color:#b91c1c;
+            padding:30px">
+
+            Gagal mengambil data Firebase.
+
+            <br><br>
+
+            ${escapeHtml(error.message)}
+
+        </td>
+
+        </tr>
+
+        `;
 
     }
 
 }
 
 
-function applyDashboardSummary(data){
+/* =====================================================
+   DASHBOARD
+===================================================== */
 
-    const ok = Number(data.ok || 0);
-    const low = Number(data.low || 0);
-    const empty = Number(data.empty || 0);
-    const restock = Number(data.restock || 0);
+function updateDashboard(){
 
-    $("okItems").textContent = ok;
-    $("lowItems").textContent = low;
-    $("emptyItems").textContent = empty;
-    $("restockItems").textContent = restock;
+    const ok =
+        items.filter(
+            x => getStatus(x).type === "ok"
+        ).length;
+
+
+    const low =
+        items.filter(
+            x => getStatus(x).type === "low"
+        ).length;
+
+
+    const empty =
+        items.filter(
+            x => getStatus(x).type === "empty"
+        ).length;
+
+
+    const restock =
+        items.filter(
+            x =>
+                Number(x.qty || 0)
+                <=
+                Number(x.minqty || 0)
+        ).length;
+
+
+    $("okItems").textContent =
+        ok;
+
+    $("lowItems").textContent =
+        low;
+
+    $("emptyItems").textContent =
+        empty;
 
     const habisCard = $("statHABIS");
 
@@ -3229,21 +3180,8 @@ function applyDashboardSummary(data){
         );
     }
 
-}
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-
-
-function updateDashboard(){
-
-    const summary =
-        calculateDashboardSummary(items);
-
-    applyDashboardSummary(summary);
+    $("restockItems").textContent =
+        restock;
 
 }
 
@@ -4075,25 +4013,13 @@ function updateAvailableStock(){
 }
 
 
-async function openTransaction(
+function openTransaction(
     mode,
     code=""
 ){
 
     transactionMode =
         mode;
-
-    if(!itemsLoaded){
-        try{
-            await loadItems();
-        }catch(error){
-            showMessage(
-                "Gagal memuat data sparepart: " + error.message,
-                "error"
-            );
-            return;
-        }
-    }
 
 
     $("transactionTitle")
@@ -5370,16 +5296,7 @@ async function exportHistoryExcel(){
    EXPORT
 ===================================================== */
 
-async function exportExcel(){
-
-    if(!itemsLoaded){
-        try{
-            await loadItems();
-        }catch(error){
-            showMessage("Gagal memuat data: " + error.message,"error");
-            return;
-        }
-    }
+function exportExcel(){
 
     if(items.length === 0){
 
@@ -5597,7 +5514,9 @@ function startSearchQrScanner(){
                     searchQrScanHandled=true;
 
                     const code =
-                        getCodeFromQr(decodedText);
+                        String(
+                            decodedText
+                        ).trim();
 
                     /*
                      * Hasil scan masuk ke pencarian.
@@ -5748,7 +5667,7 @@ function openQr(code){
         qrBox.appendChild(qrInner);
 
         new QRCode(qrInner,{
-            text:getUserWebUrl(item.code),
+            text:String(item.code),
             width:220,
             height:220,
             colorDark:"#000000",
@@ -5756,26 +5675,6 @@ function openQr(code){
             correctLevel:QRCode.CorrectLevel.H
         });
     },100);
-}
-
-/* =====================================================
-   QR USER - QR langsung membuka Web User
-===================================================== */
-function getUserWebUrl(code){
-    const url = new URL("user.html", window.location.href);
-    url.search = "";
-    url.searchParams.set("code", String(code || "").trim());
-    return url.href;
-}
-
-function getCodeFromQr(value){
-    const raw = String(value || "").trim();
-    try{
-        const url = new URL(raw);
-        const code = url.searchParams.get("code");
-        if(code) return code.trim();
-    }catch(error){}
-    return raw;
 }
 
 function stopQrScanner(){
@@ -5857,11 +5756,7 @@ function startQrScanner(){
         qrScanner.start(
             {facingMode:"environment"},
             {fps:10,qrbox:{width:250,height:250}},
-            function(decodedText){
-                showScannedItem(
-                    getCodeFromQr(decodedText)
-                );
-            },
+            function(decodedText){showScannedItem(decodedText);},
             function(){ }
         ).then(function(){
             qrScannerRunning=true;
@@ -5902,26 +5797,18 @@ function printQr(){
     <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}
 
 /* =====================================================
-   EMPTY STATE ILLUSTRATION - RESPONSIVE MOBILE + WEB
+   EMPTY STATE ILLUSTRATION
 ===================================================== */
 .stock-empty-illustration{
-    box-sizing:border-box;
-    width:100%;
-    max-width:760px;
-    margin:14px auto 24px;
-    padding:0 10px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    width:min(100%, 680px);
+    margin:8px auto 18px;
+    text-align:center;
     overflow:hidden;
     border-radius:24px;
     opacity:1;
     transform:translateY(0) scale(1);
-    transition:
-        opacity .45s ease,
-        transform .55s cubic-bezier(.2,.8,.2,1),
-        max-height .6s ease,
-        margin .6s ease;
+    transition:opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1),
+               max-height .65s ease, margin .65s ease;
     max-height:900px;
     pointer-events:auto;
 }
@@ -5929,21 +5816,21 @@ function printQr(){
 .stock-empty-illustration img{
     display:block;
     width:100%;
-    max-width:740px;
     height:auto;
-    margin:0 auto;
-    border-radius:22px;
-    object-fit:contain;
+    border-radius:24px;
+    filter:saturate(1.03);
+}
+
+.stock-data-panel:not(.is-visible) + .stock-empty-illustration{
+    animation:emptyStateFloat 4s ease-in-out infinite;
 }
 
 .stock-empty-illustration.is-hidden{
     opacity:0;
-    transform:translateY(-24px) scale(.96);
+    transform:translateY(-22px) scale(.96);
     max-height:0;
     margin-top:0;
     margin-bottom:0;
-    padding-top:0;
-    padding-bottom:0;
     pointer-events:none;
 }
 
@@ -5952,56 +5839,13 @@ function printQr(){
     50%{transform:translateY(-5px);}
 }
 
-.stock-empty-illustration:not(.is-hidden){animation:emptyStateFloat 4.5s ease-in-out infinite;}
-
-/* WEB / DESKTOP */
-@media(min-width:801px){
-    .stock-empty-illustration{
-        max-width:760px;
-        margin-top:18px;
-        margin-bottom:28px;
-    }
-    .stock-empty-illustration img{
-        max-width:740px;
-    }
-}
-
-/* TABLET */
-@media(min-width:601px) and (max-width:800px){
-    .stock-empty-illustration{
-        max-width:650px;
-        margin-top:14px;
-        margin-bottom:24px;
-    }
-}
-
-/* MOBILE */
 @media(max-width:600px){
     .stock-empty-illustration{
-        width:100%;
-        max-width:430px;
-        padding:0 6px;
-        margin:10px auto 18px;
+        width:calc(100% - 12px);
         border-radius:18px;
-        max-height:620px;
+        margin-top:6px;
     }
-
-    .stock-empty-illustration img{
-        width:100%;
-        max-width:418px;
-        border-radius:18px;
-    }
-}
-
-/* HP sangat kecil */
-@media(max-width:380px){
-    .stock-empty-illustration{
-        max-width:360px;
-        padding:0 4px;
-    }
-    .stock-empty-illustration img{
-        max-width:352px;
-    }
+    .stock-empty-illustration img{border-radius:18px;}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -6012,6 +5856,29 @@ function printQr(){
     }
 }
 
+
+/* V8 - ILUSTRASI CENTER */
+.stock-empty-illustration{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    max-width:760px;
+    margin:10px auto 20px;
+}
+.stock-empty-illustration img{
+    width:100%;
+    max-width:760px;
+    margin:0 auto;
+    display:block;
+}
+@media(max-width:600px){
+    .stock-empty-illustration{
+        width:calc(100% - 10px);
+        margin-left:auto;
+        margin-right:auto;
+    }
+}
 
 </style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
@@ -6432,12 +6299,6 @@ if(toggleStockData && stockDataPanel){
         const visible =
             stockDataPanel.classList.toggle("is-visible");
 
-        if(visible && !itemsLoaded){
-            loadItems().catch(function(error){
-                console.error(error);
-            });
-        }
-
         toggleStockData.setAttribute(
             "aria-expanded",
             visible ? "true" : "false"
@@ -6661,10 +6522,6 @@ document
 
 
                 if(menu === "data"){
-
-                    if(!stockDataPanel.classList.contains("is-visible")){
-                        toggleStockData.click();
-                    }
 
                     window.scrollTo({
                         top:0,
@@ -6997,35 +6854,10 @@ document
 
 
 /* =====================================================
-   START - HEMAT FIREBASE READ
+   START
 ===================================================== */
 
-/*
- * Dashboard memantau 1 dokumen saja secara realtime.
- * Seluruh collection spareparts baru dibaca saat memang diperlukan.
- */
-onSnapshot(
-    dashboardSummaryRef,
-    function(snapshot){
-
-        if(snapshot.exists()){
-            applyDashboardSummary(snapshot.data());
-        }
-        else if(!itemsLoaded && !itemsLoading){
-            startDashboardSummary();
-        }
-
-    },
-    function(error){
-        console.error(
-            "Dashboard listener gagal:",
-            error
-        );
-    }
-);
-
-/* Pastikan summary dibuat jika project masih tahap awal. */
-startDashboardSummary();
+loadItems();
 
 
 /* =========================================================
@@ -7062,7 +6894,7 @@ async function createAllQrCanvas(item){
     box.style.background = "#ffffff";
 
     new QRCode(box,{
-        text:getUserWebUrl(item.code),
+        text:String(item.code),
         width:420,
         height:420,
         colorDark:"#000000",
@@ -7242,16 +7074,7 @@ async function loadJSZip(){
     throw new Error("JSZip tidak tersedia.");
 }
 
-async async function downloadAllQR(){
-
-    if(!itemsLoaded){
-        try{
-            await loadItems();
-        }catch(error){
-            showMessage("Gagal memuat data: " + error.message,"error");
-            return;
-        }
-    }
+async function downloadAllQR(){
 
     if(typeof items === "undefined" || items.length === 0){
         showMessage("Tidak ada data sparepart.","error");
