@@ -5632,13 +5632,22 @@ function openQr(code){
 
         qrBox.appendChild(qrInner);
 
+        /*
+         * QR WEB USER FINAL:
+         * Isi QR harus sama persis dengan QR pada
+         * Download Semua QR.
+         */
+        const userWebUrl =
+            "https://ziboneva123.github.io/stock-sparepart/user.html?code=" +
+            encodeURIComponent(String(item.code));
+
         new QRCode(qrInner,{
-            text:String(item.code),
+            text:userWebUrl,
             width:220,
             height:220,
             colorDark:"#000000",
             colorLight:"#ffffff",
-            correctLevel:QRCode.CorrectLevel.H
+            correctLevel:QRCode.CorrectLevel.M
         });
     },100);
 }
