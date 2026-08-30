@@ -2696,7 +2696,7 @@ Data lainnya tidak dihapus.
 <div class="modal" id="userMessagesModal">
     <div class="modal-card">
         <h2>Kotak Masuk Pesan User</h2>
-        <div class="admin-note-info">Pesan khusus dari User akan muncul di sini.</div>
+        <div class="admin-note-info">Pesan khusus dari User akan muncul di sini. Maksimal 10 pesan tersimpan. Jika pesan ke-11 masuk, pesan paling lama otomatis dihapus.</div>
         <div id="userMessagesList" class="inbox-list">
             <div class="inbox-empty">Belum ada pesan.</div>
         </div>
@@ -2982,6 +2982,60 @@ function updateMessageNotification(count){
     }
 }
 
+/* =====================================================
+   BATAS PESAN USER = 10
+   Jika jumlah pesan > 10, pesan paling lama otomatis dihapus.
+   Yang dipertahankan adalah 10 pesan terbaru.
+===================================================== */
+const MAX_USER_MESSAGES = 10;
+let userMessageCleanupRunning = false;
+
+async function cleanupOldUserMessages(snapshot){
+    if(userMessageCleanupRunning) return;
+    if(!snapshot || snapshot.size <= MAX_USER_MESSAGES) return;
+
+    userMessageCleanupRunning = true;
+
+    try{
+        const rows = [];
+
+        snapshot.forEach(function(d){
+            const data = d.data() || {};
+            let time = null;
+
+            if(data.createdAt && typeof data.createdAt.toMillis === "function"){
+                time = data.createdAt.toMillis();
+            }
+
+            /*
+             * Pesan yang timestamp-nya masih menunggu server
+             * dianggap paling baru agar tidak salah terhapus.
+             */
+            rows.push({
+                id:d.id,
+                time:time === null ? Number.MAX_SAFE_INTEGER : time
+            });
+        });
+
+        rows.sort(function(a,b){
+            return a.time - b.time;
+        });
+
+        const deleteCount = rows.length - MAX_USER_MESSAGES;
+        const oldRows = rows.slice(0, deleteCount);
+
+        await Promise.all(oldRows.map(function(row){
+            return deleteDoc(doc(db, "userMessages", row.id));
+        }));
+
+        console.log("Pesan lama otomatis dihapus:", deleteCount);
+    }catch(error){
+        console.warn("Gagal membersihkan pesan lama:", error);
+    }finally{
+        userMessageCleanupRunning = false;
+    }
+}
+
 function startUserMessageNotification(){
     try{
         onSnapshot(userMessagesRef, function(snapshot){
@@ -2991,6 +3045,14 @@ function startUserMessageNotification(){
                 if(data.read !== true) unread++;
             });
             updateMessageNotification(unread);
+
+            /*
+             * Jika jumlah pesan sudah lebih dari 10,
+             * hapus pesan yang paling lama secara otomatis.
+             */
+            if(snapshot.size > MAX_USER_MESSAGES){
+                cleanupOldUserMessages(snapshot);
+            }
         }, function(error){
             console.warn("Notifikasi pesan User tidak tersedia:", error);
         });
@@ -3006,6 +3068,14 @@ async function openUserMessages(){
     list.innerHTML = '<div class="inbox-empty">Memuat pesan...</div>';
     try{
         const snap = await getDocs(userMessagesRef);
+
+        /* Pastikan database tidak menyimpan lebih dari 10 pesan. */
+        if(snap.size > MAX_USER_MESSAGES){
+            await cleanupOldUserMessages(snap);
+            await getDocs(userMessagesRef);
+            return openUserMessages();
+        }
+
         const rows = [];
         snap.forEach(function(d){ rows.push({id:d.id, data:d.data() || {}}); });
         rows.sort(function(a,b){
