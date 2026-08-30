@@ -2636,7 +2636,8 @@ import {
     query,
     where,
     serverTimestamp,
-    runTransaction
+    runTransaction,
+    onSnapshot
 
 }
 from
@@ -2852,7 +2853,22 @@ const transactionRef =
     );
 
 
+/*
+ * RINGKASAN DASHBOARD
+ * Hanya 1 dokumen yang dipantau realtime.
+ * Tabel sparepart tidak dibaca saat halaman pertama dibuka.
+ */
+const dashboardSummaryRef =
+    doc(
+        db,
+        "inventoryMeta",
+        "summary"
+    );
+
+
 let items = [];
+let itemsLoaded = false;
+let itemsLoading = null;
 
 let editingCode = null;
 
@@ -2976,139 +2992,233 @@ function getStatus(item){
 
 async function loadItems(){
 
-    try{
+    if(itemsLoading){
+        return itemsLoading;
+    }
 
-        const snap =
-            await getDocs(
-                stockRef
-            );
+    itemsLoading = (async function(){
+
+        try{
+
+            const snap =
+                await getDocs(
+                    stockRef
+                );
 
 
-        items =
-            snap.docs.map(
-                function(d){
+            items =
+                snap.docs.map(
+                    function(d){
 
-                    const data =
-                        d.data();
+                        const data =
+                            d.data();
 
-                    return {
+                        return {
 
-                        firestoreId:d.id,
+                            firestoreId:d.id,
 
-                        code:
-                            data.code ||
-                            decodeURIComponent(d.id),
+                            code:
+                                data.code ||
+                                decodeURIComponent(d.id),
 
-                        name:
-                            data.name || "",
+                            name:
+                                data.name || "",
 
-                        lokasi:
-                            data.lokasi || "",
+                            lokasi:
+                                data.lokasi || "",
 
-                        qty:
-                            Number(data.qty || 0),
+                            qty:
+                                Number(data.qty || 0),
 
-                        minqty:
-                            Number(data.minqty || 0)
+                            minqty:
+                                Number(data.minqty || 0)
 
-                    };
+                        };
+
+                    }
+                );
+
+
+            items.sort(
+                function(a,b){
+
+                    return String(a.code)
+                        .localeCompare(
+                            String(b.code)
+                        );
 
                 }
             );
 
 
-        items.sort(
-            function(a,b){
+            itemsLoaded = true;
 
-                return String(a.code)
-                    .localeCompare(
-                        String(b.code)
-                    );
+            updateDashboard();
 
+            renderTable();
+
+            updateSelects();
+
+
+            /*
+             * Simpan ringkasan agar pembukaan halaman berikutnya
+             * cukup membaca 1 dokumen, bukan seluruh sparepart.
+             */
+            const summary = calculateDashboardSummary(items);
+
+            await setDoc(
+                dashboardSummaryRef,
+                {
+                    ok:summary.ok,
+                    low:summary.low,
+                    empty:summary.empty,
+                    restock:summary.restock,
+                    updatedAt:serverTimestamp()
+                },
+                {merge:true}
+            );
+
+
+            return items;
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            const body = $("stockBody");
+
+            if(body){
+                body.innerHTML = `
+
+                <tr>
+
+                <td
+                    colspan="7"
+                    style="
+                    text-align:center;
+                    color:#b91c1c;
+                    padding:30px">
+
+                    Gagal mengambil data Firebase.
+
+                    <br><br>
+
+                    ${escapeHtml(error.message)}
+
+                </td>
+
+                </tr>
+
+                `;
             }
-        );
+
+            throw error;
+
+        }
+        finally{
+            itemsLoading = null;
+        }
+
+    })();
+
+    return itemsLoading;
+
+}
 
 
-        updateDashboard();
+function calculateDashboardSummary(list){
 
-        renderTable();
+    const summary = {
+        ok:0,
+        low:0,
+        empty:0,
+        restock:0
+    };
 
-        updateSelects();
+    list.forEach(function(item){
+
+        const status = getStatus(item);
+
+        if(status.type === "ok") summary.ok++;
+        if(status.type === "low") summary.low++;
+        if(status.type === "empty") summary.empty++;
+
+        if(
+            Number(item.qty || 0)
+            <=
+            Number(item.minqty || 0)
+        ){
+            summary.restock++;
+        }
+
+    });
+
+    return summary;
+
+}
+
+
+async function startDashboardSummary(){
+
+    try{
+
+        const snap =
+            await getDoc(
+                dashboardSummaryRef
+            );
+
+        if(snap.exists()){
+
+            applyDashboardSummary(
+                snap.data()
+            );
+
+        }
+        else{
+
+            /*
+             * Hanya terjadi saat ringkasan belum pernah dibuat.
+             * Setelah ini halaman tidak perlu lagi membaca seluruh tabel
+             * saat startup.
+             */
+            await loadItems();
+
+        }
 
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            "Dashboard summary gagal:",
+            error
+        );
 
-        $("stockBody").innerHTML = `
-
-        <tr>
-
-        <td
-            colspan="7"
-            style="
-            text-align:center;
-            color:#b91c1c;
-            padding:30px">
-
-            Gagal mengambil data Firebase.
-
-            <br><br>
-
-            ${escapeHtml(error.message)}
-
-        </td>
-
-        </tr>
-
-        `;
+        /* Jika summary belum tersedia, jangan membuat halaman macet. */
+        if(!itemsLoaded){
+            try{
+                await loadItems();
+            }catch(e){
+                console.error(e);
+            }
+        }
 
     }
 
 }
 
 
-/* =====================================================
-   DASHBOARD
-===================================================== */
+function applyDashboardSummary(data){
 
-function updateDashboard(){
+    const ok = Number(data.ok || 0);
+    const low = Number(data.low || 0);
+    const empty = Number(data.empty || 0);
+    const restock = Number(data.restock || 0);
 
-    const ok =
-        items.filter(
-            x => getStatus(x).type === "ok"
-        ).length;
-
-
-    const low =
-        items.filter(
-            x => getStatus(x).type === "low"
-        ).length;
-
-
-    const empty =
-        items.filter(
-            x => getStatus(x).type === "empty"
-        ).length;
-
-
-    const restock =
-        items.filter(
-            x =>
-                Number(x.qty || 0)
-                <=
-                Number(x.minqty || 0)
-        ).length;
-
-
-    $("okItems").textContent =
-        ok;
-
-    $("lowItems").textContent =
-        low;
-
-    $("emptyItems").textContent =
-        empty;
+    $("okItems").textContent = ok;
+    $("lowItems").textContent = low;
+    $("emptyItems").textContent = empty;
+    $("restockItems").textContent = restock;
 
     const habisCard = $("statHABIS");
 
@@ -3119,8 +3229,21 @@ function updateDashboard(){
         );
     }
 
-    $("restockItems").textContent =
-        restock;
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+
+
+function updateDashboard(){
+
+    const summary =
+        calculateDashboardSummary(items);
+
+    applyDashboardSummary(summary);
 
 }
 
@@ -3952,13 +4075,25 @@ function updateAvailableStock(){
 }
 
 
-function openTransaction(
+async function openTransaction(
     mode,
     code=""
 ){
 
     transactionMode =
         mode;
+
+    if(!itemsLoaded){
+        try{
+            await loadItems();
+        }catch(error){
+            showMessage(
+                "Gagal memuat data sparepart: " + error.message,
+                "error"
+            );
+            return;
+        }
+    }
 
 
     $("transactionTitle")
@@ -5235,7 +5370,16 @@ async function exportHistoryExcel(){
    EXPORT
 ===================================================== */
 
-function exportExcel(){
+async function exportExcel(){
+
+    if(!itemsLoaded){
+        try{
+            await loadItems();
+        }catch(error){
+            showMessage("Gagal memuat data: " + error.message,"error");
+            return;
+        }
+    }
 
     if(items.length === 0){
 
@@ -6288,6 +6432,12 @@ if(toggleStockData && stockDataPanel){
         const visible =
             stockDataPanel.classList.toggle("is-visible");
 
+        if(visible && !itemsLoaded){
+            loadItems().catch(function(error){
+                console.error(error);
+            });
+        }
+
         toggleStockData.setAttribute(
             "aria-expanded",
             visible ? "true" : "false"
@@ -6511,6 +6661,10 @@ document
 
 
                 if(menu === "data"){
+
+                    if(!stockDataPanel.classList.contains("is-visible")){
+                        toggleStockData.click();
+                    }
 
                     window.scrollTo({
                         top:0,
@@ -6843,10 +6997,35 @@ document
 
 
 /* =====================================================
-   START
+   START - HEMAT FIREBASE READ
 ===================================================== */
 
-loadItems();
+/*
+ * Dashboard memantau 1 dokumen saja secara realtime.
+ * Seluruh collection spareparts baru dibaca saat memang diperlukan.
+ */
+onSnapshot(
+    dashboardSummaryRef,
+    function(snapshot){
+
+        if(snapshot.exists()){
+            applyDashboardSummary(snapshot.data());
+        }
+        else if(!itemsLoaded && !itemsLoading){
+            startDashboardSummary();
+        }
+
+    },
+    function(error){
+        console.error(
+            "Dashboard listener gagal:",
+            error
+        );
+    }
+);
+
+/* Pastikan summary dibuat jika project masih tahap awal. */
+startDashboardSummary();
 
 
 /* =========================================================
@@ -7063,7 +7242,16 @@ async function loadJSZip(){
     throw new Error("JSZip tidak tersedia.");
 }
 
-async function downloadAllQR(){
+async async function downloadAllQR(){
+
+    if(!itemsLoaded){
+        try{
+            await loadItems();
+        }catch(error){
+            showMessage("Gagal memuat data: " + error.message,"error");
+            return;
+        }
+    }
 
     if(typeof items === "undefined" || items.length === 0){
         showMessage("Tidak ada data sparepart.","error");
