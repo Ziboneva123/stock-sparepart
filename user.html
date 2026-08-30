@@ -27,6 +27,7 @@ import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-ap
 import{getFirestore,doc,getDoc,runTransaction,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyB4ea4a-Q2wNWagzatBWx6DuEgmyLKTjOs",authDomain:"stock-sparepart-a66cf.firebaseapp.com",projectId:"stock-sparepart-a66cf",storageBucket:"stock-sparepart-a66cf.firebasestorage.app",messagingSenderId:"1064348530987",appId:"1:1064348530987:web:299b60f0db04e5a904ed6e"});
 const db=getFirestore(app),tr=collection(db,"transactions"),card=document.getElementById("card");
+ let currentMinStock=0;
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 const key=v=>encodeURIComponent(String(v).trim()),code=new URLSearchParams(location.search).get("code")?.trim();
 function status(q,m){return q<=0?["HABIS","empty"]:q<=m?["LOW","low"]:["OK",""]}
@@ -35,8 +36,10 @@ async function load(){
   if(!code)throw Error("QR tidak memiliki kode sparepart.");
   const s=await getDoc(doc(db,"spareparts",key(code))); if(!s.exists())throw Error("Sparepart "+code+" tidak ditemukan.");
   const d=s.data(),q=Number(d.qty||0),m=Number(d.minqty||0),st=status(q,m);
+   currentMinStock=m;
   card.innerHTML=`<span class="badge">USER WEB • BARANG KELUAR</span><div class="code">${esc(d.code||code)}</div><div class="name">${esc(d.name||"-")}</div>
   <div class="grid"><div class="box"><div class="label">Lokasi</div><div class="value">${esc(d.lokasi||"-")}</div></div><div class="box"><div class="label">Minimum Stock</div><div class="value">${m}</div></div></div>
+  <div class="box" style="margin-top:12px"><div class="label">Deskripsi</div><div class="value">${esc(d.deskripsi||d.description||"Deskripsi belum diisi di Web Maintenance.")}</div></div>
   <div class="stock ${st[1]}"><div class="label">STOCK TERSEDIA</div><div class="num" id="stock">${q}</div><div class="status">${st[0]}</div></div>
   <h2>Ambil Barang</h2><div class="row"><div><label>Jumlah diambil</label><input id="qty" type="number" min="1" max="${Math.max(q,1)}" value="1"></div><div><label>Nama Operator</label><input id="op" placeholder="Nama operator"></div></div>
   <label>Keterangan</label><textarea id="note" rows="2" placeholder="Opsional"></textarea>
@@ -54,7 +57,15 @@ async function take(){
   const ref=doc(db,"spareparts",key(code));let rem=0;
   await runTransaction(db,async tx=>{const s=await tx.get(ref);if(!s.exists())throw Error("Sparepart tidak ditemukan.");const q=Number(s.data().qty||0);if(n>q)throw Error("Stock tidak mencukupi. Stock saat ini: "+q);rem=q-n;tx.update(ref,{qty:rem,updatedAt:serverTimestamp()})});
   await addDoc(tr,{code,type:"out",qty:n,operator:op,note,remainingStock:rem,createdAt:serverTimestamp()});
-  msg("Barang berhasil diambil. Stock tersisa: "+rem,"ok");setTimeout(load,700);
+  document.getElementById("stock").textContent=rem;
+   const st=status(rem,currentMinStock);
+   const stockEl=document.querySelector(".stock");
+   if(stockEl){stockEl.className="stock "+st[1];}
+   const statusEl=document.querySelector(".stock .status");
+   if(statusEl)statusEl.textContent=st[0];
+   const takeBtn=document.getElementById("take");
+   if(rem<=0)takeBtn.disabled=true;
+   msg("Barang berhasil diambil. Stock tersisa: "+rem,"ok");
  }catch(e){msg("Gagal mengambil barang: "+e.message,"err");b.disabled=false;b.textContent="AMBIL BARANG (KELUAR)"}
 }
 load();
