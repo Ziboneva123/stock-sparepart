@@ -19,7 +19,37 @@ input,textarea{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:12
 .msg{display:none;margin-top:13px;padding:12px;border-radius:10px;font-weight:700}.msg.show{display:block}.ok{background:#e9f8ef;color:#137c3d}.err{background:#fff0f0;color:#b42318}
 .back{display:block;text-align:center;margin-top:16px;color:#168d48;font-weight:800;text-decoration:none}
 @media(max-width:600px){main{width:calc(100% - 14px);margin-top:10px}.card{padding:16px;border-radius:17px}.grid,.row{grid-template-columns:1fr}}
+
+/* =====================================================
+   LOGIN WEB USER
+===================================================== */
+#userLoginScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px;background:#071d30;}
+.user-login-card{width:100%;max-width:480px;background:#fff;border-radius:22px;padding:32px 26px;box-shadow:0 20px 55px rgba(0,0,0,.28);text-align:center;border-top:5px solid #18b957;}
+.user-login-card h2{margin:0;color:#123b50;font-size:28px;}
+.user-login-card p{margin:10px 0 24px;color:#64748b;}
+.user-password-wrap{position:relative;}
+#userLoginPassword{width:100%;padding:15px 78px 15px 15px;border:1px solid #cbd5e1;border-radius:12px;font-size:18px;text-align:center;outline:none;}
+#userLoginPassword:focus{border-color:#18a953;box-shadow:0 0 0 3px rgba(24,169,83,.12);}
+#userTogglePassword{position:absolute;right:7px;top:50%;transform:translateY(-50%);height:40px;padding:0 11px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;color:#334155;font-weight:800;cursor:pointer;}
+#userLoginButton{width:100%;margin-top:15px;padding:15px;border:0;border-radius:12px;background:#18a953;color:#fff;font-size:17px;font-weight:900;cursor:pointer;}
+#userLoginError{min-height:22px;margin-top:10px;color:#b42318;font-weight:800;}
+#userWebsiteContent{display:none;}
+@media(max-width:600px){.user-login-card{padding:28px 18px;border-radius:19px}.user-login-card h2{font-size:24px;}}
 </style></head><body>
+
+<div id="userLoginScreen">
+  <div class="user-login-card">
+    <h2>MAINTENANCE • USER</h2>
+    <p>Masukkan password untuk melanjutkan</p>
+    <div class="user-password-wrap">
+      <input id="userLoginPassword" type="password" placeholder="Password" autocomplete="off">
+      <button type="button" id="userTogglePassword">Buka</button>
+    </div>
+    <button id="userLoginButton">MASUK</button>
+    <div id="userLoginError"></div>
+  </div>
+</div>
+<div id="userWebsiteContent">
 <header><h1>MAINTENANCE • USER</h1><p>Sparepart Inventory • Ambil Barang</p></header>
 <main><section class="card" id="card"><div style="text-align:center;padding:35px;color:#64748b">Membaca data sparepart...</div></section></main>
 <script type="module">
@@ -39,6 +69,7 @@ async function load(){
    currentMinStock=m;
   card.innerHTML=`<span class="badge">USER WEB • BARANG KELUAR</span><div class="code">${esc(d.code||code)}</div><div class="name">${esc(d.name||"-")}</div>
   <div class="grid"><div class="box"><div class="label">Lokasi</div><div class="value">${esc(d.lokasi||"-")}</div></div><div class="box"><div class="label">Minimum Stock</div><div class="value">${m}</div></div></div>
+  <div class="box" style="margin-top:12px"><div class="label">Deskripsi</div><div class="value">${esc(d.deskripsi||d.description||"Deskripsi belum diisi di Web Maintenance.")}</div></div>
   <div class="stock ${st[1]}"><div class="label">STOCK TERSEDIA</div><div class="num" id="stock">${q}</div><div class="status">${st[0]}</div></div>
   <h2>Ambil Barang</h2><div class="row"><div><label>Jumlah diambil</label><input id="qty" type="number" min="1" max="${Math.max(q,1)}" value="1"></div><div><label>Nama Operator</label><input id="op" placeholder="Nama operator"></div></div>
   <label>Keterangan</label><textarea id="note" rows="2" placeholder="Opsional"></textarea>
@@ -68,4 +99,31 @@ async function take(){
  }catch(e){msg("Gagal mengambil barang: "+e.message,"err");b.disabled=false;b.textContent="AMBIL BARANG (KELUAR)"}
 }
 load();
-</script></body></html>
+</script></div>
+<script>
+(function(){
+  const PASSWORD = "01234";
+  const KEY = "maintenanceUserLogin";
+  const screen = document.getElementById("userLoginScreen");
+  const content = document.getElementById("userWebsiteContent");
+  const input = document.getElementById("userLoginPassword");
+  const button = document.getElementById("userLoginButton");
+  const error = document.getElementById("userLoginError");
+  const toggle = document.getElementById("userTogglePassword");
+  function show(){screen.style.display="none";content.style.display="block";}
+  function login(){
+    if(input.value.trim()===PASSWORD){
+      localStorage.setItem(KEY,"true"); error.textContent=""; show();
+    }else{
+      error.textContent="Password salah."; input.value=""; input.focus();
+    }
+  }
+  try{if(localStorage.getItem(KEY)==="true") show();}catch(e){}
+  button.addEventListener("click",login);
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+  toggle.addEventListener("click",()=>{
+    const open=input.type==="password"; input.type=open?"text":"password"; toggle.textContent=open?"Tutup":"Buka";
+  });
+})();
+</script>
+</body></html>
