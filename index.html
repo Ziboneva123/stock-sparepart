@@ -7169,146 +7169,138 @@ async function downloadAllQR(){
 
 
 /* =====================================================
-   HEMAT FIREBASE: DASHBOARD HANYA LISTEN 1 DOKUMEN
-   dashboard/summary
+   REALTIME DASHBOARD â€” SAFE MODE
+   Tidak bergantung pada dashboard/summary.
+   Menggunakan collection spareparts + transactions yang
+   memang sudah dipakai tabel/history utama.
 ===================================================== */
-let realtimeSummaryUnsubscribe = null;
+let realtimeStockUnsubscribe = null;
+let realtimeTransactionUnsubscribe = null;
+let realtimeItems = [];
+let realtimeTransactions = [];
 
 function rtNumber(v){
     const n = Number(v || 0);
     return Number.isFinite(n) ? n.toLocaleString("id-ID") : "0";
 }
 
+function rtDateKey(date){
+    return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
+}
+
 function rtDateLabel(key){
-    const p = String(key || "").split("-");
-    if(p.length !== 3) return key;
-    return p[2] + "/" + p[1];
+    const p=String(key||"").split("-");
+    return p.length===3 ? p[2]+"/"+p[1] : key;
 }
 
 function renderRealtimeCombo(summary){
-    const svg = $("realtimeComboChart");
-    const legend = $("realtimeComboLegend");
+    const svg=$("realtimeComboChart");
+    const legend=$("realtimeComboLegend");
     if(!svg) return;
 
-    const daily = summary && summary.trafficDaily ? summary.trafficDaily : {};
-    const keys = Object.keys(daily).sort().slice(-30);
-    const points = keys.map(k => ({
-        key:k,
-        masuk:Number(daily[k]?.masuk || 0),
-        keluar:Number(daily[k]?.keluar || 0)
-    }));
-
+    const daily=summary && summary.trafficDaily ? summary.trafficDaily : {};
+    const keys=Object.keys(daily).sort().slice(-30);
+    const points=keys.map(k=>({key:k,masuk:Number(daily[k]?.masuk||0),keluar:Number(daily[k]?.keluar||0)}));
     const W=1100,H=520,L=62,R=62,T=32,B=82,iw=W-L-R,ih=H-T-B;
     const stockVals=[Number(summary.totalItems||0),Number(summary.okItems||0),Number(summary.lowItems||0),Number(summary.habisItems||0)];
     const trafficMax=Math.max(1,...points.map(x=>Math.max(x.masuk,x.keluar)));
     const stockMax=Math.max(1,...stockVals);
     const step=points.length ? iw/points.length : iw;
-    const groupW=Math.min(30,step*.72);
-    const bw=Math.max(2,(groupW-4)/2);
+    const groupW=Math.min(30,step*.72), bw=Math.max(2,(groupW-4)/2);
     let out=`<rect x="0" y="0" width="${W}" height="${H}" fill="white"/>`;
-
-    // Grid and left stock axis
     for(let i=0;i<=5;i++){
-        const v=stockMax*i/5;
-        const y=T+ih-(v/stockMax*ih);
+        const v=stockMax*i/5,y=T+ih-(v/stockMax*ih);
         out+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#e2e8f0"/>`;
         out+=`<text x="${L-9}" y="${y+4}" text-anchor="end" font-size="12" fill="#64748b">${Math.round(v)}</text>`;
     }
-    // Right traffic axis
     for(let i=0;i<=5;i++){
-        const v=trafficMax*i/5;
-        const y=T+ih-(v/trafficMax*ih);
+        const v=trafficMax*i/5,y=T+ih-(v/trafficMax*ih);
         out+=`<text x="${W-R+9}" y="${y+4}" text-anchor="start" font-size="12" fill="#64748b">${Math.round(v)}</text>`;
     }
     out+=`<text x="16" y="20" font-size="12" font-weight="800" fill="#475569">JUMLAH ITEM</text>`;
     out+=`<text x="${W-120}" y="20" font-size="12" font-weight="800" fill="#475569">QTY TRAFFIC</text>`;
-
-    // Traffic columns
     points.forEach((x,i)=>{
-        const cx=L+i*step+step/2;
-        const hIn=(x.masuk/trafficMax)*ih;
-        const hOut=(x.keluar/trafficMax)*ih;
-        const base=T+ih;
+        const cx=L+i*step+step/2,base=T+ih,hIn=(x.masuk/trafficMax)*ih,hOut=(x.keluar/trafficMax)*ih;
         out+=`<rect x="${cx-groupW/2}" y="${base-hIn}" width="${bw}" height="${Math.max(1,hIn)}" rx="2" fill="#2563eb"><title>${x.key} MASUK: ${x.masuk}</title></rect>`;
         out+=`<rect x="${cx-groupW/2+bw+4}" y="${base-hOut}" width="${bw}" height="${Math.max(1,hOut)}" rx="2" fill="#dc2626"><title>${x.key} KELUAR: ${x.keluar}</title></rect>`;
-        if(i===0 || i===points.length-1 || i%5===0){
-            out+=`<text x="${cx}" y="${H-B+23}" text-anchor="middle" font-size="11" fill="#64748b">${rtDateLabel(x.key)}</text>`;
-        }
+        if(i===0 || i===points.length-1 || i%5===0) out+=`<text x="${cx}" y="${H-B+23}" text-anchor="middle" font-size="11" fill="#64748b">${rtDateLabel(x.key)}</text>`;
     });
-
-    function linePath(getVal){
-        if(!points.length) return "";
-        return points.map((x,i)=>{
-            const cx=L+i*step+step/2;
-            const val=getVal(x);
-            const y=T+ih-(val/stockMax*ih);
-            return (i===0?"M":"L")+cx.toFixed(1)+" "+y.toFixed(1);
-        }).join(" ");
-    }
-
-    // Status/item reference lines across the 30-day traffic axis.
-    const lines=[
-        ["TOTAL ITEM",Number(summary.totalItems||0),"#0f172a"],
-        ["OK ITEM",Number(summary.okItems||0),"#16a34a"],
-        ["LOW ITEM",Number(summary.lowItems||0),"#d97706"],
-        ["HABIS ITEM",Number(summary.habisItems||0),"#dc2626"]
-    ];
+    const lines=[["TOTAL ITEM",Number(summary.totalItems||0),"#0f172a"],["OK ITEM",Number(summary.okItems||0),"#16a34a"],["LOW ITEM",Number(summary.lowItems||0),"#d97706"],["HABIS ITEM",Number(summary.habisItems||0),"#dc2626"]];
     for(const [name,val,color] of lines){
         if(!points.length) continue;
         const y=T+ih-(val/stockMax*ih);
         out+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="${color}" stroke-width="2" stroke-dasharray="6 5" opacity=".85"><title>${name}: ${val} item</title></line>`;
         out+=`<text x="${W-R-4}" y="${y-5}" text-anchor="end" font-size="10" font-weight="800" fill="${color}">${name} ${val}</text>`;
     }
-
     out+=`<line x1="${L}" y1="${T+ih}" x2="${W-R}" y2="${T+ih}" stroke="#94a3b8"/>`;
     svg.innerHTML=out;
+    if(legend) legend.innerHTML=`<span><i style="background:#2563eb"></i>MASUK</span><span><i style="background:#dc2626"></i>KELUAR</span><span><i style="background:#0f172a"></i>TOTAL ITEM</span><span><i style="background:#16a34a"></i>OK</span><span><i style="background:#d97706"></i>LOW</span><span><i style="background:#dc2626"></i>HABIS</span>`;
+}
 
-    legend.innerHTML=`
-      <span><i style="background:#2563eb"></i>MASUK</span>
-      <span><i style="background:#dc2626"></i>KELUAR</span>
-      <span><i style="background:#0f172a"></i>TOTAL ITEM</span>
-      <span><i style="background:#16a34a"></i>OK</span>
-      <span><i style="background:#d97706"></i>LOW</span>
-      <span><i style="background:#dc2626"></i>HABIS</span>`;
+function buildRealtimeSummary(){
+    const sourceItems=realtimeItems.length ? realtimeItems : items;
+    let ok=0,low=0,habis=0;
+    sourceItems.forEach(item=>{
+        const st=getStatus(item).type;
+        if(st==="ok") ok++; else if(st==="low") low++; else if(st==="empty") habis++;
+    });
+    const now=new Date();
+    const cutoff=new Date(now.getTime()-30*24*60*60*1000);
+    const daily={};
+    let in30=0,out30=0;
+    realtimeTransactions.forEach(x=>{
+        if(!x.createdAt || typeof x.createdAt.toDate!=="function") return;
+        const dt=x.createdAt.toDate();
+        if(dt<cutoff || dt>now) return;
+        const key=rtDateKey(dt);
+        if(!daily[key]) daily[key]={masuk:0,keluar:0};
+        const q=Number(x.qty||0);
+        if(x.type==="in"){ daily[key].masuk+=q; in30+=q; }
+        else if(x.type==="out"){ daily[key].keluar+=q; out30+=q; }
+    });
+    const summary={totalItems:sourceItems.length,okItems:ok,lowItems:low,habisItems:habis,trafficMasuk30:in30,trafficKeluar30:out30,trafficDaily:daily};
+    $("rtTotalItems") && ($("rtTotalItems").textContent=rtNumber(summary.totalItems));
+    $("rtOkItems") && ($("rtOkItems").textContent=rtNumber(ok));
+    $("rtLowItems") && ($("rtLowItems").textContent=rtNumber(low));
+    $("rtHabisItems") && ($("rtHabisItems").textContent=rtNumber(habis));
+    $("rtMasuk30") && ($("rtMasuk30").textContent=rtNumber(in30));
+    $("rtKeluar30") && ($("rtKeluar30").textContent=rtNumber(out30));
+    const badge=$("dashboardRealtimeStatus");
+    if(badge){ badge.textContent="REALTIME AKTIF"; badge.classList.remove("error"); }
+    renderRealtimeCombo(summary);
 }
 
 function startRealtimeSummaryDashboard(){
-    if(realtimeSummaryUnsubscribe) return;
-
-    const summaryRef = doc(db,"dashboard","summary");
-    const badge = $("dashboardRealtimeStatus");
-
-    realtimeSummaryUnsubscribe = onSnapshot(summaryRef, function(snap){
-        if(!snap.exists()){
-            if(badge){badge.textContent="SUMMARY BELUM ADA";badge.classList.add("error");}
-            return;
-        }
-
-        const d=snap.data() || {};
-
-        // Existing top dashboard cards now show ITEM counts from summary.
-        if($("okItems")) $("okItems").textContent=rtNumber(d.okItems);
-        if($("lowItems")) $("lowItems").textContent=rtNumber(d.lowItems);
-        if($("emptyItems")) $("emptyItems").textContent=rtNumber(d.habisItems);
-
-        if($("rtTotalItems")) $("rtTotalItems").textContent=rtNumber(d.totalItems);
-        if($("rtOkItems")) $("rtOkItems").textContent=rtNumber(d.okItems);
-        if($("rtLowItems")) $("rtLowItems").textContent=rtNumber(d.lowItems);
-        if($("rtHabisItems")) $("rtHabisItems").textContent=rtNumber(d.habisItems);
-        if($("rtMasuk30")) $("rtMasuk30").textContent=rtNumber(d.trafficMasuk30);
-        if($("rtKeluar30")) $("rtKeluar30").textContent=rtNumber(d.trafficKeluar30);
-
-        if(badge){badge.textContent="REALTIME AKTIF";badge.classList.remove("error");}
-        renderRealtimeCombo(d);
-    }, function(error){
-        console.error("Dashboard summary listener error:",error);
-        if(badge){badge.textContent="KONEKSI ERROR";badge.classList.add("error");}
-    });
+    if(realtimeStockUnsubscribe || realtimeTransactionUnsubscribe) return;
+    const badge=$("dashboardRealtimeStatus");
+    try{
+        realtimeStockUnsubscribe=onSnapshot(stockRef,function(snap){
+            realtimeItems=snap.docs.map(d=>{ const x=d.data(); return {firestoreId:d.id,code:x.code||decodeURIComponent(d.id),name:x.name||"",lokasi:x.lokasi||"",qty:Number(x.qty||0),minqty:Number(x.minqty||0)}; });
+            buildRealtimeSummary();
+        },function(error){
+            console.error("Realtime stock listener error:",error);
+            realtimeItems=items.slice();
+            buildRealtimeSummary();
+            if(badge){badge.textContent="DATA LOKAL";badge.classList.remove("error");}
+        });
+        realtimeTransactionUnsubscribe=onSnapshot(transactionRef,function(snap){
+            realtimeTransactions=snap.docs.map(d=>({id:d.id,...d.data()}));
+            buildRealtimeSummary();
+        },function(error){
+            console.error("Realtime transaction listener error:",error);
+            realtimeTransactions=[];
+            buildRealtimeSummary();
+            if(badge){badge.textContent="STOCK AKTIF â€¢ TRAFFIC TIDAK TERSEDIA";badge.classList.add("error");}
+        });
+    }catch(error){
+        console.error("Realtime dashboard startup error:",error);
+        realtimeItems=items.slice();
+        realtimeTransactions=[];
+        buildRealtimeSummary();
+    }
 }
 
-// Mulai setelah DOM dan Firebase siap. Hanya 1 dokumen Firestore yang dipantau.
 startRealtimeSummaryDashboard();
-
 </script>
 
 </body>
