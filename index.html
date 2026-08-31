@@ -2209,8 +2209,8 @@ footer{
         <canvas id="realtimeComboChart"></canvas>
     </div>
     <div class="rt-chart-note">
-        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC harian.
-        Data diperbarui otomatis saat data Stock atau History berubah di Firebase.
+        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK saat ini.
+        Kartu di atas menunjukkan total stock serta status OK, LOW, dan HABIS. Data diperbarui otomatis dari Firebase.
     </div>
 </section>
 
@@ -3104,8 +3104,6 @@ const transactionRef =
         "transactions"
     );
 
-// Mulai listener realtime setelah referensi Firebase siap.
-startRealtimeDashboard();
 
 
 /* =====================================================
@@ -3336,7 +3334,8 @@ function updateRealtimeDashboard(){
     const labels = daily.map(x => String(x.date.getDate()).padStart(2,"0") + "/" + String(x.date.getMonth()+1).padStart(2,"0"));
     const masuk = daily.map(x => x.masuk);
     const keluar = daily.map(x => x.keluar);
-    const total = daily.map(x => x.masuk + x.keluar);
+    const totalTraffic = daily.map(x => x.masuk + x.keluar);
+    const totalStockSeries = daily.map(() => totalStock);
 
     if(realtimeChart) realtimeChart.destroy();
     realtimeChart = new Chart(canvas, {
@@ -3345,7 +3344,8 @@ function updateRealtimeDashboard(){
             datasets:[
                 {type:"bar",label:"MASUK",data:masuk,yAxisID:"yTraffic",borderWidth:1},
                 {type:"bar",label:"KELUAR",data:keluar,yAxisID:"yTraffic",borderWidth:1},
-                {type:"line",label:"TOTAL TRAFFIC",data:total,yAxisID:"yTraffic",tension:.25,fill:false,borderWidth:3,pointRadius:3}
+                {type:"line",label:"TOTAL TRAFFIC",data:totalTraffic,yAxisID:"yTraffic",tension:.25,fill:false,borderWidth:2,pointRadius:2},
+                {type:"line",label:"TOTAL STOCK SAAT INI",data:totalStockSeries,yAxisID:"yStock",tension:0,fill:false,borderWidth:3,pointRadius:2}
             ]
         },
         options:{
@@ -3358,7 +3358,8 @@ function updateRealtimeDashboard(){
             },
             scales:{
                 x:{stacked:false,title:{display:true,text:"Tanggal"}},
-                yTraffic:{beginAtZero:true,title:{display:true,text:"Qty Traffic"},ticks:{precision:0}}
+                yTraffic:{beginAtZero:true,position:"left",title:{display:true,text:"Qty Traffic"},ticks:{precision:0}},
+                yStock:{beginAtZero:true,position:"right",grid:{drawOnChartArea:false},title:{display:true,text:"Qty Stock"},ticks:{precision:0}}
             }
         }
     });
@@ -3381,9 +3382,9 @@ function startRealtimeDashboard(){
             });
             items.sort((a,b)=>String(a.code).localeCompare(String(b.code)));
             updateDashboard();
-            updateRealtimeDashboard();
             renderTable();
             updateSelects();
+            updateRealtimeDashboard();
         }, function(error){
             console.error("Realtime stock error:",error);
             const live=$("realtimeLive");
@@ -7388,7 +7389,9 @@ document
    START
 ===================================================== */
 
-loadItems();
+// Mulai setelah seluruh variabel dashboard dideklarasikan.
+// onSnapshot langsung memberikan data awal dan selanjutnya realtime.
+startRealtimeDashboard();
 
 
 /* =========================================================
