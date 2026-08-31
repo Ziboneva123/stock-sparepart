@@ -2,14 +2,14 @@
 <html lang="id">
 
 <head>
+<!-- ASCII SAFE MAINTENANCE THEME -->
 
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Maintenance Sparepart &amp; Inventory</title>
+<title>Maintenance Sparepart &amp; Inventory - Grafik Stock &amp; Traffic</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -221,63 +221,6 @@ header p{
 .overlay.show{
     display:block;
 }
-
-
-
-/* =====================================================
-   PESAN ADMIN / KOTAK MASUK
-===================================================== */
-.message-menu-item{
-    position:relative;
-    display:flex !important;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-}
-.message-menu-text{display:inline-flex;align-items:center;gap:8px;}
-.message-notif-lamp{
-    display:none;
-    width:9px;
-    height:9px;
-    min-width:9px;
-    border-radius:50%;
-    background:#ef4444;
-    box-shadow:0 0 0 3px rgba(239,68,68,.12),0 0 10px rgba(239,68,68,.95);
-    animation:messageLampBlink .9s infinite alternate;
-}
-.message-notif-lamp.show{display:inline-block;}
-@keyframes messageLampBlink{from{opacity:.35;transform:scale(.85)}to{opacity:1;transform:scale(1.2)}}
-.message-count-badge{
-    display:none;
-    min-width:20px;
-    padding:2px 6px;
-    border-radius:999px;
-    background:#ef4444;
-    color:#fff;
-    font-size:11px;
-    font-weight:900;
-    text-align:center;
-}
-.message-count-badge.show{display:inline-block;}
-.admin-note-modal .modal-card{max-width:520px;}
-.admin-note-info{
-    margin:0 0 14px;
-    padding:10px 12px;
-    border-radius:10px;
-    background:#f0fdf4;
-    color:#166534;
-    font-size:13px;
-}
-.admin-note-input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;outline:none;}
-.admin-note-textarea{min-height:130px;resize:vertical;}
-.admin-note-label{display:block;margin:10px 0 6px;font-size:13px;font-weight:800;color:#475569;}
-.inbox-empty{padding:22px;text-align:center;color:#64748b;}
-.inbox-list{display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow:auto;}
-.inbox-card{padding:13px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;}
-.inbox-card.new{border-left:4px solid #ef4444;background:#fff7f7;}
-.inbox-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;font-weight:800;color:#1e293b;}
-.inbox-meta{margin-top:4px;font-size:12px;color:#64748b;}
-.inbox-message{margin-top:9px;white-space:pre-wrap;color:#334155;line-height:1.5;}
 
 /* =====================================================
    CONTAINER
@@ -1388,7 +1331,7 @@ footer{
 
 
 /* =========================================================
-   MAINTENANCE THEME &#8212; INDUSTRIAL / ENGINEERING
+   MAINTENANCE THEME - INDUSTRIAL / ENGINEERING
    Visual-only theme override: functionality preserved.
    ========================================================= */
 :root{
@@ -1423,7 +1366,7 @@ header{
     box-shadow:0 5px 18px rgba(15,23,42,.24);
 }
 header::before{
-    content:"\2699";
+    content:"M";
     position:absolute;
     left:22px;
     top:50%;
@@ -1433,7 +1376,7 @@ header::before{
     animation:maintGear 9s linear infinite;
 }
 header::after{
-    content:"MAINTENANCE \2022 SPAREPART \2022 INVENTORY";
+    content:"MAINTENANCE - SPAREPART - INVENTORY";
     position:absolute;
     right:22px;
     bottom:8px;
@@ -1505,7 +1448,7 @@ header p{
     overflow:hidden;
 }
 .stat::after{
-    content:"\2699";
+    content:"M";
     position:absolute;
     right:12px;
     bottom:-10px;
@@ -1568,7 +1511,7 @@ table tbody tr:hover{background:#ecfdf5;}
     background-size:20px 20px;
 }
 .login-card::before{
-    content:"\2699";
+    content:"M";
     display:block;
     margin:0 auto 8px;
     width:64px;height:64px;
@@ -1607,22 +1550,6 @@ footer{
     border-color:var(--maint-green);
 }
 
-/* =====================================================
-   LOGOUT WEB MAIN
-===================================================== */
-.menu-item.logout-menu-item{
-    margin-top:14px;
-    border-top:2px solid #fecaca;
-    border-left:4px solid #dc2626;
-    background:#fff7f7;
-    color:#b91c1c;
-    font-weight:800;
-}
-.menu-item.logout-menu-item:hover{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
 /* Maintenance labels */
 .maintenance-badge{
     display:inline-flex;
@@ -1646,140 +1573,95 @@ footer{
 
 
 /* =====================================================
-   TOGGLE DATA SPAREPART
-===================================================== */
-.stock-data-toggle-wrap{
-    display:flex;
-    justify-content:center;
-    margin:14px 0 10px;
-}
-
-#toggleStockData{
+   MAINTENANCE THEME - HEADER ANIMATIF
+   ===================================================== */
+header{
     position:relative;
-    border:0;
-    border-radius:14px;
-    padding:10px 18px 10px 14px;
-    min-height:48px;
-    background:linear-gradient(135deg,#16a34a,#15803d);
-    color:#fff;
-    font-weight:800;
-    letter-spacing:.3px;
-    cursor:pointer;
-    box-shadow:0 5px 14px rgba(22,163,74,.25);
-    transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
     overflow:hidden;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
+    background:
+        linear-gradient(135deg,rgba(6,24,42,.97),rgba(15,23,42,.98)),
+        repeating-linear-gradient(0deg,transparent 0 19px,rgba(34,197,94,.055) 20px),
+        repeating-linear-gradient(90deg,transparent 0 19px,rgba(34,197,94,.055) 20px);
+    border-bottom:5px solid #16a34a;
+    box-shadow:0 8px 28px rgba(0,0,0,.20);
 }
 
-#toggleStockData .stock-toggle-icon{
-    width:28px;
-    height:28px;
-    border-radius:50%;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(255,255,255,.18);
-    flex:0 0 28px;
-    transition:transform .45s ease, background .25s ease;
+header::before{
+    content:"M";
+    position:absolute;
+    left:5%;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:92px;
+    color:rgba(234,179,8,.14);
+    animation:maintenanceGear 12s linear infinite;
+    pointer-events:none;
 }
 
-#toggleStockData .stock-toggle-icon svg{
-    width:18px;
-    height:18px;
-    fill:none;
-    stroke:currentColor;
-    stroke-width:2;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-}
-
-#toggleStockData .stock-toggle-arrow{
-    width:20px;
-    height:20px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    transition:transform .45s ease;
-}
-
-#toggleStockData .stock-toggle-arrow svg{
-    width:16px;
-    height:16px;
-    fill:none;
-    stroke:currentColor;
-    stroke-width:2.5;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-}
-
-#toggleStockData.is-open .stock-toggle-icon{
-    transform:rotate(180deg);
-    background:rgba(255,255,255,.28);
-}
-
-#toggleStockData.is-open .stock-toggle-arrow{
-    transform:rotate(180deg);
-}
-
-#toggleStockData::after{
+header::after{
     content:"";
     position:absolute;
-    top:0;
-    left:-90px;
-    width:55px;
-    height:100%;
-    background:rgba(255,255,255,.35);
-    transform:skewX(-20deg);
-    animation:stockToggleShine 2.2s ease-in-out infinite;
+    inset:0;
+    background:linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(34,197,94,.08) 45%,
+        rgba(234,179,8,.12) 50%,
+        rgba(34,197,94,.08) 55%,
+        transparent 100%
+    );
+    transform:translateX(-100%);
+    animation:maintenanceScan 5s ease-in-out infinite;
+    pointer-events:none;
 }
 
-#toggleStockData:hover{
-    transform:translateY(-1px);
-    box-shadow:0 7px 18px rgba(22,163,74,.32);
+header h1,
+header p{
+    position:relative;
+    z-index:1;
 }
 
-#toggleStockData:active{transform:scale(.97);}
-
-.stock-data-panel{
-    max-height:0 !important;
-    opacity:0 !important;
-    visibility:hidden !important;
-    pointer-events:none !important;
-    overflow:hidden !important;
-    transform:translateY(-8px);
-    transition:max-height .7s ease, opacity .35s ease, transform .45s ease, visibility 0s linear .7s;
+header h1{
+    letter-spacing:1px;
+    text-shadow:0 0 18px rgba(34,197,94,.22);
+    animation:titleMaintenance 2.8s ease-in-out infinite;
 }
 
-.stock-data-panel.is-visible{
-    max-height:100000px !important;
-    opacity:1 !important;
-    visibility:visible !important;
-    pointer-events:auto !important;
-    transform:translateY(0);
-    transition:max-height .7s ease, opacity .35s ease, transform .45s ease, visibility 0s linear 0s;
+header p{
+    color:#dbeafe;
+    animation:subtitleMaintenance 3.2s ease-in-out infinite;
 }
 
-.stock-data-hidden-note{
-    text-align:center;
-    color:#64748b;
-    font-size:12px;
-    margin:4px 0 12px;
+@keyframes maintenanceGear{
+    from{transform:translateY(-50%) rotate(0deg);}
+    to{transform:translateY(-50%) rotate(360deg);}
 }
 
-@keyframes stockToggleShine{
-    0%{left:-90px;opacity:0;}
-    15%{opacity:1;}
-    45%{left:110%;opacity:0;}
-    100%{left:110%;opacity:0;}
+@keyframes maintenanceScan{
+    0%,25%{transform:translateX(-100%);}
+    55%,100%{transform:translateX(100%);}
 }
 
-@media (prefers-reduced-motion:reduce){
-    #toggleStockData::after{animation:none;}
-    .stock-data-panel,.stock-data-panel.is-visible{transition:none;}
+@keyframes titleMaintenance{
+    0%,100%{transform:translateY(0);text-shadow:0 0 18px rgba(34,197,94,.20);}
+    50%{transform:translateY(-2px);text-shadow:0 0 28px rgba(34,197,94,.48);}
 }
+
+@keyframes subtitleMaintenance{
+    0%,100%{opacity:.82;}
+    50%{opacity:1;}
+}
+
+
+/* Login title maintenance animation */
+.login-card h1{
+    animation:loginTitlePulse 2.6s ease-in-out infinite;
+}
+@keyframes loginTitlePulse{
+    0%,100%{transform:scale(1);text-shadow:none;}
+    50%{transform:scale(1.015);text-shadow:0 0 18px rgba(34,197,94,.20);}
+}
+
 </style>
 
 </head>
@@ -1832,74 +1714,11 @@ footer{
     aria-label="Buka password">Buka</button>
 </div>
 
-        <button type="button" id="loginButton">
+        <button id="loginButton">
             MASUK
         </button>
 
         <div id="loginError"></div>
-
-<script>
-/* =====================================================
-   FALLBACK LOGIN - TIDAK BERGANTUNG FIREBASE
-   Dipasang agar tombol MASUK tetap bekerja walaupun
-   script Firebase/module gagal dimuat.
-===================================================== */
-(function(){
-    const LOGIN_PASSWORD_FALLBACK = "mtcgoaheadgoal";
-    const lsKey = "inventoryLogin";
-
-    function showMain(){
-        const login = document.getElementById("loginScreen");
-        const main = document.getElementById("websiteContent");
-        if(login) login.style.display = "none";
-        if(main) main.style.display = "block";
-    }
-
-    function loggedIn(){
-        try { return localStorage.getItem(lsKey) === "true"; }
-        catch(e) { return false; }
-    }
-
-    function saveLogin(){
-        try { localStorage.setItem(lsKey, "true"); }
-        catch(e) { console.warn("Sesi login tidak dapat disimpan:", e); }
-    }
-
-    function doLoginFallback(){
-        const input = document.getElementById("loginPassword");
-        const error = document.getElementById("loginError");
-        if(!input) return;
-
-        if(input.value.trim() === LOGIN_PASSWORD_FALLBACK){
-            saveLogin();
-            if(error) error.textContent = "";
-            showMain();
-        } else {
-            if(error) error.textContent = "Password salah.";
-            input.value = "";
-            input.focus();
-        }
-    }
-
-    function initFallbackLogin(){
-        const btn = document.getElementById("loginButton");
-        const input = document.getElementById("loginPassword");
-        if(btn) {
-            btn.onclick = doLoginFallback;
-        }
-        if(input) input.addEventListener("keydown", function(e){
-            if(e.key === "Enter") {
-                e.preventDefault();
-                doLoginFallback();
-            }
-        }, true);
-
-        if(loggedIn()) showMain();
-    }
-
-    initFallbackLogin();
-})();
-</script>
 
         <div class="developer-contact">
 
@@ -1927,11 +1746,11 @@ footer{
 <header>
 
     <h1>
-        MAINTENANCE &#8226; STOCK SPAREPART
+        MAINTENANCE &amp; STOCK SPAREPART
     </h1>
 
     <p>
-        Sistem Sparepart &#8226; Maintenance &#8226; Inventory
+        Sistem Sparepart - Maintenance - Inventory
     </p>
 
 </header>
@@ -1957,11 +1776,6 @@ footer{
     id="drawer">
 
     <h2>MENU</h2>
-
-    <button class="menu-item message-menu-item" data-menu="userMessages">
-        <span class="message-menu-text">Kotak Masuk Pesan User <span class="message-notif-lamp" id="messageNotifLamp"></span></span>
-        <span class="message-count-badge" id="messageCountBadge">0</span>
-    </button>
 
     <button class="menu-item" data-menu="data">
         Data Sparepart
@@ -2011,12 +1825,21 @@ footer{
         Scan QR Code
     </button>
     <button class="menu-item ai-menu-item" data-menu="aiStock">
+        <span class="ai-menu-avatar" aria-hidden="true"><svg class="hijab-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#16a34a"/><stop offset="1" stop-color="#0f766e"/></linearGradient><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fde2c5"/><stop offset="1" stop-color="#f5c79f"/></linearGradient></defs>
+<path d="M18 88C19 68 27 54 34 47C29 27 40 12 52 12C67 12 79 25 76 45C85 53 90 68 91 88C82 94 70 97 55 97C40 97 27 94 18 88Z" fill="url(#hg)"/>
+<path d="M29 54C30 36 38 25 51 25C65 25 73 37 72 54C68 48 63 45 52 45C41 45 35 49 29 54Z" fill="#064e3b"/>
+<path d="M35 43C36 31 43 25 52 25C63 25 70 33 69 45V56C67 68 60 75 52 75C43 75 36 67 35 56Z" fill="url(#fg)"/>
+<path d="M36 68C41 74 46 77 52 77C59 77 64 74 69 68L79 90H25Z" fill="#fff"/>
+<ellipse cx="44" cy="51" rx="2.2" ry="1.7" fill="#334155"/><ellipse cx="61" cy="51" rx="2.2" ry="1.7" fill="#334155"/>
+<path d="M40 47Q44 44 48 47M57 47Q61 44 65 47" fill="none" stroke="#7c4a2f" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M47 61Q52 65 57 61" fill="none" stroke="#b45355" stroke-width="1.7" stroke-linecap="round"/>
+<circle cx="40" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/><circle cx="64" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/>
+<path d="M26 78Q29 57 38 49" fill="none" stroke="#86efac" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+</svg></span>
         <span>FITRIYANI NUR CAHYATI</span>
     </button>
 
-    <button class="menu-item logout-menu-item" data-menu="logout">
-        LOGOUT WEB MAIN
-    </button>
 
 </aside>
 
@@ -2152,35 +1975,6 @@ footer{
 </div>
 
 
-<div class="stock-data-toggle-wrap">
-
-    <button
-        type="button"
-        id="toggleStockData"
-        aria-expanded="false"
-        aria-controls="stockDataPanel">
-        <span class="stock-toggle-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
-                <circle cx="12" cy="12" r="2.8"></circle>
-            </svg>
-        </span>
-        <span class="stock-toggle-label">TAMPILKAN DATA SPAREPART</span>
-        <span class="stock-toggle-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-                <path d="M6 9l6 6 6-6"></path>
-            </svg>
-        </span>
-    </button>
-
-</div>
-
-<div class="stock-data-hidden-note" id="stockDataHiddenNote">
-    Data sparepart disembunyikan. Tekan tombol untuk menampilkan.
-</div>
-
-<div class="stock-data-panel" id="stockDataPanel">
-
 <section class="table-wrap">
 
 <table>
@@ -2220,8 +2014,6 @@ footer{
 </table>
 
 </section>
-
-</div>
 
 </main>
 
@@ -2580,6 +2372,21 @@ Data lainnya tidak dihapus.
 
         <div class="ai-header">
             <div class="ai-profile">
+                <div class="ai-avatar" aria-hidden="true">
+                    <svg class="hijab-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#16a34a"/><stop offset="1" stop-color="#0f766e"/></linearGradient><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fde2c5"/><stop offset="1" stop-color="#f5c79f"/></linearGradient></defs>
+<path d="M18 88C19 68 27 54 34 47C29 27 40 12 52 12C67 12 79 25 76 45C85 53 90 68 91 88C82 94 70 97 55 97C40 97 27 94 18 88Z" fill="url(#hg)"/>
+<path d="M29 54C30 36 38 25 51 25C65 25 73 37 72 54C68 48 63 45 52 45C41 45 35 49 29 54Z" fill="#064e3b"/>
+<path d="M35 43C36 31 43 25 52 25C63 25 70 33 69 45V56C67 68 60 75 52 75C43 75 36 67 35 56Z" fill="url(#fg)"/>
+<path d="M36 68C41 74 46 77 52 77C59 77 64 74 69 68L79 90H25Z" fill="#fff"/>
+<ellipse cx="44" cy="51" rx="2.2" ry="1.7" fill="#334155"/><ellipse cx="61" cy="51" rx="2.2" ry="1.7" fill="#334155"/>
+<path d="M40 47Q44 44 48 47M57 47Q61 44 65 47" fill="none" stroke="#7c4a2f" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M47 61Q52 65 57 61" fill="none" stroke="#b45355" stroke-width="1.7" stroke-linecap="round"/>
+<circle cx="40" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/><circle cx="64" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/>
+<path d="M26 78Q29 57 38 49" fill="none" stroke="#86efac" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+</svg>
+                    <span class="ai-online-dot"></span>
+                </div>
                 <div>
                     <div class="ai-name">FITRIYANI NUR CAHYATI</div>
                     <div class="ai-role">AI Pembantu Stock</div>
@@ -2591,9 +2398,9 @@ Data lainnya tidak dihapus.
 
         <div class="ai-status-row">
             <span><span class="ai-dot"></span>Online</span>
-            <span><span class="ai-check">&#10003;</span> Data Real-time</span>
-            <span><span class="ai-check">&#10003;</span> Cepat</span>
-            <span><span class="ai-check">&#10003;</span> Akurat</span>
+            <span><span class="ai-check">OK</span> Data Real-time</span>
+            <span><span class="ai-check">OK</span> Cepat</span>
+            <span><span class="ai-check">OK</span> Akurat</span>
         </div>
 
         <div class="ai-quick-actions">
@@ -2710,23 +2517,6 @@ Data lainnya tidak dihapus.
 
 </div>
 
-
-<!-- =====================================================
-     KOTAK MASUK PESAN USER
-===================================================== -->
-<div class="modal" id="userMessagesModal">
-    <div class="modal-card">
-        <h2>Kotak Masuk Pesan User</h2>
-        <div class="admin-note-info">Pesan khusus dari User akan muncul di sini. Maksimal 10 pesan tersimpan. Jika pesan ke-11 masuk, pesan paling lama otomatis dihapus.</div>
-        <div id="userMessagesList" class="inbox-list">
-            <div class="inbox-empty">Belum ada pesan.</div>
-        </div>
-        <div class="modal-actions">
-            <button class="btn-light" id="cancelUserMessages">Tutup</button>
-        </div>
-    </div>
-</div>
-
 <div
     class="message"
     id="message">
@@ -2740,6 +2530,38 @@ Data lainnya tidak dihapus.
      JAVASCRIPT
 ===================================================== -->
 
+<script>
+/* LOGIN - independent from Firebase */
+(function(){
+    const PASSWORD = "mtcgoahead";
+    const loginScreen = document.getElementById("loginScreen");
+    const websiteContent = document.getElementById("websiteContent");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginButton = document.getElementById("loginButton");
+    const loginError = document.getElementById("loginError");
+    const togglePassword = document.getElementById("togglePassword");
+    function showWebsite(){
+        if(loginScreen) loginScreen.style.display="none";
+        if(websiteContent) websiteContent.style.display="block";
+    }
+    function login(){
+        if(loginPassword && loginPassword.value.trim()===PASSWORD){
+            try{localStorage.setItem("inventoryLogin","true");}catch(e){}
+            showWebsite();
+        }else{
+            if(loginError) loginError.textContent="Password salah.";
+            if(loginPassword){loginPassword.value="";loginPassword.focus();}
+        }
+    }
+    try{if(localStorage.getItem("inventoryLogin")==="true") showWebsite();}catch(e){}
+    if(loginButton) loginButton.addEventListener("click",login);
+    if(loginPassword) loginPassword.addEventListener("keydown",function(e){if(e.key==="Enter") login();});
+    if(togglePassword) togglePassword.addEventListener("click",function(){
+        if(loginPassword.type==="password"){loginPassword.type="text";togglePassword.textContent="Tutup";togglePassword.setAttribute("aria-label","Tutup password");}
+        else{loginPassword.type="password";togglePassword.textContent="Buka";togglePassword.setAttribute("aria-label","Buka password");}
+    });
+})();
+</script>
 <script type="module">
 
 import {
@@ -2763,213 +2585,11 @@ import {
     query,
     where,
     serverTimestamp,
-    runTransaction,
-    onSnapshot
+    runTransaction
 
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-const PASSWORD =
-    "mtcgoaheadgoal";
-
-
-const loginScreen =
-    document.getElementById(
-        "loginScreen"
-    );
-
-
-const websiteContent =
-    document.getElementById(
-        "websiteContent"
-    );
-
-
-const loginPassword =
-    document.getElementById(
-        "loginPassword"
-    );
-
-
-const loginButton =
-    document.getElementById(
-        "loginButton"
-    );
-
-
-const loginError =
-    document.getElementById(
-        "loginError"
-    );
-
-
-
-function isInventoryLoggedIn(){
-
-    try{
-
-        return (
-            localStorage.getItem(
-                "inventoryLogin"
-            ) === "true"
-        );
-
-    }
-    catch(error){
-
-        console.warn(
-            "localStorage tidak tersedia:",
-            error
-        );
-
-        return false;
-
-    }
-
-}
-
-function setInventoryLoggedIn(){
-
-    try{
-        localStorage.setItem(
-            "inventoryLogin",
-            "true"
-        );
-    }
-    catch(error){
-        console.warn("Gagal menyimpan login:",error);
-    }
-
-}
-
-function login(){
-
-    if(
-        loginPassword.value.trim() === PASSWORD
-    ){
-
-        setInventoryLoggedIn();
-
-        loginScreen.style.display =
-            "none";
-
-        websiteContent.style.display =
-            "block";
-
-    }
-    else{
-
-        loginError.textContent =
-            "Password salah.";
-
-        loginPassword.value = "";
-
-        loginPassword.focus();
-
-    }
-
-}
-
-/* =====================================================
-   LOGOUT WEB MAIN
-   Setelah logout, sesi login dihapus sehingga halaman
-   wajib meminta password lagi.
-===================================================== */
-function logoutInventory(){
-    if(!confirm("Apakah Anda yakin ingin logout dari Web Main?")){
-        return;
-    }
-
-    try{
-        localStorage.removeItem("inventoryLogin");
-    }catch(error){
-        console.warn("Gagal menghapus sesi login:", error);
-    }
-
-    // Tutup menu/drawer jika masih terbuka.
-    const drawer = document.getElementById("drawer");
-    const overlay = document.getElementById("overlay");
-    if(drawer) drawer.classList.remove("open");
-    if(overlay) overlay.classList.remove("show");
-
-    // Tutup modal yang sedang terbuka agar kembali ke halaman login.
-    document.querySelectorAll(".modal.show").forEach(function(modal){
-        modal.classList.remove("show");
-    });
-
-    // Kembali ke layar login.
-    if(websiteContent) websiteContent.style.display = "none";
-    if(loginScreen) loginScreen.style.display = "flex";
-
-    if(loginPassword){
-        loginPassword.value = "";
-        loginPassword.type = "password";
-        loginPassword.focus();
-    }
-    if(loginError) loginError.textContent = "";
-
-    // Pastikan label tombol password kembali normal.
-    const toggle = document.getElementById("togglePassword");
-    if(toggle){
-        toggle.textContent = "Buka";
-        toggle.setAttribute("aria-label", "Buka password");
-    }
-}
-
-
-loginButton.addEventListener(
-    "click",
-    login
-);
-
-/* =====================================================
-   SESSION LOGIN
-===================================================== */
-
-if(
-    isInventoryLoggedIn()
-){
-    loginScreen.style.display = "none";
-    websiteContent.style.display = "block";
-}
-
-/* =====================================================
-   LIHAT / SEMBUNYIKAN PASSWORD
-===================================================== */
-
-const togglePassword = document.getElementById("togglePassword");
-
-if(togglePassword){
-    togglePassword.addEventListener("click", function(){
-        if(loginPassword.type === "password"){
-            loginPassword.type = "text";
-            togglePassword.textContent = "Tutup";
-            togglePassword.setAttribute("aria-label", "Tutup password");
-        }else{
-            loginPassword.type = "password";
-            togglePassword.textContent = "Buka";
-            togglePassword.setAttribute("aria-label", "Buka password");
-        }
-    });
-}
-
-
-loginPassword.addEventListener(
-    "keydown",
-    function(e){
-
-        if(e.key === "Enter"){
-            login();
-        }
-
-    }
-);
 
 
 /* =====================================================
@@ -3024,156 +2644,6 @@ const transactionRef =
         db,
         "transactions"
     );
-
-
-/* =====================================================
-   KOTAK MASUK PESAN USER
-===================================================== */
-const userMessagesRef = collection(db, "userMessages");
-
-function formatMessageDate(value){
-    try{
-        if(!value) return "Menunggu waktu...";
-        const d = value.toDate ? value.toDate() : new Date(value);
-        return d.toLocaleString("id-ID", {dateStyle:"medium", timeStyle:"short"});
-    }catch(e){ return ""; }
-}
-
-function updateMessageNotification(count){
-    const lamp = document.getElementById("messageNotifLamp");
-    const badge = document.getElementById("messageCountBadge");
-    if(lamp) lamp.classList.toggle("show", count > 0);
-    if(badge){
-        badge.textContent = count > 99 ? "99+" : String(count);
-        badge.classList.toggle("show", count > 0);
-    }
-}
-
-/* =====================================================
-   BATAS PESAN USER = 10
-   Jika jumlah pesan > 10, pesan paling lama otomatis dihapus.
-   Yang dipertahankan adalah 10 pesan terbaru.
-===================================================== */
-const MAX_USER_MESSAGES = 10;
-let userMessageCleanupRunning = false;
-
-async function cleanupOldUserMessages(snapshot){
-    if(userMessageCleanupRunning) return;
-    if(!snapshot || snapshot.size <= MAX_USER_MESSAGES) return;
-
-    userMessageCleanupRunning = true;
-
-    try{
-        const rows = [];
-
-        snapshot.forEach(function(d){
-            const data = d.data() || {};
-            let time = null;
-
-            if(data.createdAt && typeof data.createdAt.toMillis === "function"){
-                time = data.createdAt.toMillis();
-            }
-
-            /*
-             * Pesan yang timestamp-nya masih menunggu server
-             * dianggap paling baru agar tidak salah terhapus.
-             */
-            rows.push({
-                id:d.id,
-                time:time === null ? Number.MAX_SAFE_INTEGER : time
-            });
-        });
-
-        rows.sort(function(a,b){
-            return a.time - b.time;
-        });
-
-        const deleteCount = rows.length - MAX_USER_MESSAGES;
-        const oldRows = rows.slice(0, deleteCount);
-
-        await Promise.all(oldRows.map(function(row){
-            return deleteDoc(doc(db, "userMessages", row.id));
-        }));
-
-        console.log("Pesan lama otomatis dihapus:", deleteCount);
-    }catch(error){
-        console.warn("Gagal membersihkan pesan lama:", error);
-    }finally{
-        userMessageCleanupRunning = false;
-    }
-}
-
-function startUserMessageNotification(){
-    try{
-        onSnapshot(userMessagesRef, function(snapshot){
-            let unread = 0;
-            snapshot.forEach(function(d){
-                const data = d.data() || {};
-                if(data.read !== true) unread++;
-            });
-            updateMessageNotification(unread);
-
-            /*
-             * Jika jumlah pesan sudah lebih dari 10,
-             * hapus pesan yang paling lama secara otomatis.
-             */
-            if(snapshot.size > MAX_USER_MESSAGES){
-                cleanupOldUserMessages(snapshot);
-            }
-        }, function(error){
-            console.warn("Notifikasi pesan User tidak tersedia:", error);
-        });
-    }catch(error){
-        console.warn("Gagal memasang listener pesan User:", error);
-    }
-}
-
-async function openUserMessages(){
-    const list = document.getElementById("userMessagesList");
-    if(!list) return;
-    openModal("userMessagesModal");
-    list.innerHTML = '<div class="inbox-empty">Memuat pesan...</div>';
-    try{
-        const snap = await getDocs(userMessagesRef);
-
-        /* Pastikan database tidak menyimpan lebih dari 10 pesan. */
-        if(snap.size > MAX_USER_MESSAGES){
-            await cleanupOldUserMessages(snap);
-            await getDocs(userMessagesRef);
-            return openUserMessages();
-        }
-
-        const rows = [];
-        snap.forEach(function(d){ rows.push({id:d.id, data:d.data() || {}}); });
-        rows.sort(function(a,b){
-            const ta = a.data.createdAt && a.data.createdAt.toMillis ? a.data.createdAt.toMillis() : 0;
-            const tb = b.data.createdAt && b.data.createdAt.toMillis ? b.data.createdAt.toMillis() : 0;
-            return tb - ta;
-        });
-        if(!rows.length){
-            list.innerHTML = '<div class="inbox-empty">Belum ada pesan dari User.</div>';
-            updateMessageNotification(0);
-            return;
-        }
-        list.innerHTML = rows.map(function(row){
-            const x = row.data;
-            return '<div class="inbox-card ' + (x.read === true ? '' : 'new') + '">' +
-                '<div class="inbox-head"><span>' + escapeHtml(x.operator || 'User') + '</span>' +
-                '<span class="inbox-meta">' + escapeHtml(formatMessageDate(x.createdAt)) + '</span></div>' +
-                '<div class="inbox-meta">Kode sparepart: ' + escapeHtml(x.code || '-') + '</div>' +
-                '<div class="inbox-message">' + escapeHtml(x.message || '') + '</div>' +
-                '</div>';
-        }).join('');
-        const unreadIds = rows.filter(function(r){return r.data.read !== true;}).map(function(r){return r.id;});
-        await Promise.all(unreadIds.map(function(id){
-            return updateDoc(doc(db,"userMessages",id), {read:true, readAt:serverTimestamp()});
-        }));
-    }catch(error){
-        console.error("Gagal membuka Kotak Masuk:", error);
-        list.innerHTML = '<div class="inbox-empty" style="color:#b91c1c;">Gagal memuat pesan: ' + escapeHtml(error.message) + '</div>';
-    }
-}
-
 
 
 let items = [];
@@ -5559,7 +5029,7 @@ async function exportHistoryExcel(){
    EXPORT
 ===================================================== */
 
-function exportExcel(){
+async function exportExcel(){
 
     if(items.length === 0){
 
@@ -5572,64 +5042,295 @@ function exportExcel(){
 
     }
 
+    try{
 
-    const data =
-        items.map(
-            function(item){
+        showMessage(
+            "Menyiapkan Excel + Grafik...",
+            "ok"
+        );
+
+        /* =================================================
+           DATA STOCK
+        ================================================= */
+        const stockData =
+            items.map(function(item){
 
                 return {
-
-                    "Kode":
-                        item.code,
-
-                    "Nama Sparepart":
-                        item.name,
-
-                    "Lokasi":
-                        item.lokasi,
-
-                    "Stock":
-                        item.qty,
-
-                    "Min. Stock":
-                        item.minqty,
-
-                    "Status":
-                        getStatus(item).text
-
+                    "Kode": item.code,
+                    "Nama Sparepart": item.name,
+                    "Lokasi": item.lokasi,
+                    "Stock": Number(item.qty || 0),
+                    "Min. Stock": Number(item.minqty || 0),
+                    "Status": getStatus(item).text
                 };
 
+            });
+
+        /* =================================================
+           RINGKASAN STATUS STOCK
+           Status mengikuti aturan website:
+           HABIS = stock <= 0
+           LOW   = stock <= min stock
+           OK    = stock > min stock
+        ================================================= */
+        const statusCount = {
+            OK:0,
+            LOW:0,
+            HABIS:0
+        };
+
+        items.forEach(function(item){
+            const status = getStatus(item).text;
+            if(statusCount[status] !== undefined){
+                statusCount[status]++;
             }
+        });
+
+        const statusData = [
+            {"Status":"OK", "Jumlah":statusCount.OK},
+            {"Status":"LOW", "Jumlah":statusCount.LOW},
+            {"Status":"HABIS", "Jumlah":statusCount.HABIS}
+        ];
+
+        /* =================================================
+           HISTORY / TRAFFIC HARIAN
+        ================================================= */
+        const snap = await getDocs(transactionRef);
+
+        const trafficMap = {};
+        const historyData = [];
+
+        snap.docs.forEach(function(d){
+
+            const x = d.data();
+
+            let tanggal = "";
+            let dateKey = "";
+
+            if(x.createdAt && typeof x.createdAt.toDate === "function"){
+
+                const dt = x.createdAt.toDate();
+
+                dateKey =
+                    dt.getFullYear() + "-" +
+                    String(dt.getMonth()+1).padStart(2,"0") + "-" +
+                    String(dt.getDate()).padStart(2,"0");
+
+                tanggal = dt.toLocaleString("id-ID");
+
+                if(!trafficMap[dateKey]){
+                    trafficMap[dateKey] = {
+                        tanggal:dateKey,
+                        masuk:0,
+                        keluar:0,
+                        total:0
+                    };
+                }
+
+                const qty = Number(x.qty || 0);
+
+                if(x.type === "in"){
+                    trafficMap[dateKey].masuk += qty;
+                }
+                else if(x.type === "out"){
+                    trafficMap[dateKey].keluar += qty;
+                }
+
+                trafficMap[dateKey].total += qty;
+            }
+
+            historyData.push({
+                "Tanggal":tanggal,
+                "Kode":x.code || "",
+                "Jenis":x.type === "in" ? "MASUK" : "KELUAR",
+                "Jumlah":Number(x.qty || 0),
+                "Operator":x.operator || "",
+                "Keterangan":x.note || ""
+            });
+
+        });
+
+        historyData.sort(function(a,b){
+            return String(a.Tanggal).localeCompare(String(b.Tanggal));
+        });
+
+        const trafficData = Object.keys(trafficMap)
+            .sort()
+            .map(function(key){
+                return {
+                    "Tanggal":trafficMap[key].tanggal,
+                    "Barang Masuk":trafficMap[key].masuk,
+                    "Barang Keluar":trafficMap[key].keluar,
+                    "Total Traffic":trafficMap[key].total
+                };
+            });
+
+        /* =================================================
+           EXCEL WORKBOOK
+        ================================================= */
+        const workbook = XLSX.utils.book_new();
+
+        const wsStock = XLSX.utils.json_to_sheet(stockData);
+        wsStock["!cols"] = [
+            {wch:18},{wch:32},{wch:18},{wch:12},{wch:12},{wch:12}
+        ];
+        XLSX.utils.book_append_sheet(workbook, wsStock, "Sparepart");
+
+        const wsStatus = XLSX.utils.json_to_sheet(statusData);
+        wsStatus["!cols"] = [{wch:15},{wch:12}];
+        XLSX.utils.book_append_sheet(workbook, wsStatus, "Status Stock");
+
+        const wsTraffic = XLSX.utils.json_to_sheet(trafficData);
+        wsTraffic["!cols"] = [
+            {wch:16},{wch:16},{wch:16},{wch:18}
+        ];
+        XLSX.utils.book_append_sheet(workbook, wsTraffic, "Traffic Harian");
+
+        const wsHistory = XLSX.utils.json_to_sheet(historyData);
+        wsHistory["!cols"] = [
+            {wch:22},{wch:18},{wch:12},{wch:12},{wch:22},{wch:35}
+        ];
+        XLSX.utils.book_append_sheet(workbook, wsHistory, "History Transaksi");
+
+        /* Sheet petunjuk agar data grafik mudah dibaca di Excel */
+        const grafikInfo = [
+            ["GRAFIK INVENTORY"],
+            ["Grafik dibuat berdasarkan data Stock dan History Traffic."],
+            ["Grafik Status Stock: OK, LOW, HABIS."],
+            ["Grafik Traffic Harian: jumlah barang MASUK dan KELUAR per hari."],
+            [],
+            ["Data grafik status stock ada di sheet: Status Stock"],
+            ["Data grafik traffic harian ada di sheet: Traffic Harian"]
+        ];
+        const wsInfo = XLSX.utils.aoa_to_sheet(grafikInfo);
+        wsInfo["!cols"] = [{wch:75}];
+        XLSX.utils.book_append_sheet(workbook, wsInfo, "Grafik");
+
+        XLSX.writeFile(
+            workbook,
+            "Inventory_Sparepart_Lengkap.xlsx"
         );
 
+        /* =================================================
+           FILE GRAFIK HTML
+           Dibuat mandiri tanpa library grafik eksternal.
+           Bisa dibuka langsung di HP/PC.
+        ================================================= */
+        const chartPayload = {
+            generatedAt:new Date().toLocaleString("id-ID"),
+            statusData:statusData,
+            trafficData:trafficData
+        };
 
-    const worksheet =
-        XLSX.utils.json_to_sheet(
-            data
+        const chartHtml = buildInventoryChartHtml(chartPayload);
+
+        const blob = new Blob(
+            [chartHtml],
+            {type:"text/html;charset=utf-8"}
         );
 
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Grafik_Inventory_Stock_Traffic.html";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function(){URL.revokeObjectURL(url);},2000);
 
-    const workbook =
-        XLSX.utils.book_new();
+        showMessage(
+            "Berhasil: Excel lengkap + file Grafik Column & Pie.",
+            "ok"
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal export: " + error.message,
+            "error"
+        );
+
+    }
+
+}
 
 
-    XLSX.utils.book_append_sheet(
-        workbook,
-        worksheet,
-        "Sparepart"
-    );
+/* =====================================================
+   GENERATOR FILE GRAFIK INVENTORY
+   - Pie : komposisi status stock
+   - Column : traffic MASUK/KELUAR per hari
+===================================================== */
+function buildInventoryChartHtml(payload){
 
+    const safe = JSON.stringify(payload)
+        .replace(/</g,"\\u003c")
+        .replace(/>/g,"\\u003e")
+        .replace(/&/g,"\\u0026");
 
-    XLSX.writeFile(
-        workbook,
-        "Inventory_Sparepart.xlsx"
-    );
-
-
-    showMessage(
-        "Excel berhasil dibuat."
-    );
-
+    return `<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Grafik Inventory Stock & Traffic</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#1f2937}
+.header{background:#1f2937;color:#fff;padding:24px 18px;text-align:center}
+.header h1{margin:0;font-size:27px}.header p{margin:7px 0 0;color:#d1d5db}
+.wrap{width:94%;max-width:1200px;margin:22px auto 40px}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 5px 20px rgba(0,0,0,.08)}
+.card h2{margin:0 0 5px;font-size:21px}.sub{color:#64748b;font-size:14px;margin-bottom:15px}
+svg{width:100%;height:auto;display:block;background:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:14px}.legend span{display:inline-flex;align-items:center;gap:6px}.dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+.note{font-size:13px;color:#64748b;margin-top:10px}
+@media(max-width:600px){.wrap{width:96%}.card{padding:13px}.header h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="header"><h1>GRAFIK INVENTORY</h1><p>Stock & History Traffic Harian</p></div>
+<div class="wrap">
+<div class="card">
+<h2>Pie Chart â€” Keadaan Stock</h2>
+<div class="sub">Jumlah sparepart berdasarkan status OK, LOW, dan HABIS.</div>
+<div id="pie"></div>
+<div class="legend" id="pieLegend"></div>
+</div>
+<div class="card">
+<h2>Column Chart â€” Traffic Keluar / Masuk per Hari</h2>
+<div class="sub">Jumlah unit barang MASUK dan KELUAR berdasarkan tanggal transaksi.</div>
+<div id="traffic"></div>
+<div class="legend"><span><i class="dot" style="background:#15803d"></i>Barang Masuk</span><span><i class="dot" style="background:#dc2626"></i>Barang Keluar</span></div>
+<div class="note">Dibuat: ${payload.generatedAt}</div>
+</div>
+</div>
+<script>
+const DATA=${safe};
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function pieChart(){
+ const data=DATA.statusData; const total=data.reduce((a,b)=>a+b.Jumlah,0); const cx=250,cy=210,r=150;
+ const colors={OK:'#15803d',LOW:'#d97706',HABIS:'#dc2626'}; let angle=-Math.PI/2; let paths='';
+ if(total===0){paths='<circle cx="250" cy="210" r="150" fill="#e5e7eb"/>';}
+ else data.forEach(d=>{if(!d.Jumlah)return;const a=d.Jumlah/total*Math.PI*2;const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(angle+a),y2=cy+r*Math.sin(angle+a),large=a>Math.PI?1:0;paths+=`<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${colors[d.Status]}"/>`;angle+=a;});
+ const svg=`<svg viewBox="0 0 500 430" role="img"><g>${paths}</g><circle cx="250" cy="210" r="72" fill="white"/><text x="250" y="205" text-anchor="middle" font-size="28" font-weight="700">${total}</text><text x="250" y="230" text-anchor="middle" font-size="14" fill="#64748b">Total Stock Item</text></svg>`;
+ document.getElementById('pie').innerHTML=svg;
+ document.getElementById('pieLegend').innerHTML=data.map(d=>`<span><i class="dot" style="background:${colors[d.Status]}"></i>${esc(d.Status)}: ${d.Jumlah}</span>`).join('');
+}
+function trafficChart(){
+ const data=DATA.trafficData; const W=1000,H=470,L=65,R=25,T=35,B=85,iw=W-L-R,ih=H-T-B;
+ if(!data.length){document.getElementById('traffic').innerHTML='<p>Belum ada history traffic.</p>';return;}
+ const max=Math.max(1,...data.map(d=>Math.max(d['Barang Masuk'],d['Barang Keluar']))); const step=iw/data.length; const groupW=Math.min(70,step*.72); const bw=Math.max(3,(groupW-8)/2); let svg=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+ for(let i=0;i<=5;i++){const v=max*i/5,y=T+ih-(v/max*ih);svg+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#e5e7eb"/><text x="${L-10}" y="${y+5}" text-anchor="end" font-size="12" fill="#64748b">${Math.round(v)}</text>`;}
+ svg+=`<line x1="${L}" y1="${T+ih}" x2="${W-R}" y2="${T+ih}" stroke="#94a3b8"/>`;
+ data.forEach((d,i)=>{const x=L+i*step+(step-groupW)/2; const vin=d['Barang Masuk'],vout=d['Barang Keluar'];const hin=vin/max*ih,hout=vout/max*ih;svg+=`<rect x="${x}" y="${T+ih-hin}" width="${bw}" height="${hin}" rx="3" fill="#15803d"><title>${esc(d.Tanggal)} â€” Masuk: ${vin}</title></rect>`;svg+=`<rect x="${x+bw+6}" y="${T+ih-hout}" width="${bw}" height="${hout}" rx="3" fill="#dc2626"><title>${esc(d.Tanggal)} â€” Keluar: ${vout}</title></rect>`;svg+=`<text x="${x+groupW/2}" y="${T+ih+22}" text-anchor="middle" font-size="11" fill="#475569" transform="rotate(35 ${x+groupW/2} ${T+ih+22})">${esc(d.Tanggal)}</text>`;});
+ svg+='</svg>';document.getElementById('traffic').innerHTML=svg;
+}
+pieChart();trafficChart();
+</script>
+</body></html>`;
 }
 
 
@@ -5929,22 +5630,13 @@ function openQr(code){
 
         qrBox.appendChild(qrInner);
 
-        /*
-         * QR WEB USER FINAL:
-         * Isi QR harus sama persis dengan QR pada
-         * Download Semua QR.
-         */
-        const userWebUrl =
-            "https://ziboneva123.github.io/stock-sparepart/user.html?code=" +
-            encodeURIComponent(String(item.code));
-
         new QRCode(qrInner,{
-            text:userWebUrl,
+            text:String(item.code),
             width:220,
             height:220,
             colorDark:"#000000",
             colorLight:"#ffffff",
-            correctLevel:QRCode.CorrectLevel.M
+            correctLevel:QRCode.CorrectLevel.H
         });
     },100);
 }
@@ -6066,101 +5758,7 @@ function printQr(){
     }
 
     win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
-    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}
-
-/* =====================================================
-   EMPTY STATE ILLUSTRATION
-===================================================== */
-.stock-empty-illustration{
-    width:min(100%, 680px);
-    margin:8px auto 18px;
-    text-align:center;
-    overflow:hidden;
-    border-radius:24px;
-    opacity:1;
-    transform:translateY(0) scale(1);
-    transition:opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1),
-               max-height .65s ease, margin .65s ease;
-    max-height:900px;
-    pointer-events:auto;
-}
-
-.stock-empty-illustration img{
-    display:block;
-    width:100%;
-    height:auto;
-    border-radius:24px;
-    filter:saturate(1.03);
-}
-
-.stock-data-panel:not(.is-visible) + .stock-empty-illustration{
-    animation:emptyStateFloat 4s ease-in-out infinite;
-}
-
-.stock-empty-illustration.is-hidden{
-    opacity:0;
-    transform:translateY(-22px) scale(.96);
-    max-height:0;
-    margin-top:0;
-    margin-bottom:0;
-    pointer-events:none;
-}
-
-@keyframes emptyStateFloat{
-    0%,100%{transform:translateY(0);}
-    50%{transform:translateY(-5px);}
-}
-
-@media(max-width:600px){
-    .stock-empty-illustration{
-        width:calc(100% - 12px);
-        border-radius:18px;
-        margin-top:6px;
-    }
-    .stock-empty-illustration img{border-radius:18px;}
-}
-
-@media(prefers-reduced-motion:reduce){
-    .stock-empty-illustration,
-    .stock-empty-illustration.is-hidden{
-        transition:none;
-        animation:none;
-    }
-}
-
-
-/* V8 - ILUSTRASI CENTER */
-.stock-empty-illustration{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    width:100%;
-    max-width:760px;
-    margin:10px auto 20px;
-}
-.stock-empty-illustration img{
-    width:100%;
-    max-width:760px;
-    margin:0 auto;
-    display:block;
-}
-@media(max-width:600px){
-    .stock-empty-illustration{
-        width:calc(100% - 10px);
-        margin-left:auto;
-        margin-right:auto;
-    }
-}
-
-
-/* QR LABEL: tampilkan hanya nama sparepart */
-.qr-code-label .qr-code-code,
-.qr-code-label .code,
-.qr-card .qr-code-text,
-.qr-card .qr-code-part,
-.qr-item .qr-code-text,
-.qr-item .qr-code-part { display:none !important; }
-</style>
+    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
 </body></html>`);
     win.document.close();
@@ -6206,9 +5804,9 @@ function aiNormalize(text){
 
 function aiStatusLabel(item){
     const s = getStatus(item);
-    if(s.type === "empty") return "&#128308; HABIS";
-    if(s.type === "low") return "&#128992; LOW";
-    return "&#128994; OK";
+    if(s.type === "empty") return "[HABIS] HABIS";
+    if(s.type === "low") return "[LOW] LOW";
+    return "[OK] OK";
 }
 
 function aiFindItems(question){
@@ -6312,7 +5910,7 @@ function aiAnswerStockQuestion(question){
     const q = aiNormalize(question);
 
     if(!q){
-        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>&#8220;berapa stok A0001?&#8221;</strong>.";
+        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>"berapa stok A0001?"</strong>.";
     }
 
     if(items.length === 0){
@@ -6333,10 +5931,10 @@ function aiAnswerStockQuestion(question){
 
         return `
             <strong>Ringkasan Stock</strong><br>
-            &#128994; OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
-            &#128992; LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
-            &#128308; HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
-            &#128995; Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
+            [OK] OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
+            [LOW] LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
+            [HABIS] HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
+            [RESTOCK] Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
         `;
     }
 
@@ -6350,12 +5948,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "empty");
 
         if(!list.length){
-            return "&#128994; Saat ini tidak ada sparepart dengan stock HABIS.";
+            return "[OK] Saat ini tidak ada sparepart dengan stock HABIS.";
         }
 
         return aiRenderItemTable(
             list,
-            "&#128308; Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
+            "[HABIS] Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
         );
     }
 
@@ -6369,12 +5967,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "low");
 
         if(!list.length){
-            return "&#128994; Saat ini tidak ada sparepart berstatus LOW.";
+            return "[OK] Saat ini tidak ada sparepart berstatus LOW.";
         }
 
         return aiRenderItemTable(
             list,
-            "&#128992; Ditemukan " + aiFormatNumber(list.length) + " item LOW."
+            "[LOW] Ditemukan " + aiFormatNumber(list.length) + " item LOW."
         );
     }
 
@@ -6392,12 +5990,12 @@ function aiAnswerStockQuestion(question){
             });
 
         if(!list.length){
-            return "&#128994; Tidak ada item yang perlu direstock.";
+            return "[OK] Tidak ada item yang perlu direstock.";
         }
 
         return aiRenderItemTable(
             list,
-            "&#128995; Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
+            "[RESTOCK] Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
         );
     }
 
@@ -6424,13 +6022,13 @@ function aiAnswerStockQuestion(question){
         const status = getStatus(item);
 
         return `
-            <strong>${escapeHtml(item.code)} &#8211; ${escapeHtml(item.name)}</strong><br>
+            <strong>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</strong><br>
             Lokasi: <strong>${escapeHtml(item.lokasi || "-")}</strong><br>
             Stock: <strong>${aiFormatNumber(item.qty)}</strong> unit<br>
             Minimum Stock: <strong>${aiFormatNumber(item.minqty)}</strong> unit<br>
             Status: <strong>${aiStatusLabel(item)}</strong>
             ${status.type !== "ok"
-                ? "<br>&#9888; Item ini perlu diperhatikan."
+                ? "<br>[WARNING] Item ini perlu diperhatikan."
                 : ""}
         `;
     }
@@ -6462,11 +6060,11 @@ function aiAnswerStockQuestion(question){
     return `
         Saya belum yakin dengan pertanyaannya.<br><br>
         Coba contoh:<br>
-        &#8226; <strong>Berapa stok A0001?</strong><br>
-        &#8226; <strong>Apa saja barang yang habis?</strong><br>
-        &#8226; <strong>Apa saja yang perlu direstock?</strong><br>
-        &#8226; <strong>Berapa total stok semua barang?</strong><br>
-        &#8226; <strong>Apa status stok di lokasi A?</strong>
+        - <strong>Berapa stok A0001?</strong><br>
+        - <strong>Apa saja barang yang habis?</strong><br>
+        - <strong>Apa saja yang perlu direstock?</strong><br>
+        - <strong>Berapa total stok semua barang?</strong><br>
+        - <strong>Apa status stok di lokasi A?</strong>
     `;
 }
 
@@ -6561,56 +6159,6 @@ async function aiAsk(){
     chat.scrollTop = chat.scrollHeight;
 }
 
-
-
-/* =====================================================
-   TOGGLE DATA SPAREPART
-===================================================== */
-
-const toggleStockData = $("toggleStockData");
-const stockDataPanel = $("stockDataPanel");
-const stockDataHiddenNote = $("stockDataHiddenNote");
-const stockEmptyIllustration = $("stockEmptyIllustration");
-
-if(toggleStockData && stockDataPanel){
-
-    toggleStockData.addEventListener("click", function(){
-
-        const visible =
-            stockDataPanel.classList.toggle("is-visible");
-
-        toggleStockData.setAttribute(
-            "aria-expanded",
-            visible ? "true" : "false"
-        );
-
-        toggleStockData.classList.toggle("is-open", visible);
-
-        const toggleLabel =
-            toggleStockData.querySelector(".stock-toggle-label");
-
-        if(toggleLabel){
-            toggleLabel.textContent =
-                visible
-                ? "SEMBUNYIKAN DATA SPAREPART"
-                : "TAMPILKAN DATA SPAREPART";
-        }
-
-        if(stockDataHiddenNote){
-            stockDataHiddenNote.style.display =
-                visible ? "none" : "block";
-        }
-
-        if(stockEmptyIllustration){
-            stockEmptyIllustration.classList.toggle("is-hidden", visible);
-            stockEmptyIllustration.setAttribute(
-                "aria-hidden",
-                visible ? "true" : "false"
-            );
-        }
-
-    });
-}
 
 /* =====================================================
    TABLE ACTION
@@ -6801,21 +6349,6 @@ document
                     .classList.remove("show");
 
 
-                if(menu === "logout"){
-
-                    logoutInventory();
-                    return;
-
-                }
-
-
-                if(menu === "userMessages"){
-
-                    openUserMessages();
-
-                }
-
-
                 if(menu === "data"){
 
                     window.scrollTo({
@@ -6912,18 +6445,6 @@ document
     }
 );
 
-
-
-/* =====================================================
-   KOTAK MASUK PESAN USER - BUTTON
-===================================================== */
-if(document.getElementById("cancelUserMessages")){
-    document.getElementById("cancelUserMessages").addEventListener("click",function(){
-        closeModal("userMessagesModal");
-    });
-}
-
-startUserMessageNotification();
 
 /* =====================================================
    MODAL BUTTONS
@@ -7186,9 +6707,8 @@ async function createAllQrCanvas(item){
 
     /*
      * QR FINAL:
-     * Isi QR = URL WEB USER + KODE BARANG.
-     * Saat discan, langsung membuka Web User untuk part tersebut.
-     * Nama barang tetap ditulis DI LUAR QR, di bawah QR.
+     * Isi QR = KODE BARANG SAJA.
+     * Nama barang ditulis DI LUAR QR, di bawah QR.
      * Quiet zone putih tetap dipertahankan agar mudah discan.
      */
 
@@ -7201,14 +6721,8 @@ async function createAllQrCanvas(item){
     box.style.height = "680px";
     box.style.background = "#ffffff";
 
-    const userWebBaseUrl =
-        "https://ziboneva123.github.io/stock-sparepart/user.html?code=";
-
-    const userWebUrl =
-        userWebBaseUrl + encodeURIComponent(String(item.code));
-
     new QRCode(box,{
-        text:userWebUrl,
+        text:String(item.code),
         width:420,
         height:420,
         colorDark:"#000000",
@@ -7559,6 +7073,3 @@ async function downloadAllQR(){
 </body>
 
 </html>
-
-
-<style id="remove-main-illustration">#stockEmptyIllustration,.stock-empty-illustration{display:none!important;}</style>
