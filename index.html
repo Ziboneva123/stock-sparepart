@@ -3396,8 +3396,33 @@ function startRealtimeDashboard(){
     }
     if(!transactionRealtimeStarted){
         transactionRealtimeStarted = true;
-        onSnapshot(transactionRef, function(snap){
-            realtimeTransactions = snap.docs.map(function(d){ return {id:d.id,...d.data()}; });
+
+        /*
+         * HEMAT QUOTA FIRESTORE:
+         * Dashboard hanya membutuhkan traffic 30 hari terakhir.
+         * Jangan listen seluruh collection transactions karena history
+         * akan terus membesar dan setiap pembukaan halaman dapat membaca
+         * seluruh dokumen history.
+         *
+         * where() ini memakai createdAt yang sudah dibuat dengan
+         * serverTimestamp() pada setiap transaksi.
+         */
+        const now = new Date();
+        const trafficStart = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() - 29,
+            0, 0, 0, 0
+        );
+        const realtimeTrafficQuery = query(
+            transactionRef,
+            where("createdAt", ">=", trafficStart)
+        );
+
+        onSnapshot(realtimeTrafficQuery, function(snap){
+            realtimeTransactions = snap.docs.map(function(d){
+                return {id:d.id,...d.data()};
+            });
             updateRealtimeDashboard();
         }, function(error){
             console.error("Realtime transaction error:",error);
@@ -7393,7 +7418,8 @@ document
 ===================================================== */
 
 // Mulai setelah seluruh variabel dashboard dideklarasikan.
-// onSnapshot langsung memberikan data awal dan selanjutnya realtime.
+// onSnapshot memberikan data awal dan perubahan selanjutnya secara realtime.
+// Dashboard traffic hanya memantau transaksi 30 hari terakhir untuk menghemat read Firestore.
 startRealtimeDashboard();
 
 
