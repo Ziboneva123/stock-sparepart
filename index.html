@@ -2179,9 +2179,9 @@ footer{
 
     <div class="realtime-metrics">
         <div class="rt-card">
-            <div class="rt-label">Total Stock</div>
+            <div class="rt-label">Total Stock (Item)</div>
             <div class="rt-value" id="rtTotalStock">0</div>
-            <div class="rt-sub">Qty stock saat ini</div>
+            <div class="rt-sub">Jumlah item sparepart</div>
         </div>
         <div class="rt-card rt-ok">
             <div class="rt-label">Status OK (Item)</div>
@@ -2209,8 +2209,7 @@ footer{
         <canvas id="realtimeComboChart"></canvas>
     </div>
     <div class="rt-chart-note">
-        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK saat ini.
-        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK saat ini. Status OK/LOW/HABIS menunjukkan jumlah item; qty stock ditampilkan di bawahnya. Data diperbarui otomatis dari Firebase.
+        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK (jumlah item) saat ini. Status OK/LOW/HABIS menunjukkan jumlah item; qty stock ditampilkan di bawahnya. Data diperbarui otomatis dari Firebase.
     </div>
 </section>
 
@@ -3274,11 +3273,10 @@ function formatQty(value){
 function updateRealtimeDashboard(){
     const totals = {ok:0, low:0, empty:0};
     const qtyTotals = {ok:0, low:0, empty:0};
-    let totalStock = 0;
+    let totalStock = items.length;
 
     items.forEach(function(item){
         const qty = Number(item.qty || 0);
-        totalStock += qty;
         const st = getStatus(item).type;
         totals[st] += 1;
         qtyTotals[st] += qty;
@@ -3348,7 +3346,7 @@ function updateRealtimeDashboard(){
                 {type:"bar",label:"MASUK",data:masuk,yAxisID:"yTraffic",borderWidth:1},
                 {type:"bar",label:"KELUAR",data:keluar,yAxisID:"yTraffic",borderWidth:1},
                 {type:"line",label:"TOTAL TRAFFIC",data:totalTraffic,yAxisID:"yTraffic",tension:.25,fill:false,borderWidth:2,pointRadius:2},
-                {type:"line",label:"TOTAL STOCK SAAT INI",data:totalStockSeries,yAxisID:"yStock",tension:0,fill:false,borderWidth:3,pointRadius:2}
+                {type:"line",label:"TOTAL STOCK (ITEM) SAAT INI",data:totalStockSeries,yAxisID:"yStock",tension:0,fill:false,borderWidth:3,pointRadius:2}
             ]
         },
         options:{
