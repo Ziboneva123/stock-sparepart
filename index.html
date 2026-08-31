@@ -12,11 +12,10 @@ content="width=device-width, initial-scale=1.0">
 <title>Maintenance Sparepart &amp; Inventory</title>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
 <style>
 
@@ -1782,6 +1781,38 @@ footer{
     #toggleStockData::after{animation:none;}
     .stock-data-panel,.stock-data-panel.is-visible{transition:none;}
 }
+
+/* =====================================================
+   REALTIME INVENTORY DASHBOARD
+===================================================== */
+.realtime-dashboard{
+    margin:18px 0 24px;
+    padding:18px;
+    border-radius:18px;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+.realtime-dashboard-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+}
+.realtime-dashboard-title{font-size:20px;font-weight:900;color:#0f172a}
+.realtime-live{font-size:12px;font-weight:800;color:#15803d;background:#dcfce7;padding:7px 10px;border-radius:999px}
+.realtime-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.rt-card{border:1px solid #e2e8f0;border-radius:14px;padding:13px 14px;background:#f8fafc;min-height:92px}
+.rt-label{font-size:12px;color:#64748b;font-weight:800;text-transform:uppercase}
+.rt-value{font-size:25px;font-weight:900;color:#0f172a;margin-top:7px}
+.rt-sub{font-size:11px;color:#64748b;margin-top:3px}
+.rt-ok{border-left:5px solid #16a34a}.rt-low{border-left:5px solid #f59e0b}.rt-empty{border-left:5px solid #dc2626}.rt-in{border-left:5px solid #2563eb}.rt-out{border-left:5px solid #7c3aed}
+.rt-chart-wrap{position:relative;height:380px;width:100%;}
+.rt-chart-note{margin-top:9px;font-size:11px;color:#64748b;line-height:1.45}
+@media(max-width:900px){.realtime-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}.rt-chart-wrap{height:330px}}
+@media(max-width:520px){.realtime-metrics{grid-template-columns:1fr 1fr}.rt-value{font-size:21px}.rt-chart-wrap{height:290px}}
 </style>
 
 </head>
@@ -2134,8 +2165,54 @@ footer{
 
     </div>
 
+
 </section>
 
+<!-- =====================================================
+     REALTIME DASHBOARD
+===================================================== -->
+<section class="realtime-dashboard" id="realtimeDashboard">
+    <div class="realtime-dashboard-head">
+        <div class="realtime-dashboard-title">Dashboard Realtime Stock & Traffic</div>
+        <div class="realtime-live" id="realtimeLive">â— REALTIME FIREBASE</div>
+    </div>
+
+    <div class="realtime-metrics">
+        <div class="rt-card">
+            <div class="rt-label">Total Stock</div>
+            <div class="rt-value" id="rtTotalStock">0</div>
+            <div class="rt-sub">Qty stock saat ini</div>
+        </div>
+        <div class="rt-card rt-ok">
+            <div class="rt-label">Status OK</div>
+            <div class="rt-value" id="rtOkStock">0</div>
+            <div class="rt-sub">Qty stock</div>
+        </div>
+        <div class="rt-card rt-low">
+            <div class="rt-label">Status LOW</div>
+            <div class="rt-value" id="rtLowStock">0</div>
+            <div class="rt-sub">Qty stock</div>
+        </div>
+        <div class="rt-card rt-empty">
+            <div class="rt-label">Status HABIS</div>
+            <div class="rt-value" id="rtEmptyStock">0</div>
+            <div class="rt-sub">Qty stock</div>
+        </div>
+        <div class="rt-card rt-in">
+            <div class="rt-label">Traffic 30 Hari</div>
+            <div class="rt-value" id="rtTrafficTotal">0</div>
+            <div class="rt-sub"><span id="rtTrafficIn">0</span> masuk Â· <span id="rtTrafficOut">0</span> keluar</div>
+        </div>
+    </div>
+
+    <div class="rt-chart-wrap">
+        <canvas id="realtimeComboChart"></canvas>
+    </div>
+    <div class="rt-chart-note">
+        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC harian.
+        Data diperbarui otomatis saat data Stock atau History berubah di Firebase.
+    </div>
+</section>
 
 <div
     class="filter-info"
@@ -3027,6 +3104,9 @@ const transactionRef =
         "transactions"
     );
 
+// Mulai listener realtime setelah referensi Firebase siap.
+startRealtimeDashboard();
+
 
 /* =====================================================
    KOTAK MASUK PESAN USER
@@ -3178,7 +3258,149 @@ async function openUserMessages(){
 
 
 
+
 let items = [];
+
+/* =====================================================
+   REALTIME DASHBOARD CHART
+===================================================== */
+let realtimeChart = null;
+let realtimeTransactions = [];
+let stockRealtimeStarted = false;
+let transactionRealtimeStarted = false;
+
+function formatQty(value){
+    return Number(value || 0).toLocaleString("id-ID", {maximumFractionDigits: 0});
+}
+
+function updateRealtimeDashboard(){
+    const totals = {ok:0, low:0, empty:0};
+    let totalStock = 0;
+
+    items.forEach(function(item){
+        const qty = Number(item.qty || 0);
+        totalStock += qty;
+        const st = getStatus(item).type;
+        if(st === "ok") totals.ok += qty;
+        else if(st === "low") totals.low += qty;
+        else totals.empty += qty;
+    });
+
+    const today = new Date();
+    const days = [];
+    for(let i=29;i>=0;i--){
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate()-i);
+        days.push(d);
+    }
+
+    const daily = days.map(function(d){
+        return {date:d, masuk:0, keluar:0};
+    });
+
+    function parseTransactionDate(value){
+        if(!value) return null;
+        if(value.toDate) return value.toDate();
+        if(value instanceof Date) return value;
+        const s = String(value).trim();
+        let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if(m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+        const dt = new Date(s);
+        return isNaN(dt.getTime()) ? null : dt;
+    }
+
+    let trafficIn = 0;
+    let trafficOut = 0;
+    realtimeTransactions.forEach(function(tx){
+        const d = parseTransactionDate(tx.createdAt);
+        if(!d) return;
+        const key = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+        const found = daily.find(x => x.date.getFullYear()+"-"+(x.date.getMonth()+1)+"-"+x.date.getDate() === key);
+        if(!found) return;
+        const qty = Number(tx.qty || 0);
+        const type = String(tx.type || "").toLowerCase();
+        if(type === "in" || type === "masuk") { found.masuk += qty; trafficIn += qty; }
+        if(type === "out" || type === "keluar") { found.keluar += qty; trafficOut += qty; }
+    });
+
+    $("rtTotalStock").textContent = formatQty(totalStock);
+    $("rtOkStock").textContent = formatQty(totals.ok);
+    $("rtLowStock").textContent = formatQty(totals.low);
+    $("rtEmptyStock").textContent = formatQty(totals.empty);
+    $("rtTrafficTotal").textContent = formatQty(trafficIn + trafficOut);
+    $("rtTrafficIn").textContent = formatQty(trafficIn);
+    $("rtTrafficOut").textContent = formatQty(trafficOut);
+
+    const canvas = $("realtimeComboChart");
+    if(!canvas || typeof Chart === "undefined") return;
+
+    const labels = daily.map(x => String(x.date.getDate()).padStart(2,"0") + "/" + String(x.date.getMonth()+1).padStart(2,"0"));
+    const masuk = daily.map(x => x.masuk);
+    const keluar = daily.map(x => x.keluar);
+    const total = daily.map(x => x.masuk + x.keluar);
+
+    if(realtimeChart) realtimeChart.destroy();
+    realtimeChart = new Chart(canvas, {
+        data:{
+            labels:labels,
+            datasets:[
+                {type:"bar",label:"MASUK",data:masuk,yAxisID:"yTraffic",borderWidth:1},
+                {type:"bar",label:"KELUAR",data:keluar,yAxisID:"yTraffic",borderWidth:1},
+                {type:"line",label:"TOTAL TRAFFIC",data:total,yAxisID:"yTraffic",tension:.25,fill:false,borderWidth:3,pointRadius:3}
+            ]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            interaction:{mode:"index",intersect:false},
+            plugins:{
+                legend:{position:"top"},
+                tooltip:{callbacks:{title:function(ctx){ return "Tanggal " + ctx[0].label; }}}
+            },
+            scales:{
+                x:{stacked:false,title:{display:true,text:"Tanggal"}},
+                yTraffic:{beginAtZero:true,title:{display:true,text:"Qty Traffic"},ticks:{precision:0}}
+            }
+        }
+    });
+}
+
+function startRealtimeDashboard(){
+    if(!stockRealtimeStarted){
+        stockRealtimeStarted = true;
+        onSnapshot(stockRef, function(snap){
+            items = snap.docs.map(function(d){
+                const data=d.data();
+                return {
+                    firestoreId:d.id,
+                    code:data.code || decodeURIComponent(d.id),
+                    name:data.name || "",
+                    lokasi:data.lokasi || "",
+                    qty:Number(data.qty || 0),
+                    minqty:Number(data.minqty || 0)
+                };
+            });
+            items.sort((a,b)=>String(a.code).localeCompare(String(b.code)));
+            updateDashboard();
+            updateRealtimeDashboard();
+            renderTable();
+            updateSelects();
+        }, function(error){
+            console.error("Realtime stock error:",error);
+            const live=$("realtimeLive");
+            if(live){ live.textContent="â— REALTIME ERROR"; live.style.background="#fee2e2"; live.style.color="#b91c1c"; }
+        });
+    }
+    if(!transactionRealtimeStarted){
+        transactionRealtimeStarted = true;
+        onSnapshot(transactionRef, function(snap){
+            realtimeTransactions = snap.docs.map(function(d){ return {id:d.id,...d.data()}; });
+            updateRealtimeDashboard();
+        }, function(error){
+            console.error("Realtime transaction error:",error);
+        });
+    }
+}
+
 
 let editingCode = null;
 
@@ -5561,7 +5783,7 @@ async function exportHistoryExcel(){
    EXPORT
 ===================================================== */
 
-async function exportExcel(){
+function exportExcel(){
 
     if(items.length === 0){
 
@@ -5574,407 +5796,64 @@ async function exportExcel(){
 
     }
 
-    if(typeof ExcelJS === "undefined" || typeof Chart === "undefined"){
-        showMessage(
-            "Library Excel/Grafik belum termuat. Periksa koneksi internet lalu coba lagi.",
-            "error"
+
+    const data =
+        items.map(
+            function(item){
+
+                return {
+
+                    "Kode":
+                        item.code,
+
+                    "Nama Sparepart":
+                        item.name,
+
+                    "Lokasi":
+                        item.lokasi,
+
+                    "Stock":
+                        item.qty,
+
+                    "Min. Stock":
+                        item.minqty,
+
+                    "Status":
+                        getStatus(item).text
+
+                };
+
+            }
         );
-        return;
-    }
 
-    showMessage("Menyiapkan Excel + grafik...", "ok");
 
-    function stockStatusCounts(){
-        const result = {OK:0, LOW:0, HABIS:0};
-        items.forEach(function(item){
-            const status = getStatus(item).type;
-            if(status === "ok") result.OK += Number(item.qty || 0);
-            else if(status === "low") result.LOW += Number(item.qty || 0);
-            else result.HABIS += Number(item.qty || 0);
-        });
-        return result;
-    }
-
-    function toDateKey(date){
-        return date.getFullYear() + "-" +
-            String(date.getMonth()+1).padStart(2,"0") + "-" +
-            String(date.getDate()).padStart(2,"0");
-    }
-
-    function displayDate(key){
-        const parts = key.split("-");
-        return parts[2] + "/" + parts[1];
-    }
-
-    async function getAllTransactions(){
-        try{
-            const snap = await getDocs(transactionRef);
-            return snap.docs.map(function(d){
-                return {id:d.id, ...d.data()};
-            }).filter(function(x){
-                return x.createdAt && typeof x.createdAt.toDate === "function";
-            });
-        }
-        catch(error){
-            console.warn("History transaksi tidak dapat diambil:", error);
-            return [];
-        }
-    }
-
-    function last30DaysTraffic(history){
-        const now = new Date();
-        now.setHours(23,59,59,999);
-
-        const first = new Date(now);
-        first.setDate(first.getDate() - 29);
-        first.setHours(0,0,0,0);
-
-        const map = {};
-        const labels = [];
-
-        for(let i=0; i<30; i++){
-            const d = new Date(first);
-            d.setDate(first.getDate()+i);
-            const key = toDateKey(d);
-            map[key] = {in:0, out:0};
-            labels.push(key);
-        }
-
-        history.forEach(function(x){
-            const dt = x.createdAt.toDate();
-            if(dt < first || dt > now) return;
-            const key = toDateKey(dt);
-            if(!map[key]) return;
-            if(x.type === "in") map[key].in += Number(x.qty || 0);
-            if(x.type === "out") map[key].out += Number(x.qty || 0);
-        });
-
-        return {
-            keys: labels,
-            labels: labels.map(displayDate),
-            in: labels.map(function(k){return map[k].in;}),
-            out: labels.map(function(k){return map[k].out;})
-        };
-    }
-
-    function makeChartImage(config, width, height){
-        return new Promise(function(resolve){
-            const canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
-            canvas.style.position = "fixed";
-            canvas.style.left = "-10000px";
-            canvas.style.top = "-10000px";
-            document.body.appendChild(canvas);
-
-            const chart = new Chart(canvas.getContext("2d"), config);
-
-            setTimeout(function(){
-                const base64 = canvas.toDataURL("image/png", 1.0);
-                chart.destroy();
-                canvas.remove();
-                resolve(base64);
-            }, 250);
-        });
-    }
-
-    try{
-        const history = await getAllTransactions();
-        const status = stockStatusCounts();
-        const traffic = last30DaysTraffic(history);
-
-        /* =========================
-           DATA SHEET STOCK
-        ========================= */
-        const stockData = items.map(function(item){
-            return {
-                "Kode": item.code,
-                "Nama Sparepart": item.name,
-                "Lokasi": item.lokasi,
-                "Stock": Number(item.qty || 0),
-                "Min. Stock": Number(item.minqty || 0),
-                "Status": getStatus(item).text
-            };
-        });
-
-        /* =========================
-           DATA SHEET HISTORY 30 HARI
-        ========================= */
-        const historyData = history.map(function(x){
-            const item = items.find(function(i){
-                return String(i.code) === String(x.code);
-            });
-            return {
-                "Tanggal": x.createdAt.toDate().toLocaleString("id-ID"),
-                "Kode": x.code || "",
-                "Nama Sparepart": item ? item.name : "",
-                "Lokasi": item ? item.lokasi : "",
-                "Jenis": x.type === "in" ? "MASUK" : "KELUAR",
-                "Jumlah": Number(x.qty || 0),
-                "Operator": x.operator || "",
-                "Keterangan": x.note || ""
-            };
-        }).sort(function(a,b){
-            return String(a.Tanggal).localeCompare(String(b.Tanggal));
-        });
-
-        /* =========================
-           GRAFIK 1: PIE STATUS STOCK
-           Berdasarkan JUMLAH STOCK, bukan jumlah item.
-        ========================= */
-        const pieImage = await makeChartImage({
-            type:"pie",
-            data:{
-                labels:["OK","LOW","HABIS"],
-                datasets:[{
-                    data:[status.OK,status.LOW,status.HABIS],
-                    borderWidth:1
-                }]
-            },
-            options:{
-                responsive:false,
-                animation:false,
-                plugins:{
-                    title:{
-                        display:true,
-                        text:"Persentase Total Stock berdasarkan Status",
-                        font:{size:20,weight:"bold"}
-                    },
-                    legend:{position:"bottom"}
-                }
-            }
-        }, 900, 600);
-
-        /* =========================
-           GRAFIK 2: COLUMN TRAFFIC 1 BULAN
-        ========================= */
-        const trafficImage = await makeChartImage({
-            type:"bar",
-            data:{
-                labels:traffic.labels,
-                datasets:[
-                    {
-                        label:"MASUK",
-                        data:traffic.in,
-                        borderWidth:1
-                    },
-                    {
-                        label:"KELUAR",
-                        data:traffic.out,
-                        borderWidth:1
-                    }
-                ]
-            },
-            options:{
-                responsive:false,
-                animation:false,
-                scales:{
-                    x:{
-                        title:{display:true,text:"Tanggal"}
-                    },
-                    y:{
-                        beginAtZero:true,
-                        title:{display:true,text:"Jumlah"}
-                    }
-                },
-                plugins:{
-                    title:{
-                        display:true,
-                        text:"History Traffic In / Out 30 Hari",
-                        font:{size:20,weight:"bold"}
-                    },
-                    legend:{position:"bottom"}
-                }
-            }
-        }, 1400, 700);
-
-        /* =========================
-           GRAFIK 3: KOMBINASI COLUMN + LINE
-           Column = status stock (OK/LOW/HABIS)
-           Line = traffic MASUK/KELUAR total 30 hari.
-           Dua sumbu Y agar skala tidak menipu.
-        ========================= */
-        const totalIn30 = traffic.in.reduce(function(a,b){return a+b;},0);
-        const totalOut30 = traffic.out.reduce(function(a,b){return a+b;},0);
-
-        const comboImage = await makeChartImage({
-            type:"bar",
-            data:{
-                labels:["OK","LOW","HABIS"],
-                datasets:[
-                    {
-                        type:"bar",
-                        label:"Jumlah Stock",
-                        data:[status.OK,status.LOW,status.HABIS],
-                        yAxisID:"yStock",
-                        borderWidth:1
-                    },
-                    {
-                        type:"line",
-                        label:"Traffic MASUK (30 Hari)",
-                        data:[totalIn30,totalIn30,totalIn30],
-                        yAxisID:"yTraffic",
-                        tension:0.2,
-                        fill:false,
-                        borderWidth:3,
-                        pointRadius:4
-                    },
-                    {
-                        type:"line",
-                        label:"Traffic KELUAR (30 Hari)",
-                        data:[totalOut30,totalOut30,totalOut30],
-                        yAxisID:"yTraffic",
-                        tension:0.2,
-                        fill:false,
-                        borderWidth:3,
-                        pointRadius:4
-                    }
-                ]
-            },
-            options:{
-                responsive:false,
-                animation:false,
-                scales:{
-                    yStock:{
-                        type:"linear",
-                        position:"left",
-                        beginAtZero:true,
-                        title:{display:true,text:"Jumlah Stock"}
-                    },
-                    yTraffic:{
-                        type:"linear",
-                        position:"right",
-                        beginAtZero:true,
-                        grid:{drawOnChartArea:false},
-                        title:{display:true,text:"Traffic 30 Hari"}
-                    }
-                },
-                plugins:{
-                    title:{
-                        display:true,
-                        text:"Kombinasi Status Stock + History Traffic 30 Hari",
-                        font:{size:20,weight:"bold"}
-                    },
-                    legend:{position:"bottom"}
-                }
-            }
-        }, 1400, 750);
-
-        /* =========================
-           EXCEL WORKBOOK
-        ========================= */
-        const workbook = new ExcelJS.Workbook();
-        workbook.creator = "Inventory Sparepart";
-        workbook.created = new Date();
-
-        function styleHeader(row){
-            row.font = {bold:true};
-            row.alignment = {vertical:"middle",horizontal:"center"};
-        }
-
-        const wsStock = workbook.addWorksheet("Sparepart");
-        wsStock.columns = [
-            {header:"Kode",key:"Kode",width:18},
-            {header:"Nama Sparepart",key:"Nama Sparepart",width:30},
-            {header:"Lokasi",key:"Lokasi",width:18},
-            {header:"Stock",key:"Stock",width:12},
-            {header:"Min. Stock",key:"Min. Stock",width:12},
-            {header:"Status",key:"Status",width:14}
-        ];
-        stockData.forEach(function(row){wsStock.addRow(row);});
-        styleHeader(wsStock.getRow(1));
-        wsStock.views = [{state:"frozen",ySplit:1}];
-
-        const wsHistory = workbook.addWorksheet("History Transaksi");
-        wsHistory.columns = [
-            {header:"Tanggal",key:"Tanggal",width:22},
-            {header:"Kode",key:"Kode",width:18},
-            {header:"Nama Sparepart",key:"Nama Sparepart",width:30},
-            {header:"Lokasi",key:"Lokasi",width:18},
-            {header:"Jenis",key:"Jenis",width:12},
-            {header:"Jumlah",key:"Jumlah",width:12},
-            {header:"Operator",key:"Operator",width:22},
-            {header:"Keterangan",key:"Keterangan",width:35}
-        ];
-        historyData.forEach(function(row){wsHistory.addRow(row);});
-        styleHeader(wsHistory.getRow(1));
-        wsHistory.views = [{state:"frozen",ySplit:1}];
-
-        const wsTraffic = workbook.addWorksheet("Traffic 30 Hari");
-        wsTraffic.columns = [
-            {header:"Tanggal",key:"Tanggal",width:15},
-            {header:"MASUK",key:"MASUK",width:14},
-            {header:"KELUAR",key:"KELUAR",width:14},
-            {header:"TOTAL",key:"TOTAL",width:14}
-        ];
-        traffic.keys.forEach(function(key,i){
-            wsTraffic.addRow({
-                Tanggal:key,
-                MASUK:traffic.in[i],
-                KELUAR:traffic.out[i],
-                TOTAL:traffic.in[i]+traffic.out[i]
-            });
-        });
-        styleHeader(wsTraffic.getRow(1));
-        wsTraffic.views = [{state:"frozen",ySplit:1}];
-
-        const wsCharts = workbook.addWorksheet("Grafik");
-        wsCharts.getCell("A1").value = "GRAFIK INVENTORY SPAREPART";
-        wsCharts.getCell("A1").font = {bold:true,size:18};
-        wsCharts.getCell("A2").value = "Pie = persentase total stock per status | Column = traffic 30 hari | Combo = stock + traffic";
-        wsCharts.getCell("A2").font = {italic:true};
-
-        const pieId = workbook.addImage({base64:pieImage,extension:"png"});
-        const trafficId = workbook.addImage({base64:trafficImage,extension:"png"});
-        const comboId = workbook.addImage({base64:comboImage,extension:"png"});
-
-        wsCharts.addImage(pieId,{tl:{col:0,row:3},ext:{width:600,height:400}});
-        wsCharts.addImage(trafficId,{tl:{col:9,row:3},ext:{width:850,height:425}});
-        wsCharts.addImage(comboId,{tl:{col:0,row:30},ext:{width:850,height:455}});
-
-        wsCharts.getColumn(1).width = 18;
-        wsCharts.getColumn(2).width = 18;
-        wsCharts.getColumn(3).width = 18;
-        wsCharts.getColumn(4).width = 18;
-        wsCharts.getColumn(10).width = 18;
-
-        /* Ringkasan angka di sheet grafik */
-        wsCharts.getCell("A24").value = "Ringkasan";
-        wsCharts.getCell("A24").font = {bold:true,size:14};
-        wsCharts.getCell("A25").value = "OK Stock";
-        wsCharts.getCell("B25").value = status.OK;
-        wsCharts.getCell("A26").value = "LOW Stock";
-        wsCharts.getCell("B26").value = status.LOW;
-        wsCharts.getCell("A27").value = "HABIS Stock";
-        wsCharts.getCell("B27").value = status.HABIS;
-        wsCharts.getCell("D25").value = "Traffic MASUK 30 Hari";
-        wsCharts.getCell("E25").value = totalIn30;
-        wsCharts.getCell("D26").value = "Traffic KELUAR 30 Hari";
-        wsCharts.getCell("E26").value = totalOut30;
-
-        const buffer = await workbook.xlsx.writeBuffer();
-        const blob = new Blob([buffer],{
-            type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "Inventory_Sparepart_Grafik.xlsx";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(function(){URL.revokeObjectURL(url);},1000);
-
-        showMessage("Excel berhasil dibuat lengkap dengan 3 grafik.", "ok");
-
-    }
-    catch(error){
-        console.error("Export Excel + grafik gagal:", error);
-        showMessage(
-            "Gagal export Excel + grafik: " + error.message,
-            "error"
+    const worksheet =
+        XLSX.utils.json_to_sheet(
+            data
         );
-    }
+
+
+    const workbook =
+        XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Sparepart"
+    );
+
+
+    XLSX.writeFile(
+        workbook,
+        "Inventory_Sparepart.xlsx"
+    );
+
+
+    showMessage(
+        "Excel berhasil dibuat."
+    );
+
 }
 
 
