@@ -2174,7 +2174,7 @@ footer{
 <section class="realtime-dashboard" id="realtimeDashboard">
     <div class="realtime-dashboard-head">
         <div class="realtime-dashboard-title">Dashboard Realtime Stock & Traffic</div>
-        <div class="realtime-live" id="realtimeLive">â— REALTIME FIREBASE</div>
+        <div class="realtime-live" id="realtimeLive">REALTIME FIREBASE</div>
     </div>
 
     <div class="realtime-metrics">
@@ -2184,24 +2184,24 @@ footer{
             <div class="rt-sub">Qty stock saat ini</div>
         </div>
         <div class="rt-card rt-ok">
-            <div class="rt-label">Status OK</div>
+            <div class="rt-label">Status OK (Item)</div>
             <div class="rt-value" id="rtOkStock">0</div>
-            <div class="rt-sub">Qty stock</div>
+            <div class="rt-sub"><span id="rtOkQty">0</span> qty stock</div>
         </div>
         <div class="rt-card rt-low">
-            <div class="rt-label">Status LOW</div>
+            <div class="rt-label">Status LOW (Item)</div>
             <div class="rt-value" id="rtLowStock">0</div>
-            <div class="rt-sub">Qty stock</div>
+            <div class="rt-sub"><span id="rtLowQty">0</span> qty stock</div>
         </div>
         <div class="rt-card rt-empty">
-            <div class="rt-label">Status HABIS</div>
+            <div class="rt-label">Status HABIS (Item)</div>
             <div class="rt-value" id="rtEmptyStock">0</div>
-            <div class="rt-sub">Qty stock</div>
+            <div class="rt-sub"><span id="rtEmptyQty">0</span> qty stock</div>
         </div>
         <div class="rt-card rt-in">
             <div class="rt-label">Traffic 30 Hari</div>
             <div class="rt-value" id="rtTrafficTotal">0</div>
-            <div class="rt-sub"><span id="rtTrafficIn">0</span> masuk Â· <span id="rtTrafficOut">0</span> keluar</div>
+            <div class="rt-sub"><span id="rtTrafficIn">0</span> masuk - <span id="rtTrafficOut">0</span> keluar</div>
         </div>
     </div>
 
@@ -2210,7 +2210,7 @@ footer{
     </div>
     <div class="rt-chart-note">
         Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK saat ini.
-        Kartu di atas menunjukkan total stock serta status OK, LOW, dan HABIS. Data diperbarui otomatis dari Firebase.
+        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK saat ini. Status OK/LOW/HABIS menunjukkan jumlah item; qty stock ditampilkan di bawahnya. Data diperbarui otomatis dari Firebase.
     </div>
 </section>
 
@@ -3273,15 +3273,15 @@ function formatQty(value){
 
 function updateRealtimeDashboard(){
     const totals = {ok:0, low:0, empty:0};
+    const qtyTotals = {ok:0, low:0, empty:0};
     let totalStock = 0;
 
     items.forEach(function(item){
         const qty = Number(item.qty || 0);
         totalStock += qty;
         const st = getStatus(item).type;
-        if(st === "ok") totals.ok += qty;
-        else if(st === "low") totals.low += qty;
-        else totals.empty += qty;
+        totals[st] += 1;
+        qtyTotals[st] += qty;
     });
 
     const today = new Date();
@@ -3324,6 +3324,9 @@ function updateRealtimeDashboard(){
     $("rtOkStock").textContent = formatQty(totals.ok);
     $("rtLowStock").textContent = formatQty(totals.low);
     $("rtEmptyStock").textContent = formatQty(totals.empty);
+    $("rtOkQty").textContent = formatQty(qtyTotals.ok);
+    $("rtLowQty").textContent = formatQty(qtyTotals.low);
+    $("rtEmptyQty").textContent = formatQty(qtyTotals.empty);
     $("rtTrafficTotal").textContent = formatQty(trafficIn + trafficOut);
     $("rtTrafficIn").textContent = formatQty(trafficIn);
     $("rtTrafficOut").textContent = formatQty(trafficOut);
@@ -3388,7 +3391,7 @@ function startRealtimeDashboard(){
         }, function(error){
             console.error("Realtime stock error:",error);
             const live=$("realtimeLive");
-            if(live){ live.textContent="â— REALTIME ERROR"; live.style.background="#fee2e2"; live.style.color="#b91c1c"; }
+            if(live){ live.textContent="REALTIME ERROR"; live.style.background="#fee2e2"; live.style.color="#b91c1c"; }
         });
     }
     if(!transactionRealtimeStarted){
