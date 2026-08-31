@@ -2,9 +2,9 @@
 <html lang="id">
 
 <head>
-<!-- ASCII SAFE MAINTENANCE THEME -->
 
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,7 @@ content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
 <style>
 
@@ -221,6 +222,63 @@ header p{
 .overlay.show{
     display:block;
 }
+
+
+
+/* =====================================================
+   PESAN ADMIN / KOTAK MASUK
+===================================================== */
+.message-menu-item{
+    position:relative;
+    display:flex !important;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+.message-menu-text{display:inline-flex;align-items:center;gap:8px;}
+.message-notif-lamp{
+    display:none;
+    width:9px;
+    height:9px;
+    min-width:9px;
+    border-radius:50%;
+    background:#ef4444;
+    box-shadow:0 0 0 3px rgba(239,68,68,.12),0 0 10px rgba(239,68,68,.95);
+    animation:messageLampBlink .9s infinite alternate;
+}
+.message-notif-lamp.show{display:inline-block;}
+@keyframes messageLampBlink{from{opacity:.35;transform:scale(.85)}to{opacity:1;transform:scale(1.2)}}
+.message-count-badge{
+    display:none;
+    min-width:20px;
+    padding:2px 6px;
+    border-radius:999px;
+    background:#ef4444;
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+    text-align:center;
+}
+.message-count-badge.show{display:inline-block;}
+.admin-note-modal .modal-card{max-width:520px;}
+.admin-note-info{
+    margin:0 0 14px;
+    padding:10px 12px;
+    border-radius:10px;
+    background:#f0fdf4;
+    color:#166534;
+    font-size:13px;
+}
+.admin-note-input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;outline:none;}
+.admin-note-textarea{min-height:130px;resize:vertical;}
+.admin-note-label{display:block;margin:10px 0 6px;font-size:13px;font-weight:800;color:#475569;}
+.inbox-empty{padding:22px;text-align:center;color:#64748b;}
+.inbox-list{display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow:auto;}
+.inbox-card{padding:13px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;}
+.inbox-card.new{border-left:4px solid #ef4444;background:#fff7f7;}
+.inbox-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;font-weight:800;color:#1e293b;}
+.inbox-meta{margin-top:4px;font-size:12px;color:#64748b;}
+.inbox-message{margin-top:9px;white-space:pre-wrap;color:#334155;line-height:1.5;}
 
 /* =====================================================
    CONTAINER
@@ -1331,7 +1389,7 @@ footer{
 
 
 /* =========================================================
-   MAINTENANCE THEME - INDUSTRIAL / ENGINEERING
+   MAINTENANCE THEME &#8212; INDUSTRIAL / ENGINEERING
    Visual-only theme override: functionality preserved.
    ========================================================= */
 :root{
@@ -1366,7 +1424,7 @@ header{
     box-shadow:0 5px 18px rgba(15,23,42,.24);
 }
 header::before{
-    content:"M";
+    content:"\2699";
     position:absolute;
     left:22px;
     top:50%;
@@ -1376,7 +1434,7 @@ header::before{
     animation:maintGear 9s linear infinite;
 }
 header::after{
-    content:"MAINTENANCE - SPAREPART - INVENTORY";
+    content:"MAINTENANCE \2022 SPAREPART \2022 INVENTORY";
     position:absolute;
     right:22px;
     bottom:8px;
@@ -1448,7 +1506,7 @@ header p{
     overflow:hidden;
 }
 .stat::after{
-    content:"M";
+    content:"\2699";
     position:absolute;
     right:12px;
     bottom:-10px;
@@ -1511,7 +1569,7 @@ table tbody tr:hover{background:#ecfdf5;}
     background-size:20px 20px;
 }
 .login-card::before{
-    content:"M";
+    content:"\2699";
     display:block;
     margin:0 auto 8px;
     width:64px;height:64px;
@@ -1550,6 +1608,22 @@ footer{
     border-color:var(--maint-green);
 }
 
+/* =====================================================
+   LOGOUT WEB MAIN
+===================================================== */
+.menu-item.logout-menu-item{
+    margin-top:14px;
+    border-top:2px solid #fecaca;
+    border-left:4px solid #dc2626;
+    background:#fff7f7;
+    color:#b91c1c;
+    font-weight:800;
+}
+.menu-item.logout-menu-item:hover{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
 /* Maintenance labels */
 .maintenance-badge{
     display:inline-flex;
@@ -1573,95 +1647,172 @@ footer{
 
 
 /* =====================================================
-   MAINTENANCE THEME - HEADER ANIMATIF
-   ===================================================== */
-header{
+   TOGGLE DATA SPAREPART
+===================================================== */
+.stock-data-toggle-wrap{
+    display:flex;
+    justify-content:center;
+    margin:14px 0 10px;
+}
+
+#toggleStockData{
     position:relative;
+    border:0;
+    border-radius:14px;
+    padding:10px 18px 10px 14px;
+    min-height:48px;
+    background:linear-gradient(135deg,#16a34a,#15803d);
+    color:#fff;
+    font-weight:800;
+    letter-spacing:.3px;
+    cursor:pointer;
+    box-shadow:0 5px 14px rgba(22,163,74,.25);
+    transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
     overflow:hidden;
-    background:
-        linear-gradient(135deg,rgba(6,24,42,.97),rgba(15,23,42,.98)),
-        repeating-linear-gradient(0deg,transparent 0 19px,rgba(34,197,94,.055) 20px),
-        repeating-linear-gradient(90deg,transparent 0 19px,rgba(34,197,94,.055) 20px);
-    border-bottom:5px solid #16a34a;
-    box-shadow:0 8px 28px rgba(0,0,0,.20);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
 }
 
-header::before{
-    content:"M";
-    position:absolute;
-    left:5%;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:92px;
-    color:rgba(234,179,8,.14);
-    animation:maintenanceGear 12s linear infinite;
-    pointer-events:none;
+#toggleStockData .stock-toggle-icon{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,.18);
+    flex:0 0 28px;
+    transition:transform .45s ease, background .25s ease;
 }
 
-header::after{
+#toggleStockData .stock-toggle-icon svg{
+    width:18px;
+    height:18px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+#toggleStockData .stock-toggle-arrow{
+    width:20px;
+    height:20px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .45s ease;
+}
+
+#toggleStockData .stock-toggle-arrow svg{
+    width:16px;
+    height:16px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2.5;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+#toggleStockData.is-open .stock-toggle-icon{
+    transform:rotate(180deg);
+    background:rgba(255,255,255,.28);
+}
+
+#toggleStockData.is-open .stock-toggle-arrow{
+    transform:rotate(180deg);
+}
+
+#toggleStockData::after{
     content:"";
     position:absolute;
-    inset:0;
-    background:linear-gradient(
-        120deg,
-        transparent 0%,
-        rgba(34,197,94,.08) 45%,
-        rgba(234,179,8,.12) 50%,
-        rgba(34,197,94,.08) 55%,
-        transparent 100%
-    );
-    transform:translateX(-100%);
-    animation:maintenanceScan 5s ease-in-out infinite;
-    pointer-events:none;
+    top:0;
+    left:-90px;
+    width:55px;
+    height:100%;
+    background:rgba(255,255,255,.35);
+    transform:skewX(-20deg);
+    animation:stockToggleShine 2.2s ease-in-out infinite;
 }
 
-header h1,
-header p{
-    position:relative;
-    z-index:1;
+#toggleStockData:hover{
+    transform:translateY(-1px);
+    box-shadow:0 7px 18px rgba(22,163,74,.32);
 }
 
-header h1{
-    letter-spacing:1px;
-    text-shadow:0 0 18px rgba(34,197,94,.22);
-    animation:titleMaintenance 2.8s ease-in-out infinite;
+#toggleStockData:active{transform:scale(.97);}
+
+.stock-data-panel{
+    max-height:0 !important;
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+    overflow:hidden !important;
+    transform:translateY(-8px);
+    transition:max-height .7s ease, opacity .35s ease, transform .45s ease, visibility 0s linear .7s;
 }
 
-header p{
-    color:#dbeafe;
-    animation:subtitleMaintenance 3.2s ease-in-out infinite;
+.stock-data-panel.is-visible{
+    max-height:100000px !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+    transform:translateY(0);
+    transition:max-height .7s ease, opacity .35s ease, transform .45s ease, visibility 0s linear 0s;
 }
 
-@keyframes maintenanceGear{
-    from{transform:translateY(-50%) rotate(0deg);}
-    to{transform:translateY(-50%) rotate(360deg);}
+.stock-data-hidden-note{
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+    margin:4px 0 12px;
 }
 
-@keyframes maintenanceScan{
-    0%,25%{transform:translateX(-100%);}
-    55%,100%{transform:translateX(100%);}
+@keyframes stockToggleShine{
+    0%{left:-90px;opacity:0;}
+    15%{opacity:1;}
+    45%{left:110%;opacity:0;}
+    100%{left:110%;opacity:0;}
 }
 
-@keyframes titleMaintenance{
-    0%,100%{transform:translateY(0);text-shadow:0 0 18px rgba(34,197,94,.20);}
-    50%{transform:translateY(-2px);text-shadow:0 0 28px rgba(34,197,94,.48);}
+@media (prefers-reduced-motion:reduce){
+    #toggleStockData::after{animation:none;}
+    .stock-data-panel,.stock-data-panel.is-visible{transition:none;}
 }
 
-@keyframes subtitleMaintenance{
-    0%,100%{opacity:.82;}
-    50%{opacity:1;}
+/* =====================================================
+   REALTIME INVENTORY DASHBOARD
+===================================================== */
+.realtime-dashboard{
+    margin:18px 0 24px;
+    padding:18px;
+    border-radius:18px;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    box-shadow:0 8px 24px rgba(15,23,42,.06);
 }
-
-
-/* Login title maintenance animation */
-.login-card h1{
-    animation:loginTitlePulse 2.6s ease-in-out infinite;
+.realtime-dashboard-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
 }
-@keyframes loginTitlePulse{
-    0%,100%{transform:scale(1);text-shadow:none;}
-    50%{transform:scale(1.015);text-shadow:0 0 18px rgba(34,197,94,.20);}
-}
-
+.realtime-dashboard-title{font-size:20px;font-weight:900;color:#0f172a}
+.realtime-live{font-size:12px;font-weight:800;color:#15803d;background:#dcfce7;padding:7px 10px;border-radius:999px}
+.realtime-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.rt-card{border:1px solid #e2e8f0;border-radius:14px;padding:13px 14px;background:#f8fafc;min-height:92px}
+.rt-label{font-size:12px;color:#64748b;font-weight:800;text-transform:uppercase}
+.rt-value{font-size:25px;font-weight:900;color:#0f172a;margin-top:7px}
+.rt-sub{font-size:11px;color:#64748b;margin-top:3px}
+.rt-ok{border-left:5px solid #16a34a}.rt-low{border-left:5px solid #f59e0b}.rt-empty{border-left:5px solid #dc2626}.rt-in{border-left:5px solid #2563eb}.rt-out{border-left:5px solid #7c3aed}
+.rt-chart-wrap{position:relative;height:380px;width:100%;}
+.rt-chart-note{margin-top:9px;font-size:11px;color:#64748b;line-height:1.45}
+@media(max-width:900px){.realtime-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}.rt-chart-wrap{height:330px}}
+@media(max-width:520px){.realtime-metrics{grid-template-columns:1fr 1fr}.rt-value{font-size:21px}.rt-chart-wrap{height:290px}}
 </style>
 
 </head>
@@ -1714,11 +1865,74 @@ header p{
     aria-label="Buka password">Buka</button>
 </div>
 
-        <button id="loginButton">
+        <button type="button" id="loginButton">
             MASUK
         </button>
 
         <div id="loginError"></div>
+
+<script>
+/* =====================================================
+   FALLBACK LOGIN - TIDAK BERGANTUNG FIREBASE
+   Dipasang agar tombol MASUK tetap bekerja walaupun
+   script Firebase/module gagal dimuat.
+===================================================== */
+(function(){
+    const LOGIN_PASSWORD_FALLBACK = "mtcgoaheadgoal";
+    const lsKey = "inventoryLogin";
+
+    function showMain(){
+        const login = document.getElementById("loginScreen");
+        const main = document.getElementById("websiteContent");
+        if(login) login.style.display = "none";
+        if(main) main.style.display = "block";
+    }
+
+    function loggedIn(){
+        try { return localStorage.getItem(lsKey) === "true"; }
+        catch(e) { return false; }
+    }
+
+    function saveLogin(){
+        try { localStorage.setItem(lsKey, "true"); }
+        catch(e) { console.warn("Sesi login tidak dapat disimpan:", e); }
+    }
+
+    function doLoginFallback(){
+        const input = document.getElementById("loginPassword");
+        const error = document.getElementById("loginError");
+        if(!input) return;
+
+        if(input.value.trim() === LOGIN_PASSWORD_FALLBACK){
+            saveLogin();
+            if(error) error.textContent = "";
+            showMain();
+        } else {
+            if(error) error.textContent = "Password salah.";
+            input.value = "";
+            input.focus();
+        }
+    }
+
+    function initFallbackLogin(){
+        const btn = document.getElementById("loginButton");
+        const input = document.getElementById("loginPassword");
+        if(btn) {
+            btn.onclick = doLoginFallback;
+        }
+        if(input) input.addEventListener("keydown", function(e){
+            if(e.key === "Enter") {
+                e.preventDefault();
+                doLoginFallback();
+            }
+        }, true);
+
+        if(loggedIn()) showMain();
+    }
+
+    initFallbackLogin();
+})();
+</script>
 
         <div class="developer-contact">
 
@@ -1746,11 +1960,11 @@ header p{
 <header>
 
     <h1>
-        MAINTENANCE &amp; STOCK SPAREPART
+        MAINTENANCE &#8226; STOCK SPAREPART
     </h1>
 
     <p>
-        Sistem Sparepart - Maintenance - Inventory
+        Sistem Sparepart &#8226; Maintenance &#8226; Inventory
     </p>
 
 </header>
@@ -1776,6 +1990,11 @@ header p{
     id="drawer">
 
     <h2>MENU</h2>
+
+    <button class="menu-item message-menu-item" data-menu="userMessages">
+        <span class="message-menu-text">Kotak Masuk Pesan User <span class="message-notif-lamp" id="messageNotifLamp"></span></span>
+        <span class="message-count-badge" id="messageCountBadge">0</span>
+    </button>
 
     <button class="menu-item" data-menu="data">
         Data Sparepart
@@ -1825,21 +2044,12 @@ header p{
         Scan QR Code
     </button>
     <button class="menu-item ai-menu-item" data-menu="aiStock">
-        <span class="ai-menu-avatar" aria-hidden="true"><svg class="hijab-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#16a34a"/><stop offset="1" stop-color="#0f766e"/></linearGradient><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fde2c5"/><stop offset="1" stop-color="#f5c79f"/></linearGradient></defs>
-<path d="M18 88C19 68 27 54 34 47C29 27 40 12 52 12C67 12 79 25 76 45C85 53 90 68 91 88C82 94 70 97 55 97C40 97 27 94 18 88Z" fill="url(#hg)"/>
-<path d="M29 54C30 36 38 25 51 25C65 25 73 37 72 54C68 48 63 45 52 45C41 45 35 49 29 54Z" fill="#064e3b"/>
-<path d="M35 43C36 31 43 25 52 25C63 25 70 33 69 45V56C67 68 60 75 52 75C43 75 36 67 35 56Z" fill="url(#fg)"/>
-<path d="M36 68C41 74 46 77 52 77C59 77 64 74 69 68L79 90H25Z" fill="#fff"/>
-<ellipse cx="44" cy="51" rx="2.2" ry="1.7" fill="#334155"/><ellipse cx="61" cy="51" rx="2.2" ry="1.7" fill="#334155"/>
-<path d="M40 47Q44 44 48 47M57 47Q61 44 65 47" fill="none" stroke="#7c4a2f" stroke-width="1.6" stroke-linecap="round"/>
-<path d="M47 61Q52 65 57 61" fill="none" stroke="#b45355" stroke-width="1.7" stroke-linecap="round"/>
-<circle cx="40" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/><circle cx="64" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/>
-<path d="M26 78Q29 57 38 49" fill="none" stroke="#86efac" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
-</svg></span>
         <span>FITRIYANI NUR CAHYATI</span>
     </button>
 
+    <button class="menu-item logout-menu-item" data-menu="logout">
+        LOGOUT WEB MAIN
+    </button>
 
 </aside>
 
@@ -1955,8 +2165,54 @@ header p{
 
     </div>
 
+
 </section>
 
+<!-- =====================================================
+     REALTIME DASHBOARD
+===================================================== -->
+<section class="realtime-dashboard" id="realtimeDashboard">
+    <div class="realtime-dashboard-head">
+        <div class="realtime-dashboard-title">Dashboard Realtime Stock & Traffic</div>
+        <div class="realtime-live" id="realtimeLive">REALTIME FIREBASE</div>
+    </div>
+
+    <div class="realtime-metrics">
+        <div class="rt-card">
+            <div class="rt-label">Total Stock</div>
+            <div class="rt-value" id="rtTotalStock">0</div>
+            <div class="rt-sub">Qty stock saat ini</div>
+        </div>
+        <div class="rt-card rt-ok">
+            <div class="rt-label">Status OK (Item)</div>
+            <div class="rt-value" id="rtOkStock">0</div>
+            <div class="rt-sub"><span id="rtOkQty">0</span> qty stock</div>
+        </div>
+        <div class="rt-card rt-low">
+            <div class="rt-label">Status LOW (Item)</div>
+            <div class="rt-value" id="rtLowStock">0</div>
+            <div class="rt-sub"><span id="rtLowQty">0</span> qty stock</div>
+        </div>
+        <div class="rt-card rt-empty">
+            <div class="rt-label">Status HABIS (Item)</div>
+            <div class="rt-value" id="rtEmptyStock">0</div>
+            <div class="rt-sub"><span id="rtEmptyQty">0</span> qty stock</div>
+        </div>
+        <div class="rt-card rt-in">
+            <div class="rt-label">Traffic 30 Hari</div>
+            <div class="rt-value" id="rtTrafficTotal">0</div>
+            <div class="rt-sub"><span id="rtTrafficIn">0</span> masuk - <span id="rtTrafficOut">0</span> keluar</div>
+        </div>
+    </div>
+
+    <div class="rt-chart-wrap">
+        <canvas id="realtimeComboChart"></canvas>
+    </div>
+    <div class="rt-chart-note">
+        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK saat ini.
+        Column menunjukkan Qty MASUK dan KELUAR per hari. Garis menunjukkan TOTAL TRAFFIC dan TOTAL STOCK saat ini. Status OK/LOW/HABIS menunjukkan jumlah item; qty stock ditampilkan di bawahnya. Data diperbarui otomatis dari Firebase.
+    </div>
+</section>
 
 <div
     class="filter-info"
@@ -1974,6 +2230,35 @@ header p{
 
 </div>
 
+
+<div class="stock-data-toggle-wrap">
+
+    <button
+        type="button"
+        id="toggleStockData"
+        aria-expanded="false"
+        aria-controls="stockDataPanel">
+        <span class="stock-toggle-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                <circle cx="12" cy="12" r="2.8"></circle>
+            </svg>
+        </span>
+        <span class="stock-toggle-label">TAMPILKAN DATA SPAREPART</span>
+        <span class="stock-toggle-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <path d="M6 9l6 6 6-6"></path>
+            </svg>
+        </span>
+    </button>
+
+</div>
+
+<div class="stock-data-hidden-note" id="stockDataHiddenNote">
+    Data sparepart disembunyikan. Tekan tombol untuk menampilkan.
+</div>
+
+<div class="stock-data-panel" id="stockDataPanel">
 
 <section class="table-wrap">
 
@@ -2014,6 +2299,8 @@ header p{
 </table>
 
 </section>
+
+</div>
 
 </main>
 
@@ -2372,21 +2659,6 @@ Data lainnya tidak dihapus.
 
         <div class="ai-header">
             <div class="ai-profile">
-                <div class="ai-avatar" aria-hidden="true">
-                    <svg class="hijab-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#16a34a"/><stop offset="1" stop-color="#0f766e"/></linearGradient><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fde2c5"/><stop offset="1" stop-color="#f5c79f"/></linearGradient></defs>
-<path d="M18 88C19 68 27 54 34 47C29 27 40 12 52 12C67 12 79 25 76 45C85 53 90 68 91 88C82 94 70 97 55 97C40 97 27 94 18 88Z" fill="url(#hg)"/>
-<path d="M29 54C30 36 38 25 51 25C65 25 73 37 72 54C68 48 63 45 52 45C41 45 35 49 29 54Z" fill="#064e3b"/>
-<path d="M35 43C36 31 43 25 52 25C63 25 70 33 69 45V56C67 68 60 75 52 75C43 75 36 67 35 56Z" fill="url(#fg)"/>
-<path d="M36 68C41 74 46 77 52 77C59 77 64 74 69 68L79 90H25Z" fill="#fff"/>
-<ellipse cx="44" cy="51" rx="2.2" ry="1.7" fill="#334155"/><ellipse cx="61" cy="51" rx="2.2" ry="1.7" fill="#334155"/>
-<path d="M40 47Q44 44 48 47M57 47Q61 44 65 47" fill="none" stroke="#7c4a2f" stroke-width="1.6" stroke-linecap="round"/>
-<path d="M47 61Q52 65 57 61" fill="none" stroke="#b45355" stroke-width="1.7" stroke-linecap="round"/>
-<circle cx="40" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/><circle cx="64" cy="59" r="2.2" fill="#fca5a5" opacity=".35"/>
-<path d="M26 78Q29 57 38 49" fill="none" stroke="#86efac" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
-</svg>
-                    <span class="ai-online-dot"></span>
-                </div>
                 <div>
                     <div class="ai-name">FITRIYANI NUR CAHYATI</div>
                     <div class="ai-role">AI Pembantu Stock</div>
@@ -2398,9 +2670,9 @@ Data lainnya tidak dihapus.
 
         <div class="ai-status-row">
             <span><span class="ai-dot"></span>Online</span>
-            <span><span class="ai-check">OK</span> Data Real-time</span>
-            <span><span class="ai-check">OK</span> Cepat</span>
-            <span><span class="ai-check">OK</span> Akurat</span>
+            <span><span class="ai-check">&#10003;</span> Data Real-time</span>
+            <span><span class="ai-check">&#10003;</span> Cepat</span>
+            <span><span class="ai-check">&#10003;</span> Akurat</span>
         </div>
 
         <div class="ai-quick-actions">
@@ -2517,6 +2789,23 @@ Data lainnya tidak dihapus.
 
 </div>
 
+
+<!-- =====================================================
+     KOTAK MASUK PESAN USER
+===================================================== -->
+<div class="modal" id="userMessagesModal">
+    <div class="modal-card">
+        <h2>Kotak Masuk Pesan User</h2>
+        <div class="admin-note-info">Pesan khusus dari User akan muncul di sini. Maksimal 10 pesan tersimpan. Jika pesan ke-11 masuk, pesan paling lama otomatis dihapus.</div>
+        <div id="userMessagesList" class="inbox-list">
+            <div class="inbox-empty">Belum ada pesan.</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-light" id="cancelUserMessages">Tutup</button>
+        </div>
+    </div>
+</div>
+
 <div
     class="message"
     id="message">
@@ -2553,7 +2842,8 @@ import {
     query,
     where,
     serverTimestamp,
-    runTransaction
+    runTransaction,
+    onSnapshot
 
 }
 from
@@ -2565,7 +2855,7 @@ from
 ===================================================== */
 
 const PASSWORD =
-    "mtcgoahead";
+    "mtcgoaheadgoal";
 
 
 const loginScreen =
@@ -2663,6 +2953,52 @@ function login(){
 
     }
 
+}
+
+/* =====================================================
+   LOGOUT WEB MAIN
+   Setelah logout, sesi login dihapus sehingga halaman
+   wajib meminta password lagi.
+===================================================== */
+function logoutInventory(){
+    if(!confirm("Apakah Anda yakin ingin logout dari Web Main?")){
+        return;
+    }
+
+    try{
+        localStorage.removeItem("inventoryLogin");
+    }catch(error){
+        console.warn("Gagal menghapus sesi login:", error);
+    }
+
+    // Tutup menu/drawer jika masih terbuka.
+    const drawer = document.getElementById("drawer");
+    const overlay = document.getElementById("overlay");
+    if(drawer) drawer.classList.remove("open");
+    if(overlay) overlay.classList.remove("show");
+
+    // Tutup modal yang sedang terbuka agar kembali ke halaman login.
+    document.querySelectorAll(".modal.show").forEach(function(modal){
+        modal.classList.remove("show");
+    });
+
+    // Kembali ke layar login.
+    if(websiteContent) websiteContent.style.display = "none";
+    if(loginScreen) loginScreen.style.display = "flex";
+
+    if(loginPassword){
+        loginPassword.value = "";
+        loginPassword.type = "password";
+        loginPassword.focus();
+    }
+    if(loginError) loginError.textContent = "";
+
+    // Pastikan label tombol password kembali normal.
+    const toggle = document.getElementById("togglePassword");
+    if(toggle){
+        toggle.textContent = "Buka";
+        toggle.setAttribute("aria-label", "Buka password");
+    }
 }
 
 
@@ -2769,7 +3105,306 @@ const transactionRef =
     );
 
 
+
+/* =====================================================
+   KOTAK MASUK PESAN USER
+===================================================== */
+const userMessagesRef = collection(db, "userMessages");
+
+function formatMessageDate(value){
+    try{
+        if(!value) return "Menunggu waktu...";
+        const d = value.toDate ? value.toDate() : new Date(value);
+        return d.toLocaleString("id-ID", {dateStyle:"medium", timeStyle:"short"});
+    }catch(e){ return ""; }
+}
+
+function updateMessageNotification(count){
+    const lamp = document.getElementById("messageNotifLamp");
+    const badge = document.getElementById("messageCountBadge");
+    if(lamp) lamp.classList.toggle("show", count > 0);
+    if(badge){
+        badge.textContent = count > 99 ? "99+" : String(count);
+        badge.classList.toggle("show", count > 0);
+    }
+}
+
+/* =====================================================
+   BATAS PESAN USER = 10
+   Jika jumlah pesan > 10, pesan paling lama otomatis dihapus.
+   Yang dipertahankan adalah 10 pesan terbaru.
+===================================================== */
+const MAX_USER_MESSAGES = 10;
+let userMessageCleanupRunning = false;
+
+async function cleanupOldUserMessages(snapshot){
+    if(userMessageCleanupRunning) return;
+    if(!snapshot || snapshot.size <= MAX_USER_MESSAGES) return;
+
+    userMessageCleanupRunning = true;
+
+    try{
+        const rows = [];
+
+        snapshot.forEach(function(d){
+            const data = d.data() || {};
+            let time = null;
+
+            if(data.createdAt && typeof data.createdAt.toMillis === "function"){
+                time = data.createdAt.toMillis();
+            }
+
+            /*
+             * Pesan yang timestamp-nya masih menunggu server
+             * dianggap paling baru agar tidak salah terhapus.
+             */
+            rows.push({
+                id:d.id,
+                time:time === null ? Number.MAX_SAFE_INTEGER : time
+            });
+        });
+
+        rows.sort(function(a,b){
+            return a.time - b.time;
+        });
+
+        const deleteCount = rows.length - MAX_USER_MESSAGES;
+        const oldRows = rows.slice(0, deleteCount);
+
+        await Promise.all(oldRows.map(function(row){
+            return deleteDoc(doc(db, "userMessages", row.id));
+        }));
+
+        console.log("Pesan lama otomatis dihapus:", deleteCount);
+    }catch(error){
+        console.warn("Gagal membersihkan pesan lama:", error);
+    }finally{
+        userMessageCleanupRunning = false;
+    }
+}
+
+function startUserMessageNotification(){
+    try{
+        onSnapshot(userMessagesRef, function(snapshot){
+            let unread = 0;
+            snapshot.forEach(function(d){
+                const data = d.data() || {};
+                if(data.read !== true) unread++;
+            });
+            updateMessageNotification(unread);
+
+            /*
+             * Jika jumlah pesan sudah lebih dari 10,
+             * hapus pesan yang paling lama secara otomatis.
+             */
+            if(snapshot.size > MAX_USER_MESSAGES){
+                cleanupOldUserMessages(snapshot);
+            }
+        }, function(error){
+            console.warn("Notifikasi pesan User tidak tersedia:", error);
+        });
+    }catch(error){
+        console.warn("Gagal memasang listener pesan User:", error);
+    }
+}
+
+async function openUserMessages(){
+    const list = document.getElementById("userMessagesList");
+    if(!list) return;
+    openModal("userMessagesModal");
+    list.innerHTML = '<div class="inbox-empty">Memuat pesan...</div>';
+    try{
+        const snap = await getDocs(userMessagesRef);
+
+        /* Pastikan database tidak menyimpan lebih dari 10 pesan. */
+        if(snap.size > MAX_USER_MESSAGES){
+            await cleanupOldUserMessages(snap);
+            await getDocs(userMessagesRef);
+            return openUserMessages();
+        }
+
+        const rows = [];
+        snap.forEach(function(d){ rows.push({id:d.id, data:d.data() || {}}); });
+        rows.sort(function(a,b){
+            const ta = a.data.createdAt && a.data.createdAt.toMillis ? a.data.createdAt.toMillis() : 0;
+            const tb = b.data.createdAt && b.data.createdAt.toMillis ? b.data.createdAt.toMillis() : 0;
+            return tb - ta;
+        });
+        if(!rows.length){
+            list.innerHTML = '<div class="inbox-empty">Belum ada pesan dari User.</div>';
+            updateMessageNotification(0);
+            return;
+        }
+        list.innerHTML = rows.map(function(row){
+            const x = row.data;
+            return '<div class="inbox-card ' + (x.read === true ? '' : 'new') + '">' +
+                '<div class="inbox-head"><span>' + escapeHtml(x.operator || 'User') + '</span>' +
+                '<span class="inbox-meta">' + escapeHtml(formatMessageDate(x.createdAt)) + '</span></div>' +
+                '<div class="inbox-meta">Kode sparepart: ' + escapeHtml(x.code || '-') + '</div>' +
+                '<div class="inbox-message">' + escapeHtml(x.message || '') + '</div>' +
+                '</div>';
+        }).join('');
+        const unreadIds = rows.filter(function(r){return r.data.read !== true;}).map(function(r){return r.id;});
+        await Promise.all(unreadIds.map(function(id){
+            return updateDoc(doc(db,"userMessages",id), {read:true, readAt:serverTimestamp()});
+        }));
+    }catch(error){
+        console.error("Gagal membuka Kotak Masuk:", error);
+        list.innerHTML = '<div class="inbox-empty" style="color:#b91c1c;">Gagal memuat pesan: ' + escapeHtml(error.message) + '</div>';
+    }
+}
+
+
+
+
 let items = [];
+
+/* =====================================================
+   REALTIME DASHBOARD CHART
+===================================================== */
+let realtimeChart = null;
+let realtimeTransactions = [];
+let stockRealtimeStarted = false;
+let transactionRealtimeStarted = false;
+
+function formatQty(value){
+    return Number(value || 0).toLocaleString("id-ID", {maximumFractionDigits: 0});
+}
+
+function updateRealtimeDashboard(){
+    const totals = {ok:0, low:0, empty:0};
+    const qtyTotals = {ok:0, low:0, empty:0};
+    let totalStock = 0;
+
+    items.forEach(function(item){
+        const qty = Number(item.qty || 0);
+        totalStock += qty;
+        const st = getStatus(item).type;
+        totals[st] += 1;
+        qtyTotals[st] += qty;
+    });
+
+    const today = new Date();
+    const days = [];
+    for(let i=29;i>=0;i--){
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate()-i);
+        days.push(d);
+    }
+
+    const daily = days.map(function(d){
+        return {date:d, masuk:0, keluar:0};
+    });
+
+    function parseTransactionDate(value){
+        if(!value) return null;
+        if(value.toDate) return value.toDate();
+        if(value instanceof Date) return value;
+        const s = String(value).trim();
+        let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if(m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+        const dt = new Date(s);
+        return isNaN(dt.getTime()) ? null : dt;
+    }
+
+    let trafficIn = 0;
+    let trafficOut = 0;
+    realtimeTransactions.forEach(function(tx){
+        const d = parseTransactionDate(tx.createdAt);
+        if(!d) return;
+        const key = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+        const found = daily.find(x => x.date.getFullYear()+"-"+(x.date.getMonth()+1)+"-"+x.date.getDate() === key);
+        if(!found) return;
+        const qty = Number(tx.qty || 0);
+        const type = String(tx.type || "").toLowerCase();
+        if(type === "in" || type === "masuk") { found.masuk += qty; trafficIn += qty; }
+        if(type === "out" || type === "keluar") { found.keluar += qty; trafficOut += qty; }
+    });
+
+    $("rtTotalStock").textContent = formatQty(totalStock);
+    $("rtOkStock").textContent = formatQty(totals.ok);
+    $("rtLowStock").textContent = formatQty(totals.low);
+    $("rtEmptyStock").textContent = formatQty(totals.empty);
+    $("rtOkQty").textContent = formatQty(qtyTotals.ok);
+    $("rtLowQty").textContent = formatQty(qtyTotals.low);
+    $("rtEmptyQty").textContent = formatQty(qtyTotals.empty);
+    $("rtTrafficTotal").textContent = formatQty(trafficIn + trafficOut);
+    $("rtTrafficIn").textContent = formatQty(trafficIn);
+    $("rtTrafficOut").textContent = formatQty(trafficOut);
+
+    const canvas = $("realtimeComboChart");
+    if(!canvas || typeof Chart === "undefined") return;
+
+    const labels = daily.map(x => String(x.date.getDate()).padStart(2,"0") + "/" + String(x.date.getMonth()+1).padStart(2,"0"));
+    const masuk = daily.map(x => x.masuk);
+    const keluar = daily.map(x => x.keluar);
+    const totalTraffic = daily.map(x => x.masuk + x.keluar);
+    const totalStockSeries = daily.map(() => totalStock);
+
+    if(realtimeChart) realtimeChart.destroy();
+    realtimeChart = new Chart(canvas, {
+        data:{
+            labels:labels,
+            datasets:[
+                {type:"bar",label:"MASUK",data:masuk,yAxisID:"yTraffic",borderWidth:1},
+                {type:"bar",label:"KELUAR",data:keluar,yAxisID:"yTraffic",borderWidth:1},
+                {type:"line",label:"TOTAL TRAFFIC",data:totalTraffic,yAxisID:"yTraffic",tension:.25,fill:false,borderWidth:2,pointRadius:2},
+                {type:"line",label:"TOTAL STOCK SAAT INI",data:totalStockSeries,yAxisID:"yStock",tension:0,fill:false,borderWidth:3,pointRadius:2}
+            ]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            interaction:{mode:"index",intersect:false},
+            plugins:{
+                legend:{position:"top"},
+                tooltip:{callbacks:{title:function(ctx){ return "Tanggal " + ctx[0].label; }}}
+            },
+            scales:{
+                x:{stacked:false,title:{display:true,text:"Tanggal"}},
+                yTraffic:{beginAtZero:true,position:"left",title:{display:true,text:"Qty Traffic"},ticks:{precision:0}},
+                yStock:{beginAtZero:true,position:"right",grid:{drawOnChartArea:false},title:{display:true,text:"Qty Stock"},ticks:{precision:0}}
+            }
+        }
+    });
+}
+
+function startRealtimeDashboard(){
+    if(!stockRealtimeStarted){
+        stockRealtimeStarted = true;
+        onSnapshot(stockRef, function(snap){
+            items = snap.docs.map(function(d){
+                const data=d.data();
+                return {
+                    firestoreId:d.id,
+                    code:data.code || decodeURIComponent(d.id),
+                    name:data.name || "",
+                    lokasi:data.lokasi || "",
+                    qty:Number(data.qty || 0),
+                    minqty:Number(data.minqty || 0)
+                };
+            });
+            items.sort((a,b)=>String(a.code).localeCompare(String(b.code)));
+            updateDashboard();
+            renderTable();
+            updateSelects();
+            updateRealtimeDashboard();
+        }, function(error){
+            console.error("Realtime stock error:",error);
+            const live=$("realtimeLive");
+            if(live){ live.textContent="REALTIME ERROR"; live.style.background="#fee2e2"; live.style.color="#b91c1c"; }
+        });
+    }
+    if(!transactionRealtimeStarted){
+        transactionRealtimeStarted = true;
+        onSnapshot(transactionRef, function(snap){
+            realtimeTransactions = snap.docs.map(function(d){ return {id:d.id,...d.data()}; });
+            updateRealtimeDashboard();
+        }, function(error){
+            console.error("Realtime transaction error:",error);
+        });
+    }
+}
+
 
 let editingCode = null;
 
@@ -5522,13 +6157,22 @@ function openQr(code){
 
         qrBox.appendChild(qrInner);
 
+        /*
+         * QR WEB USER FINAL:
+         * Isi QR harus sama persis dengan QR pada
+         * Download Semua QR.
+         */
+        const userWebUrl =
+            "https://ziboneva123.github.io/stock-sparepart/user.html?code=" +
+            encodeURIComponent(String(item.code));
+
         new QRCode(qrInner,{
-            text:String(item.code),
+            text:userWebUrl,
             width:220,
             height:220,
             colorDark:"#000000",
             colorLight:"#ffffff",
-            correctLevel:QRCode.CorrectLevel.H
+            correctLevel:QRCode.CorrectLevel.M
         });
     },100);
 }
@@ -5650,7 +6294,101 @@ function printQr(){
     }
 
     win.document.write(`<!DOCTYPE html><html><head><title>QR ${escapeHtml(item.code)}</title>
-    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}</style>
+    <style>body{font-family:Arial;text-align:center;padding:30px}img{width:260px;height:260px}h2{margin-bottom:8px}p{color:#475569}
+
+/* =====================================================
+   EMPTY STATE ILLUSTRATION
+===================================================== */
+.stock-empty-illustration{
+    width:min(100%, 680px);
+    margin:8px auto 18px;
+    text-align:center;
+    overflow:hidden;
+    border-radius:24px;
+    opacity:1;
+    transform:translateY(0) scale(1);
+    transition:opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1),
+               max-height .65s ease, margin .65s ease;
+    max-height:900px;
+    pointer-events:auto;
+}
+
+.stock-empty-illustration img{
+    display:block;
+    width:100%;
+    height:auto;
+    border-radius:24px;
+    filter:saturate(1.03);
+}
+
+.stock-data-panel:not(.is-visible) + .stock-empty-illustration{
+    animation:emptyStateFloat 4s ease-in-out infinite;
+}
+
+.stock-empty-illustration.is-hidden{
+    opacity:0;
+    transform:translateY(-22px) scale(.96);
+    max-height:0;
+    margin-top:0;
+    margin-bottom:0;
+    pointer-events:none;
+}
+
+@keyframes emptyStateFloat{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-5px);}
+}
+
+@media(max-width:600px){
+    .stock-empty-illustration{
+        width:calc(100% - 12px);
+        border-radius:18px;
+        margin-top:6px;
+    }
+    .stock-empty-illustration img{border-radius:18px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+    .stock-empty-illustration,
+    .stock-empty-illustration.is-hidden{
+        transition:none;
+        animation:none;
+    }
+}
+
+
+/* V8 - ILUSTRASI CENTER */
+.stock-empty-illustration{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    max-width:760px;
+    margin:10px auto 20px;
+}
+.stock-empty-illustration img{
+    width:100%;
+    max-width:760px;
+    margin:0 auto;
+    display:block;
+}
+@media(max-width:600px){
+    .stock-empty-illustration{
+        width:calc(100% - 10px);
+        margin-left:auto;
+        margin-right:auto;
+    }
+}
+
+
+/* QR LABEL: tampilkan hanya nama sparepart */
+.qr-code-label .qr-code-code,
+.qr-code-label .code,
+.qr-card .qr-code-text,
+.qr-card .qr-code-part,
+.qr-item .qr-code-text,
+.qr-item .qr-code-part { display:none !important; }
+</style>
     </head><body><h2>${escapeHtml(item.code)}</h2><p>${escapeHtml(item.name)}</p><img src="${src}"><p>Lokasi: ${escapeHtml(item.lokasi || "-")}</p>
 </body></html>`);
     win.document.close();
@@ -5696,9 +6434,9 @@ function aiNormalize(text){
 
 function aiStatusLabel(item){
     const s = getStatus(item);
-    if(s.type === "empty") return "[HABIS] HABIS";
-    if(s.type === "low") return "[LOW] LOW";
-    return "[OK] OK";
+    if(s.type === "empty") return "&#128308; HABIS";
+    if(s.type === "low") return "&#128992; LOW";
+    return "&#128994; OK";
 }
 
 function aiFindItems(question){
@@ -5802,7 +6540,7 @@ function aiAnswerStockQuestion(question){
     const q = aiNormalize(question);
 
     if(!q){
-        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>"berapa stok A0001?"</strong>.";
+        return "Silakan tulis pertanyaan mengenai stok, misalnya <strong>&#8220;berapa stok A0001?&#8221;</strong>.";
     }
 
     if(items.length === 0){
@@ -5823,10 +6561,10 @@ function aiAnswerStockQuestion(question){
 
         return `
             <strong>Ringkasan Stock</strong><br>
-            [OK] OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
-            [LOW] LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
-            [HABIS] HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
-            [RESTOCK] Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
+            &#128994; OK: <strong>${aiFormatNumber(ok)}</strong> item<br>
+            &#128992; LOW: <strong>${aiFormatNumber(low)}</strong> item<br>
+            &#128308; HABIS: <strong>${aiFormatNumber(empty)}</strong> item<br>
+            &#128995; Perlu Restock: <strong>${aiFormatNumber(restock)}</strong> item
         `;
     }
 
@@ -5840,12 +6578,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "empty");
 
         if(!list.length){
-            return "[OK] Saat ini tidak ada sparepart dengan stock HABIS.";
+            return "&#128994; Saat ini tidak ada sparepart dengan stock HABIS.";
         }
 
         return aiRenderItemTable(
             list,
-            "[HABIS] Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
+            "&#128308; Ditemukan " + aiFormatNumber(list.length) + " item HABIS."
         );
     }
 
@@ -5859,12 +6597,12 @@ function aiAnswerStockQuestion(question){
         const list = items.filter(x => getStatus(x).type === "low");
 
         if(!list.length){
-            return "[OK] Saat ini tidak ada sparepart berstatus LOW.";
+            return "&#128994; Saat ini tidak ada sparepart berstatus LOW.";
         }
 
         return aiRenderItemTable(
             list,
-            "[LOW] Ditemukan " + aiFormatNumber(list.length) + " item LOW."
+            "&#128992; Ditemukan " + aiFormatNumber(list.length) + " item LOW."
         );
     }
 
@@ -5882,12 +6620,12 @@ function aiAnswerStockQuestion(question){
             });
 
         if(!list.length){
-            return "[OK] Tidak ada item yang perlu direstock.";
+            return "&#128994; Tidak ada item yang perlu direstock.";
         }
 
         return aiRenderItemTable(
             list,
-            "[RESTOCK] Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
+            "&#128995; Ditemukan " + aiFormatNumber(list.length) + " item yang perlu direstock."
         );
     }
 
@@ -5914,13 +6652,13 @@ function aiAnswerStockQuestion(question){
         const status = getStatus(item);
 
         return `
-            <strong>${escapeHtml(item.code)} - ${escapeHtml(item.name)}</strong><br>
+            <strong>${escapeHtml(item.code)} &#8211; ${escapeHtml(item.name)}</strong><br>
             Lokasi: <strong>${escapeHtml(item.lokasi || "-")}</strong><br>
             Stock: <strong>${aiFormatNumber(item.qty)}</strong> unit<br>
             Minimum Stock: <strong>${aiFormatNumber(item.minqty)}</strong> unit<br>
             Status: <strong>${aiStatusLabel(item)}</strong>
             ${status.type !== "ok"
-                ? "<br>[WARNING] Item ini perlu diperhatikan."
+                ? "<br>&#9888; Item ini perlu diperhatikan."
                 : ""}
         `;
     }
@@ -5952,11 +6690,11 @@ function aiAnswerStockQuestion(question){
     return `
         Saya belum yakin dengan pertanyaannya.<br><br>
         Coba contoh:<br>
-        - <strong>Berapa stok A0001?</strong><br>
-        - <strong>Apa saja barang yang habis?</strong><br>
-        - <strong>Apa saja yang perlu direstock?</strong><br>
-        - <strong>Berapa total stok semua barang?</strong><br>
-        - <strong>Apa status stok di lokasi A?</strong>
+        &#8226; <strong>Berapa stok A0001?</strong><br>
+        &#8226; <strong>Apa saja barang yang habis?</strong><br>
+        &#8226; <strong>Apa saja yang perlu direstock?</strong><br>
+        &#8226; <strong>Berapa total stok semua barang?</strong><br>
+        &#8226; <strong>Apa status stok di lokasi A?</strong>
     `;
 }
 
@@ -6051,6 +6789,56 @@ async function aiAsk(){
     chat.scrollTop = chat.scrollHeight;
 }
 
+
+
+/* =====================================================
+   TOGGLE DATA SPAREPART
+===================================================== */
+
+const toggleStockData = $("toggleStockData");
+const stockDataPanel = $("stockDataPanel");
+const stockDataHiddenNote = $("stockDataHiddenNote");
+const stockEmptyIllustration = $("stockEmptyIllustration");
+
+if(toggleStockData && stockDataPanel){
+
+    toggleStockData.addEventListener("click", function(){
+
+        const visible =
+            stockDataPanel.classList.toggle("is-visible");
+
+        toggleStockData.setAttribute(
+            "aria-expanded",
+            visible ? "true" : "false"
+        );
+
+        toggleStockData.classList.toggle("is-open", visible);
+
+        const toggleLabel =
+            toggleStockData.querySelector(".stock-toggle-label");
+
+        if(toggleLabel){
+            toggleLabel.textContent =
+                visible
+                ? "SEMBUNYIKAN DATA SPAREPART"
+                : "TAMPILKAN DATA SPAREPART";
+        }
+
+        if(stockDataHiddenNote){
+            stockDataHiddenNote.style.display =
+                visible ? "none" : "block";
+        }
+
+        if(stockEmptyIllustration){
+            stockEmptyIllustration.classList.toggle("is-hidden", visible);
+            stockEmptyIllustration.setAttribute(
+                "aria-hidden",
+                visible ? "true" : "false"
+            );
+        }
+
+    });
+}
 
 /* =====================================================
    TABLE ACTION
@@ -6241,6 +7029,21 @@ document
                     .classList.remove("show");
 
 
+                if(menu === "logout"){
+
+                    logoutInventory();
+                    return;
+
+                }
+
+
+                if(menu === "userMessages"){
+
+                    openUserMessages();
+
+                }
+
+
                 if(menu === "data"){
 
                     window.scrollTo({
@@ -6337,6 +7140,18 @@ document
     }
 );
 
+
+
+/* =====================================================
+   KOTAK MASUK PESAN USER - BUTTON
+===================================================== */
+if(document.getElementById("cancelUserMessages")){
+    document.getElementById("cancelUserMessages").addEventListener("click",function(){
+        closeModal("userMessagesModal");
+    });
+}
+
+startUserMessageNotification();
 
 /* =====================================================
    MODAL BUTTONS
@@ -6574,31 +7389,12 @@ document
 
 
 /* =====================================================
-   START - FIX TOTAL
+   START
 ===================================================== */
 
-(async function(){
-    try{
-        await loadItems();
-    }catch(error){
-        console.error("START ERROR:", error);
-        const body = $("stockBody");
-        if(body){
-            body.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align:center;color:#b91c1c;padding:30px">
-                        Gagal memuat data Firebase.<br><br>
-                        ${escapeHtml(error && error.message ? error.message : error)}
-                    </td>
-                </tr>
-            `;
-        }
-        showMessage(
-            "Gagal memuat data Firebase. Periksa koneksi internet dan Firebase Rules.",
-            "error"
-        );
-    }
-})();
+// Mulai setelah seluruh variabel dashboard dideklarasikan.
+// onSnapshot langsung memberikan data awal dan selanjutnya realtime.
+startRealtimeDashboard();
 
 
 /* =========================================================
@@ -6620,8 +7416,9 @@ async function createAllQrCanvas(item){
 
     /*
      * QR FINAL:
-     * Isi QR = KODE BARANG SAJA.
-     * Nama barang ditulis DI LUAR QR, di bawah QR.
+     * Isi QR = URL WEB USER + KODE BARANG.
+     * Saat discan, langsung membuka Web User untuk part tersebut.
+     * Nama barang tetap ditulis DI LUAR QR, di bawah QR.
      * Quiet zone putih tetap dipertahankan agar mudah discan.
      */
 
@@ -6634,8 +7431,14 @@ async function createAllQrCanvas(item){
     box.style.height = "680px";
     box.style.background = "#ffffff";
 
+    const userWebBaseUrl =
+        "https://ziboneva123.github.io/stock-sparepart/user.html?code=";
+
+    const userWebUrl =
+        userWebBaseUrl + encodeURIComponent(String(item.code));
+
     new QRCode(box,{
-        text:String(item.code),
+        text:userWebUrl,
         width:420,
         height:420,
         colorDark:"#000000",
@@ -6981,19 +7784,11 @@ async function downloadAllQR(){
 }
 
 
-/* =====================================================
-   GLOBAL ERROR REPORT - FIX TOTAL
-===================================================== */
-window.addEventListener("error", function(event){
-    console.error("GLOBAL ERROR:", event.error || event.message);
-});
-
-window.addEventListener("unhandledrejection", function(event){
-    console.error("UNHANDLED PROMISE:", event.reason);
-});
-
 </script>
 
 </body>
 
 </html>
+
+
+<style id="remove-main-illustration">#stockEmptyIllustration,.stock-empty-illustration{display:none!important;}</style>
