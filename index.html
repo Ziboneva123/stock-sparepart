@@ -3407,12 +3407,42 @@ function updateRealtimeDashboard(){
         });
     }
 
+    // Tampilkan angka jumlah item langsung di dalam setiap potongan pie.
+    // Plugin dibuat lokal agar tidak membutuhkan library tambahan.
+    const pieValueLabels = {
+        id: "pieValueLabels",
+        afterDatasetsDraw: function(chart){
+            const ctx = chart.ctx;
+            const meta = chart.getDatasetMeta(0);
+            const data = chart.data.datasets[0].data || [];
+            ctx.save();
+            ctx.font = "700 13px Arial, sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            meta.data.forEach(function(arc, index){
+                const value = Number(data[index] || 0);
+                if(value <= 0) return;
+                const angle = (arc.startAngle + arc.endAngle) / 2;
+                const radius = (arc.innerRadius + arc.outerRadius) / 2;
+                const x = arc.x + Math.cos(angle) * radius;
+                const y = arc.y + Math.sin(angle) * radius;
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "rgba(0,0,0,0.28)";
+                ctx.strokeText(formatQty(value), x, y);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillText(formatQty(value), x, y);
+            });
+            ctx.restore();
+        }
+    };
+
     destroyRealtimeChart("totalItemPieChart");
     const c4 = $("totalItemPieChart");
     if(c4){
         realtimeCharts.totalItemPieChart = new Chart(c4, {
             type:"pie",
             data:{labels:locations,datasets:[{label:"Total Item",data:locations.map(function(x){return locationTotals[x];})}]},
+            plugins:[pieValueLabels],
             options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}
         });
     }
@@ -3423,6 +3453,7 @@ function updateRealtimeDashboard(){
         realtimeCharts.statePieChart = new Chart(c5, {
             type:"pie",
             data:{labels:stateLabels,datasets:[{label:"Total State Item",data:stateData}]},
+            plugins:[pieValueLabels],
             options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}
         });
     }
