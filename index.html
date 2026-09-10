@@ -3129,6 +3129,15 @@ dan ditambahkan lengkap dengan seluruh datanya.
 </button>
 
 <button
+    class="btn-success"
+    id="checkDataAutoFixButton"
+    style="background:#dc2626;">
+
+    Perbaiki Otomatis (Data di Atas)
+
+</button>
+
+<button
     class="btn-light"
     id="cancelCheckData">
 
@@ -8823,16 +8832,54 @@ function buildMergeKeyByNameLokasi(item){
 }
 
 
+function compareCodeForMergeBase(itemA, itemB){
+
+    const matchA =
+        normalizeCodeForCheck(itemA.code)
+            .match(/^([A-Z]+)(\d+)$/);
+
+    const matchB =
+        normalizeCodeForCheck(itemB.code)
+            .match(/^([A-Z]+)(\d+)$/);
+
+    if(
+        matchA &&
+        matchB &&
+        matchA[1] === matchB[1]
+    ){
+
+        return (
+            parseInt(matchA[2], 10) -
+            parseInt(matchB[2], 10)
+        );
+
+    }
+
+    return String(itemA.code)
+        .localeCompare(
+            String(itemB.code)
+        );
+
+}
+
+
 async function mergeDuplicateGroup(groupItems){
 
-    // Item pertama (urutan kode) dijadikan data utama (master).
-    const master = groupItems[0];
+    // Kode paling awal (angka terkecil di rak yang sama, atau
+    // urutan alfabet jika bukan format rak+nomor) dijadikan
+    // data utama (master). Contoh: A0022 vs A0067 -> A0022 dipilih.
+    const sortedGroup =
+        [...groupItems].sort(
+            compareCodeForMergeBase
+        );
+
+    const master = sortedGroup[0];
 
     const duplicates =
-        groupItems.slice(1);
+        sortedGroup.slice(1);
 
     const totalQty =
-        groupItems.reduce(
+        sortedGroup.reduce(
             function(sum, item){
                 return sum + Number(item.qty || 0);
             },
@@ -9190,6 +9237,222 @@ async function runAutoFix(){
     }
 
 }
+
+
+/* =====================================================
+   PERBAIKI OTOMATIS DARI MENU CEK DATA
+   (Mengikuti persis apa yang tampil di layar Cek Data:
+   duplikat Kode, dan duplikat Nama - tanpa syarat Lokasi
+   harus sama. Kode paling awal/angka terkecil jadi master.)
+===================================================== */
+
+function openCheckDataAutoFixGate(){
+
+    const codeGroups =
+        groupItemsByKey(
+            items,
+            item => normalizeCodeForCheck(item.code)
+        );
+
+    const nameGroups =
+        groupItemsByKey(
+            items,
+            item => normalizeNameForCheck(item.name)
+        );
+
+    if(
+        codeGroups.length === 0 &&
+        nameGroups.length === 0
+    ){
+
+        alert(
+            "Tidak ada duplikat yang tampil saat ini untuk " +
+            "diperbaiki. Klik 'Cek Ulang' dulu jika data baru " +
+            "saja berubah."
+        );
+
+        return;
+
+    }
+
+
+    const confirmRead =
+        window.confirm(
+            "PERBAIKI OTOMATIS (DATA DI CEK DATA)\n\n" +
+            "Menu ini akan menggabungkan SEMUA duplikat yang " +
+            "sedang tampil di layar Cek Data ini:\n\n" +
+            "- " + codeGroups.length +
+            " kelompok Kode duplikat\n" +
+            "- " + nameGroups.length +
+            " kelompok Nama duplikat (meski Lokasi berbeda)\n\n" +
+            "Kode dengan nomor urut paling awal/kecil akan " +
+            "dijadikan data utama (contoh: A0022 vs A0067, " +
+            "maka A0022 yang dipertahankan). Qty dari data lain " +
+            "akan dijumlahkan ke situ, lalu data lainnya dihapus.\n\n" +
+            "PERHATIAN: karena tidak mensyaratkan Lokasi sama, " +
+            "ini lebih agresif dibanding menu 'Perbaiki Data " +
+            "Otomatis' biasa. Backup tetap dibuat sehingga bisa " +
+            "di-undo lewat menu Undo Perbaikan Otomatis.\n\n" +
+            "Lanjutkan?"
+        );
+
+    if(!confirmRead){
+
+        return;
+
+    }
+
+
+    const password =
+        prompt(
+            "PASSWORD ADMIN\n\n" +
+            "Masukkan password admin untuk menjalankan " +
+            "Perbaiki Otomatis dari menu Cek Data:"
+        );
+
+    if(password === null){
+
+        return;
+
+    }
+
+    if(
+        password.trim() !==
+        UPDATE_DATA_PASSWORD
+    ){
+
+        showMessage(
+            "Password admin salah. Perbaikan data tidak dijalankan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    runCheckDataAutoFix();
+
+}
+
+
+async function runCheckDataAutoFix(){
+
+    showMessage(
+        "Sedang memperbaiki data..."
+    );
+
+    try{
+
+        await loadItems();
+
+        const originalSnapshot =
+            items.map(
+                item => ({...item})
+            );
+
+        const codeGroups =
+            groupItemsByKey(
+                originalSnapshot,
+                item => normalizeCodeForCheck(item.code)
+            );
+
+        const nameGroupsPreview =
+            groupItemsByKey(
+                originalSnapshot,
+                item => normalizeNameForCheck(item.name)
+            );
+
+        await saveAutoFixBackup(
+            codeGroups,
+            nameGroupsPreview
+        );
+
+
+        for(
+            const group
+            of codeGroups
+        ){
+
+            await mergeDuplicateGroup(group);
+
+        }
+
+
+        await loadItems();
+
+        const nameGroups =
+            groupItemsByKey(
+                items,
+                item => normalizeNameForCheck(item.name)
+            );
+
+        for(
+            const group
+            of nameGroups
+        ){
+
+            await mergeDuplicateGroup(group);
+
+        }
+
+
+        await loadItems();
+
+
+        const totalDeleted =
+            codeGroups.reduce(
+                (sum, g) => sum + (g.length - 1),
+                0
+            )
+            +
+            nameGroups.reduce(
+                (sum, g) => sum + (g.length - 1),
+                0
+            );
+
+
+        alert(
+            "Perbaikan data dari Cek Data selesai.\n\n" +
+            "- " + codeGroups.length +
+            " kelompok Kode digabung\n" +
+            "- " + nameGroups.length +
+            " kelompok Nama digabung\n" +
+            "- " + totalDeleted +
+            " data duplikat dihapus\n\n" +
+            "Kode paling awal (angka terkecil) dipertahankan " +
+            "sebagai data utama di setiap kelompok.\n\n" +
+            "Jika hasil ini ternyata salah, gunakan menu Undo " +
+            "Perbaikan Otomatis untuk mengembalikannya."
+        );
+
+
+        $("checkDataResults").innerHTML =
+            buildCheckDataHtml();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Perbaikan data gagal: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+$("checkDataAutoFixButton")
+.addEventListener(
+    "click",
+    function(){
+        openCheckDataAutoFixGate();
+    }
+);
 
 
 /* =====================================================
