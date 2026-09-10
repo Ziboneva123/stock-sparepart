@@ -2020,6 +2020,10 @@ footer{
         Cek Data (Duplikat)
     </button>
 
+    <button class="menu-item" data-menu="autoFix">
+        Perbaiki Data Otomatis
+    </button>
+
     <button class="menu-item" data-menu="add">
         Tambah Sparepart
     </button>
@@ -2380,6 +2384,38 @@ footer{
     id="itemCode"
     type="text"
     placeholder="Contoh: BRG001">
+
+</div>
+
+
+<div class="form-group" id="codeGeneratorRow">
+
+<label>Generator Kode Otomatis (berdasarkan Rak)</label>
+
+<div style="display:flex;gap:8px;">
+
+<input
+    id="codePrefixInput"
+    type="text"
+    placeholder="Contoh: A"
+    style="flex:1;">
+
+<button
+    type="button"
+    class="btn-light"
+    id="generateCodeButton"
+    style="width:auto;padding:10px 16px;white-space:nowrap;">
+    Generate Kode
+</button>
+
+</div>
+
+<p style="color:#64748b;font-size:12px;margin-top:6px;">
+    Masukkan huruf/awalan rak (misal "A"), sistem otomatis membuat
+    kode urutan berikutnya berdasarkan nomor terakhir yang sudah
+    dipakai di rak tersebut. Contoh: sudah ada A0001-A0009, maka
+    akan digenerate A0010.
+</p>
 
 </div>
 
@@ -4508,6 +4544,10 @@ function openAdd(){
 
     $("itemCode").disabled = false;
 
+    $("codePrefixInput").value = "";
+
+    $("codeGeneratorRow").style.display = "";
+
     openModal("itemModal");
 
 }
@@ -4573,9 +4613,149 @@ function openEdit(code){
         true;
 
 
+    $("codeGeneratorRow").style.display = "none";
+
+
     openModal("itemModal");
 
 }
+
+
+/* =====================================================
+   GENERATOR KODE BARANG (BERDASARKAN RAK)
+===================================================== */
+
+function generateNextCode(prefix){
+
+    const cleanPrefix =
+        String(prefix || "")
+            .trim()
+            .toUpperCase();
+
+    if(cleanPrefix === ""){
+
+        return null;
+
+    }
+
+
+    const escapedPrefix =
+        cleanPrefix.replace(
+            /[.*+?^${}()|[\]\\]/g,
+            "\\$&"
+        );
+
+    const pattern =
+        new RegExp(
+            "^" + escapedPrefix + "(\\d+)$",
+            "i"
+        );
+
+
+    let maxNumber = 0;
+
+    let numberLength = 4;
+
+    items.forEach(
+        function(item){
+
+            const match =
+                String(item.code || "")
+                    .trim()
+                    .match(pattern);
+
+            if(match){
+
+                const num =
+                    parseInt(match[1], 10);
+
+                if(num > maxNumber){
+                    maxNumber = num;
+                }
+
+                numberLength =
+                    Math.max(
+                        numberLength,
+                        match[1].length
+                    );
+
+            }
+
+        }
+    );
+
+
+    const nextNumber =
+        maxNumber + 1;
+
+    return (
+        cleanPrefix +
+        String(nextNumber)
+            .padStart(numberLength, "0")
+    );
+
+}
+
+
+$("generateCodeButton")
+.addEventListener(
+    "click",
+    function(){
+
+        const prefix =
+            $("codePrefixInput").value;
+
+        const nextCode =
+            generateNextCode(prefix);
+
+        if(!nextCode){
+
+            showMessage(
+                "Isi dulu huruf/awalan rak (misal: A).",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const alreadyExists =
+            items.some(
+                function(item){
+
+                    return String(item.code)
+                        .trim()
+                        .toUpperCase()
+                        ===
+                        nextCode.toUpperCase();
+
+                }
+            );
+
+        if(alreadyExists){
+
+            showMessage(
+                "Kode hasil generate (" +
+                nextCode +
+                ") ternyata sudah dipakai. Cek data secara manual.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        $("itemCode").value = nextCode;
+
+        showMessage(
+            "Kode berhasil digenerate: " +
+            nextCode
+        );
+
+    }
+);
 
 
 /* =====================================================
@@ -7686,6 +7866,275 @@ $("cancelCheckData")
 
 
 /* =====================================================
+   PERBAIKI DATA OTOMATIS (AUTO-FIX DUPLIKAT)
+===================================================== */
+
+function buildMergeKeyByCode(item){
+
+    return normalizeCodeForCheck(item.code);
+
+}
+
+
+function buildMergeKeyByNameLokasi(item){
+
+    const name =
+        normalizeNameForCheck(item.name);
+
+    const lokasi =
+        normalizeNameForCheck(item.lokasi);
+
+    if(name === "" || lokasi === ""){
+
+        return "";
+
+    }
+
+    return name + "||" + lokasi;
+
+}
+
+
+async function mergeDuplicateGroup(groupItems){
+
+    // Item pertama (urutan kode) dijadikan data utama (master).
+    const master = groupItems[0];
+
+    const duplicates =
+        groupItems.slice(1);
+
+    const totalQty =
+        groupItems.reduce(
+            function(sum, item){
+                return sum + Number(item.qty || 0);
+            },
+            0
+        );
+
+
+    await updateDoc(
+        doc(
+            db,
+            "spareparts",
+            master.firestoreId
+        ),
+        {
+
+            qty:totalQty,
+
+            updatedAt:
+                serverTimestamp()
+
+        }
+    );
+
+
+    for(
+        const dup
+        of duplicates
+    ){
+
+        await deleteDoc(
+            doc(
+                db,
+                "spareparts",
+                dup.firestoreId
+            )
+        );
+
+    }
+
+
+    return {
+
+        masterCode:master.code,
+
+        mergedCodes:
+            duplicates.map(
+                x => x.code
+            ),
+
+        totalQty:totalQty
+
+    };
+
+}
+
+
+function openAutoFixGate(){
+
+    const confirmRead =
+        window.confirm(
+            "PERBAIKI DATA OTOMATIS\n\n" +
+            "Menu ini akan otomatis MENGGABUNGKAN data yang:\n\n" +
+            "1. Kode-nya sama persis (hanya beda huruf besar/kecil " +
+            "atau spasi).\n" +
+            "2. Nama DAN Lokasi-nya sama persis, meski kode berbeda.\n\n" +
+            "Qty dari data yang digabung akan DIJUMLAHKAN ke satu " +
+            "data utama, dan data duplikat lainnya akan DIHAPUS " +
+            "permanen.\n\n" +
+            "Data dengan Nama sama tapi Lokasi BERBEDA tidak akan " +
+            "digabung otomatis (harus diperiksa manual lewat menu " +
+            "Cek Data), karena bisa jadi memang barang berbeda.\n\n" +
+            "Lanjutkan ke menu Perbaiki Data Otomatis?"
+        );
+
+    if(!confirmRead){
+
+        return;
+
+    }
+
+
+    const password =
+        prompt(
+            "PASSWORD ADMIN\n\n" +
+            "Masukkan password admin untuk menjalankan " +
+            "Perbaiki Data Otomatis:"
+        );
+
+    if(password === null){
+
+        return;
+
+    }
+
+    if(
+        password.trim() !==
+        UPDATE_DATA_PASSWORD
+    ){
+
+        showMessage(
+            "Password admin salah. Perbaikan data tidak dijalankan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    runAutoFix();
+
+}
+
+
+async function runAutoFix(){
+
+    showMessage(
+        "Sedang memproses perbaikan data..."
+    );
+
+    try{
+
+        await loadItems();
+
+        const codeGroups =
+            groupItemsByKey(
+                items,
+                buildMergeKeyByCode
+            );
+
+        for(
+            const group
+            of codeGroups
+        ){
+
+            await mergeDuplicateGroup(group);
+
+        }
+
+
+        await loadItems();
+
+        const nameLokasiGroups =
+            groupItemsByKey(
+                items,
+                buildMergeKeyByNameLokasi
+            );
+
+        for(
+            const group
+            of nameLokasiGroups
+        ){
+
+            await mergeDuplicateGroup(group);
+
+        }
+
+
+        await loadItems();
+
+
+        const totalGroups =
+            codeGroups.length +
+            nameLokasiGroups.length;
+
+        const totalDeleted =
+            codeGroups.reduce(
+                (sum, g) => sum + (g.length - 1),
+                0
+            )
+            +
+            nameLokasiGroups.reduce(
+                (sum, g) => sum + (g.length - 1),
+                0
+            );
+
+
+        if(totalGroups === 0){
+
+            alert(
+                "Tidak ada data duplikat yang bisa digabung " +
+                "otomatis. Data Anda sudah bersih."
+            );
+
+        }
+        else{
+
+            alert(
+                "Perbaikan data selesai.\n\n" +
+                "- " + codeGroups.length +
+                " kelompok Kode digabung\n" +
+                "- " + nameLokasiGroups.length +
+                " kelompok Nama+Lokasi digabung\n" +
+                "- " + totalDeleted +
+                " data duplikat dihapus\n\n" +
+                "Silakan cek menu Data Sparepart untuk memastikan " +
+                "hasilnya, atau buka menu Cek Data untuk melihat " +
+                "apakah masih ada duplikat Nama dengan Lokasi " +
+                "berbeda yang perlu diperiksa manual."
+            );
+
+        }
+
+
+        if(
+            $("checkDataModal").classList.contains("show")
+        ){
+
+            $("checkDataResults").innerHTML =
+                buildCheckDataHtml();
+
+        }
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Perbaikan data gagal: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
    EXPORT HISTORY TRANSAKSI KE EXCEL
 ===================================================== */
 
@@ -9159,6 +9608,13 @@ document
                 if(menu === "checkData"){
 
                     openCheckDataModal();
+
+                }
+
+
+                if(menu === "autoFix"){
+
+                    openAutoFixGate();
 
                 }
 
