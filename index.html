@@ -5409,7 +5409,7 @@ function buildAddImportPreviewHtml(rowResults){
 
         <div class="import-info" style="border-left-color:#dc2626;">
         <strong style="color:#dc2626;">
-        âŒ Ditemukan kesalahan pada ${errorCount} baris.
+        [PERINGATAN] Ditemukan kesalahan pada ${errorCount} baris.
         </strong>
         <br><br>
         Perbaiki file Excel sesuai catatan pada kolom "Keterangan"
@@ -5425,7 +5425,7 @@ function buildAddImportPreviewHtml(rowResults){
         html += `
 
         <div class="import-info" style="border-left-color:#16a34a;">
-        âœ… Semua data valid, siap ditambahkan.
+        [OK] Semua data valid, siap ditambahkan.
         </div>
 
         `;
@@ -8589,7 +8589,7 @@ function buildCheckDataHtml(){
         return `
 
         <div class="import-info" style="border-left-color:#16a34a;">
-            âœ… Tidak ditemukan kode maupun nama sparepart yang
+            [OK] Tidak ditemukan kode maupun nama sparepart yang
             duplikat. Data Anda bersih.
         </div>
 
