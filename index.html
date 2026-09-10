@@ -2269,6 +2269,31 @@ footer{
     </div>
 </section>
 
+
+<!-- =====================================================
+     KODE TERAKHIR PER RAK (REFERENSI TAMBAH BARANG)
+===================================================== -->
+<section
+    class="realtime-dashboard"
+    id="lastCodeSection">
+
+    <div class="realtime-dashboard-head">
+        <div class="realtime-dashboard-title">
+            Kode Terakhir per Rak
+        </div>
+    </div>
+
+    <p style="color:#64748b;font-size:13px;margin:-6px 0 12px;">
+        Referensi urutan kode yang sudah dipakai, supaya admin tahu
+        harus mulai dari kode berapa saat menambah barang baru.
+    </p>
+
+    <div id="lastCodeTableWrap">
+        <p>Memuat data...</p>
+    </div>
+
+</section>
+
 <div
     class="filter-info"
     id="filterInfo">
@@ -4299,6 +4324,166 @@ function updateDashboard(){
 
     $("restockItems").textContent =
         restock;
+
+
+    updateLastCodeSummary();
+
+}
+
+
+/* =====================================================
+   KODE TERAKHIR PER RAK (REFERENSI TAMBAH BARANG)
+===================================================== */
+
+function updateLastCodeSummary(){
+
+    const wrap =
+        $("lastCodeTableWrap");
+
+    if(!wrap){
+        return;
+    }
+
+
+    const prefixMap = new Map();
+
+    items.forEach(
+        function(item){
+
+            const normCode =
+                normalizeCodeForCheck(item.code);
+
+            const match =
+                normCode.match(
+                    /^([A-Z]+)(\d+)$/
+                );
+
+            if(!match){
+                return;
+            }
+
+            const prefix = match[1];
+
+            const number =
+                parseInt(match[2], 10);
+
+            const numLength =
+                match[2].length;
+
+            const current =
+                prefixMap.get(prefix);
+
+            if(
+                !current ||
+                number > current.number
+            ){
+
+                prefixMap.set(
+                    prefix,
+                    {
+
+                        prefix:prefix,
+
+                        number:number,
+
+                        numLength:numLength,
+
+                        item:item
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+    if(prefixMap.size === 0){
+
+        wrap.innerHTML =
+            "<p style='color:#64748b;font-size:13px;'>" +
+            "Belum ada kode dengan format Rak+Nomor (contoh: A0001)." +
+            "</p>";
+
+        return;
+
+    }
+
+
+    const rows =
+        Array.from(prefixMap.values())
+            .sort(
+                function(a, b){
+
+                    return a.prefix.localeCompare(
+                        b.prefix
+                    );
+
+                }
+            );
+
+
+    let html = `
+
+    <div class="excel-preview">
+
+    <table>
+
+    <thead>
+    <tr>
+        <th>Rak</th>
+        <th>Kode Terakhir</th>
+        <th>Nama Barang</th>
+        <th>Qty</th>
+        <th>Saran Kode Berikutnya</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    `;
+
+    rows.forEach(
+        function(row){
+
+            const nextCode =
+                row.prefix +
+                String(row.number + 1)
+                    .padStart(row.numLength, "0");
+
+            html += `
+
+            <tr>
+
+            <td><strong>${escapeHtml(row.prefix)}</strong></td>
+
+            <td>${escapeHtml(row.item.code)}</td>
+
+            <td>${escapeHtml(row.item.name)}</td>
+
+            <td>${Number(row.item.qty || 0)}</td>
+
+            <td><strong>${escapeHtml(nextCode)}</strong></td>
+
+            </tr>
+
+            `;
+
+        }
+    );
+
+    html += `
+
+    </tbody>
+
+    </table>
+
+    </div>
+
+    `;
+
+
+    wrap.innerHTML = html;
 
 }
 
