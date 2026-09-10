@@ -2024,6 +2024,10 @@ footer{
         Perbaiki Data Otomatis
     </button>
 
+    <button class="menu-item" data-menu="undoAutoFix">
+        Undo Perbaikan Otomatis
+    </button>
+
     <button class="menu-item" data-menu="add">
         Tambah Sparepart
     </button>
@@ -2483,6 +2487,105 @@ footer{
     id="saveItem">
 
     Simpan
+
+</button>
+
+</div>
+
+
+<div
+    style="text-align:center;margin-top:14px;"
+    id="openAddImportRow">
+
+<button
+    class="btn-light"
+    id="openAddImport"
+    style="width:auto;padding:10px 18px;">
+
+    Import Banyak Data dari Excel
+
+</button>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- =====================================================
+     TAMBAH SPAREPART VIA IMPORT EXCEL (DENGAN VALIDASI)
+===================================================== -->
+
+<div
+    class="modal"
+    id="addImportModal">
+
+<div class="modal-card">
+
+<h2>
+    Tambah Sparepart dari Excel
+</h2>
+
+
+<div class="import-info">
+
+Format kolom Excel:
+
+<br><br>
+
+<strong>
+Kode | Nama Sparepart | Lokasi | Stock | Min. Stock
+</strong>
+
+<br><br>
+
+Menu ini khusus untuk barang <strong>baru</strong>. Kode yang
+sudah terdaftar di database akan ditolak (gunakan menu
+<strong>Edit Data</strong> untuk barang yang sudah ada).
+
+<br><br>
+
+Jika kode memakai format Rak+Nomor (misal A0001, A0002), sistem
+akan memvalidasi urutan nomornya. Jika ada nomor yang bertabrakan,
+loncat, atau kosong, akan diberi tahu letak kesalahannya persis
+di baris berapa pada file Excel Anda.
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+    Pilih File Excel
+</label>
+
+<input
+    id="addImportFile"
+    type="file"
+    accept=".xlsx,.xls">
+
+</div>
+
+
+<div id="addImportPreview"></div>
+
+
+<div class="modal-actions">
+
+<button
+    class="btn-light"
+    id="cancelAddImport">
+
+    Batal
+
+</button>
+
+<button
+    class="btn-success"
+    id="addImportButton"
+    disabled>
+
+    Tambah Semua Data
 
 </button>
 
@@ -3265,6 +3368,8 @@ import {
     addDoc,
     query,
     where,
+    orderBy,
+    limit,
     serverTimestamp,
     runTransaction,
     onSnapshot,
@@ -3527,6 +3632,13 @@ const transactionRef =
     collection(
         db,
         "transactions"
+    );
+
+
+const autoFixBackupRef =
+    collection(
+        db,
+        "autoFixBackups"
     );
 
 
@@ -4548,6 +4660,8 @@ function openAdd(){
 
     $("codeGeneratorRow").style.display = "";
 
+    $("openAddImportRow").style.display = "";
+
     openModal("itemModal");
 
 }
@@ -4614,6 +4728,8 @@ function openEdit(code){
 
 
     $("codeGeneratorRow").style.display = "none";
+
+    $("openAddImportRow").style.display = "none";
 
 
     openModal("itemModal");
@@ -4753,6 +4869,633 @@ $("generateCodeButton")
             "Kode berhasil digenerate: " +
             nextCode
         );
+
+    }
+);
+
+
+/* =====================================================
+   TAMBAH SPAREPART VIA IMPORT EXCEL (DENGAN VALIDASI)
+===================================================== */
+
+let addImportRows = [];
+
+let addImportHasErrors = true;
+
+
+async function readAddImportRows(file){
+
+    const buffer =
+        await file.arrayBuffer();
+
+    const workbook =
+        XLSX.read(
+            buffer,
+            {
+                type:"array"
+            }
+        );
+
+    const sheet =
+        workbook.Sheets[
+            workbook.SheetNames[0]
+        ];
+
+    const rawRows =
+        XLSX.utils.sheet_to_json(
+            sheet,
+            {
+                defval:""
+            }
+        );
+
+    return rawRows
+        .map(
+            function(row, idx){
+
+                return {
+
+                    excelRow:idx + 2,
+
+                    code:
+                        String(
+                            row["Kode"]
+                            ??
+                            row["kode"]
+                            ??
+                            ""
+                        ).trim(),
+
+                    name:
+                        String(
+                            row["Nama Sparepart"]
+                            ??
+                            row["Nama"]
+                            ??
+                            ""
+                        ).trim(),
+
+                    lokasi:
+                        String(
+                            row["Lokasi"]
+                            ??
+                            row["lokasi"]
+                            ??
+                            ""
+                        ).trim(),
+
+                    qty:
+                        Number(
+                            row["Stock"]
+                            ??
+                            0
+                        ),
+
+                    minqty:
+                        Number(
+                            row["Min. Stock"]
+                            ??
+                            row["Min Stock"]
+                            ??
+                            0
+                        )
+
+                };
+
+            }
+        )
+        .filter(
+            x =>
+                x.code !== ""
+        );
+
+}
+
+
+function validateAddImportRows(rows){
+
+    const seenInExcel = new Map();
+
+    const prefixGroups = new Map();
+
+    const rowResults =
+        rows.map(
+            function(row){
+
+                const normCode =
+                    normalizeCodeForCheck(row.code);
+
+                const result = {
+
+                    excelRow:row.excelRow,
+
+                    code:row.code,
+
+                    name:row.name,
+
+                    lokasi:row.lokasi,
+
+                    qty:row.qty,
+
+                    minqty:row.minqty,
+
+                    messages:[]
+
+                };
+
+
+                if(
+                    seenInExcel.has(normCode)
+                ){
+
+                    result.messages.push(
+                        "Kode ini duplikat dengan baris " +
+                        seenInExcel.get(normCode) +
+                        " di file Excel yang sama."
+                    );
+
+                }
+                else{
+
+                    seenInExcel.set(
+                        normCode,
+                        row.excelRow
+                    );
+
+                }
+
+
+                const existing =
+                    items.find(
+                        function(it){
+
+                            return normalizeCodeForCheck(it.code)
+                                ===
+                                normCode;
+
+                        }
+                    );
+
+                if(existing){
+
+                    result.messages.push(
+                        "Kode ini sudah terdaftar di database " +
+                        "(Stock saat ini: " + existing.qty +
+                        "). Gunakan menu Edit Data jika ingin " +
+                        "menambah/mengubah qty, bukan menu " +
+                        "Tambah Sparepart."
+                    );
+
+                }
+
+
+                const match =
+                    normCode.match(
+                        /^([A-Z]+)(\d+)$/
+                    );
+
+                if(match){
+
+                    const prefix = match[1];
+
+                    const number =
+                        parseInt(match[2], 10);
+
+                    const numLength =
+                        match[2].length;
+
+                    if(!prefixGroups.has(prefix)){
+                        prefixGroups.set(prefix, []);
+                    }
+
+                    prefixGroups.get(prefix).push(
+                        {
+                            result:result,
+                            number:number,
+                            numLength:numLength,
+                            excelRow:row.excelRow,
+                            code:row.code
+                        }
+                    );
+
+                }
+
+
+                return result;
+
+            }
+        );
+
+
+    prefixGroups.forEach(
+        function(list, prefix){
+
+            let existingMax = 0;
+
+            const existingPattern =
+                new RegExp(
+                    "^" + prefix + "(\\d+)$"
+                );
+
+            items.forEach(
+                function(it){
+
+                    const m =
+                        normalizeCodeForCheck(it.code)
+                            .match(existingPattern);
+
+                    if(m){
+
+                        const n =
+                            parseInt(m[1], 10);
+
+                        if(n > existingMax){
+                            existingMax = n;
+                        }
+
+                    }
+
+                }
+            );
+
+
+            const sorted =
+                [...list].sort(
+                    (a, b) => a.number - b.number
+                );
+
+
+            const seenNumbers = new Set();
+
+            sorted.forEach(
+                function(entry){
+
+                    if(
+                        seenNumbers.has(entry.number)
+                    ){
+
+                        entry.result.messages.push(
+                            "Nomor urut " +
+                            prefix +
+                            String(entry.number)
+                                .padStart(entry.numLength, "0") +
+                            " dipakai lebih dari sekali untuk " +
+                            "rak " + prefix + " di file Excel ini."
+                        );
+
+                    }
+                    else{
+
+                        seenNumbers.add(entry.number);
+
+                    }
+
+                }
+            );
+
+
+            let expected =
+                existingMax + 1;
+
+            sorted.forEach(
+                function(entry){
+
+                    if(entry.number !== expected){
+
+                        entry.result.messages.push(
+                            "Urutan kode rak " + prefix +
+                            " salah pada baris " +
+                            entry.excelRow +
+                            ": seharusnya lanjut " +
+                            prefix +
+                            String(expected)
+                                .padStart(entry.numLength, "0") +
+                            ", tapi di Excel tertulis " +
+                            entry.code +
+                            ". Ada lompatan/kekosongan nomor urut " +
+                            "- perbaiki dulu urutannya di file Excel."
+                        );
+
+                    }
+
+                    expected = entry.number + 1;
+
+                }
+            );
+
+        }
+    );
+
+
+    return rowResults;
+
+}
+
+
+function buildAddImportPreviewHtml(rowResults){
+
+    if(rowResults.length === 0){
+
+        return "<p>Tidak ada data terbaca dari file Excel.</p>";
+
+    }
+
+
+    const errorCount =
+        rowResults.filter(
+            r => r.messages.length > 0
+        ).length;
+
+
+    let html = "";
+
+    if(errorCount > 0){
+
+        html += `
+
+        <div class="import-info" style="border-left-color:#dc2626;">
+        <strong style="color:#dc2626;">
+        âŒ Ditemukan kesalahan pada ${errorCount} baris.
+        </strong>
+        <br><br>
+        Perbaiki file Excel sesuai catatan pada kolom "Keterangan"
+        di bawah, lalu upload ulang. Data tidak akan ditambahkan
+        sebelum semua kesalahan diperbaiki.
+        </div>
+
+        `;
+
+    }
+    else{
+
+        html += `
+
+        <div class="import-info" style="border-left-color:#16a34a;">
+        âœ… Semua data valid, siap ditambahkan.
+        </div>
+
+        `;
+
+    }
+
+
+    html += `
+
+    <div class="excel-preview">
+
+    <table>
+
+    <thead>
+    <tr>
+        <th>Baris</th>
+        <th>Kode</th>
+        <th>Nama</th>
+        <th>Lokasi</th>
+        <th>Stock</th>
+        <th>Keterangan</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    `;
+
+    rowResults.forEach(
+        function(r){
+
+            const hasError =
+                r.messages.length > 0;
+
+            html += `
+
+            <tr>
+
+            <td>${r.excelRow}</td>
+
+            <td>${escapeHtml(r.code)}</td>
+
+            <td>${escapeHtml(r.name)}</td>
+
+            <td>${escapeHtml(r.lokasi)}</td>
+
+            <td>${r.qty}</td>
+
+            <td style="color:${hasError ? '#dc2626' : '#16a34a'};">
+                ${
+                    hasError
+                    ? escapeHtml(r.messages.join(" | "))
+                    : "OK"
+                }
+            </td>
+
+            </tr>
+
+            `;
+
+        }
+    );
+
+    html += `
+
+    </tbody>
+
+    </table>
+
+    </div>
+
+    <p>
+        Total baris: <strong>${rowResults.length}</strong>
+        &nbsp;|&nbsp;
+        Error: <strong>${errorCount}</strong>
+    </p>
+
+    `;
+
+    return html;
+
+}
+
+
+function resetAddImportForm(){
+
+    addImportRows = [];
+
+    addImportHasErrors = true;
+
+    $("addImportFile").value = "";
+
+    $("addImportPreview").innerHTML = "";
+
+    $("addImportButton").disabled = true;
+
+    $("addImportButton").textContent =
+        "Tambah Semua Data";
+
+}
+
+
+$("openAddImport")
+.addEventListener(
+    "click",
+    function(){
+
+        closeModal("itemModal");
+
+        resetAddImportForm();
+
+        openModal("addImportModal");
+
+    }
+);
+
+
+$("cancelAddImport")
+.addEventListener(
+    "click",
+    function(){
+        closeModal("addImportModal");
+    }
+);
+
+
+$("addImportFile")
+.addEventListener(
+    "change",
+    async function(){
+
+        const file =
+            this.files[0];
+
+        if(!file){
+
+            $("addImportButton").disabled = true;
+
+            return;
+
+        }
+
+        try{
+
+            await loadItems();
+
+            const rawRows =
+                await readAddImportRows(file);
+
+            const rowResults =
+                validateAddImportRows(rawRows);
+
+            addImportRows = rowResults;
+
+            addImportHasErrors =
+                rowResults.length === 0 ||
+                rowResults.some(
+                    r => r.messages.length > 0
+                );
+
+            $("addImportPreview").innerHTML =
+                buildAddImportPreviewHtml(rowResults);
+
+            $("addImportButton").disabled =
+                addImportHasErrors;
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            showMessage(
+                "Gagal membaca Excel.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+$("addImportButton")
+.addEventListener(
+    "click",
+    async function(){
+
+        if(
+            addImportHasErrors ||
+            addImportRows.length === 0
+        ){
+            return;
+        }
+
+        const button = this;
+
+        try{
+
+            button.disabled = true;
+
+            button.textContent = "Menyimpan...";
+
+            for(
+                const row
+                of addImportRows
+            ){
+
+                const safeId =
+                    firestoreKey(row.code);
+
+                await setDoc(
+                    doc(
+                        db,
+                        "spareparts",
+                        safeId
+                    ),
+                    {
+
+                        code:row.code,
+
+                        name:row.name,
+
+                        lokasi:row.lokasi,
+
+                        qty:Number(row.qty || 0),
+
+                        minqty:Number(row.minqty || 0),
+
+                        createdAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+            }
+
+
+            showMessage(
+                addImportRows.length +
+                " sparepart baru berhasil ditambahkan."
+            );
+
+            resetAddImportForm();
+
+            closeModal("addImportModal");
+
+            await loadItems();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            button.disabled = false;
+
+            button.textContent =
+                "Tambah Semua Data";
+
+            showMessage(
+                "Import gagal: " +
+                error.message,
+                "error"
+            );
+
+        }
 
     }
 );
@@ -7976,6 +8719,9 @@ function openAutoFixGate(){
             "Data dengan Nama sama tapi Lokasi BERBEDA tidak akan " +
             "digabung otomatis (harus diperiksa manual lewat menu " +
             "Cek Data), karena bisa jadi memang barang berbeda.\n\n" +
+            "Sistem akan membuat backup otomatis sebelum menggabungkan " +
+            "data, sehingga jika hasilnya ternyata salah, Anda bisa " +
+            "membatalkannya lewat menu Undo Perbaikan Otomatis.\n\n" +
             "Lanjutkan ke menu Perbaiki Data Otomatis?"
         );
 
@@ -8019,6 +8765,113 @@ function openAutoFixGate(){
 }
 
 
+async function saveAutoFixBackup(codeGroups, nameLokasiGroupsPreview){
+
+    const backupMap = new Map();
+
+    codeGroups.forEach(
+        function(group){
+
+            group.forEach(
+                function(item){
+
+                    backupMap.set(
+                        item.firestoreId,
+                        {
+
+                            firestoreId:item.firestoreId,
+
+                            code:item.code,
+
+                            name:item.name,
+
+                            lokasi:item.lokasi,
+
+                            qty:Number(item.qty || 0),
+
+                            minqty:Number(item.minqty || 0)
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+    nameLokasiGroupsPreview.forEach(
+        function(group){
+
+            group.forEach(
+                function(item){
+
+                    backupMap.set(
+                        item.firestoreId,
+                        {
+
+                            firestoreId:item.firestoreId,
+
+                            code:item.code,
+
+                            name:item.name,
+
+                            lokasi:item.lokasi,
+
+                            qty:Number(item.qty || 0),
+
+                            minqty:Number(item.minqty || 0)
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+    if(backupMap.size === 0){
+
+        return;
+
+    }
+
+
+    // Hanya simpan satu riwayat backup terbaru saja.
+    const oldBackups =
+        await getDocs(
+            autoFixBackupRef
+        );
+
+    for(
+        const d
+        of oldBackups.docs
+    ){
+
+        await deleteDoc(d.ref);
+
+    }
+
+
+    await addDoc(
+        autoFixBackupRef,
+        {
+
+            items:
+                Array.from(
+                    backupMap.values()
+                ),
+
+            createdAt:
+                serverTimestamp()
+
+        }
+    );
+
+}
+
+
 async function runAutoFix(){
 
     showMessage(
@@ -8029,11 +8882,28 @@ async function runAutoFix(){
 
         await loadItems();
 
+        const originalSnapshot =
+            items.map(
+                item => ({...item})
+            );
+
         const codeGroups =
             groupItemsByKey(
-                items,
+                originalSnapshot,
                 buildMergeKeyByCode
             );
+
+        const nameLokasiGroupsPreview =
+            groupItemsByKey(
+                originalSnapshot,
+                buildMergeKeyByNameLokasi
+            );
+
+        await saveAutoFixBackup(
+            codeGroups,
+            nameLokasiGroupsPreview
+        );
+
 
         for(
             const group
@@ -8103,7 +8973,10 @@ async function runAutoFix(){
                 "Silakan cek menu Data Sparepart untuk memastikan " +
                 "hasilnya, atau buka menu Cek Data untuk melihat " +
                 "apakah masih ada duplikat Nama dengan Lokasi " +
-                "berbeda yang perlu diperiksa manual."
+                "berbeda yang perlu diperiksa manual.\n\n" +
+                "Jika hasil ini ternyata salah, gunakan menu " +
+                "Undo Perbaikan Otomatis untuk mengembalikan " +
+                "data seperti sebelum perbaikan ini dijalankan."
             );
 
         }
@@ -8125,6 +8998,176 @@ async function runAutoFix(){
 
         showMessage(
             "Perbaikan data gagal: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   UNDO PERBAIKAN DATA OTOMATIS
+===================================================== */
+
+function openUndoAutoFixGate(){
+
+    const password =
+        prompt(
+            "UNDO PERBAIKAN DATA OTOMATIS\n\n" +
+            "Aksi ini akan mengembalikan data ke kondisi sebelum " +
+            "'Perbaiki Data Otomatis' terakhir dijalankan (data " +
+            "yang tergabung akan dipisah lagi, data yang terhapus " +
+            "akan dikembalikan).\n\n" +
+            "Hanya berlaku untuk 1 kali perbaikan terakhir.\n\n" +
+            "Masukkan password admin untuk melanjutkan:"
+        );
+
+    if(password === null){
+
+        return;
+
+    }
+
+    if(
+        password.trim() !==
+        UPDATE_DATA_PASSWORD
+    ){
+
+        showMessage(
+            "Password admin salah. Undo tidak dijalankan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+    runUndoAutoFix();
+
+}
+
+
+async function runUndoAutoFix(){
+
+    showMessage(
+        "Mengecek riwayat perbaikan data..."
+    );
+
+    try{
+
+        const backupSnap =
+            await getDocs(
+                query(
+                    autoFixBackupRef,
+                    orderBy("createdAt", "desc"),
+                    limit(1)
+                )
+            );
+
+        if(backupSnap.empty){
+
+            alert(
+                "Tidak ada riwayat 'Perbaiki Data Otomatis' " +
+                "yang bisa di-undo."
+            );
+
+            return;
+
+        }
+
+
+        const backupDoc =
+            backupSnap.docs[0];
+
+        const backupData =
+            backupDoc.data();
+
+        const backupItems =
+            backupData.items || [];
+
+
+        if(
+            !confirm(
+                "Kembalikan " +
+                backupItems.length +
+                " data sparepart ke kondisi sebelum perbaikan " +
+                "otomatis terakhir?\n\n" +
+                "Data hasil gabungan setelah itu akan ditimpa " +
+                "kembali ke data asalnya."
+            )
+        ){
+
+            return;
+
+        }
+
+
+        for(
+            const item
+            of backupItems
+        ){
+
+            await setDoc(
+                doc(
+                    db,
+                    "spareparts",
+                    item.firestoreId
+                ),
+                {
+
+                    code:item.code,
+
+                    name:item.name,
+
+                    lokasi:item.lokasi,
+
+                    qty:Number(item.qty || 0),
+
+                    minqty:Number(item.minqty || 0),
+
+                    restoredAt:
+                        serverTimestamp()
+
+                }
+            );
+
+        }
+
+
+        await deleteDoc(
+            backupDoc.ref
+        );
+
+
+        await loadItems();
+
+
+        alert(
+            "Undo berhasil. " +
+            backupItems.length +
+            " data sparepart telah dikembalikan seperti " +
+            "sebelum perbaikan otomatis terakhir dijalankan."
+        );
+
+
+        if(
+            $("checkDataModal").classList.contains("show")
+        ){
+
+            $("checkDataResults").innerHTML =
+                buildCheckDataHtml();
+
+        }
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Undo gagal: " +
             error.message,
             "error"
         );
@@ -9615,6 +10658,13 @@ document
                 if(menu === "autoFix"){
 
                     openAutoFixGate();
+
+                }
+
+
+                if(menu === "undoAutoFix"){
+
+                    openUndoAutoFixGate();
 
                 }
 
