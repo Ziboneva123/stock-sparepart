@@ -1838,6 +1838,57 @@ footer{
 </div>
 
 
+<!-- =====================================================
+     FILE SIAP - TOMBOL BAGIKAN (SUPAYA USER GESTURE FRESH)
+===================================================== -->
+
+<div
+    class="modal"
+    id="shareReadyModal">
+
+<div class="modal-card">
+
+<h2>
+    File Siap Dicetak
+</h2>
+
+<p
+    id="shareReadyText"
+    style="color:#334155;font-size:14px;">
+
+    File sudah siap.
+
+</p>
+
+<p style="color:#64748b;font-size:13px;">
+    Tekan "Bagikan ke Aplikasi" untuk memilih Pro Label Tool dari
+    menu yang muncul.
+</p>
+
+<div class="modal-actions">
+
+<button
+    class="btn-light"
+    id="shareDownloadInsteadButton">
+
+    Download Saja
+
+</button>
+
+<button
+    class="btn-primary"
+    id="shareNowButton">
+
+    Bagikan ke Aplikasi
+
+</button>
+
+</div>
+
+</div>
+</div>
+
+
 
 
 <!-- =====================================================
@@ -11959,24 +12010,113 @@ async function printAllQR(){
     }
 
     progress.classList.add("show");
-    setQrPdfProgress("Menyiapkan file untuk dikirim ke Pro Label Tool...");
+    setQrPdfProgress(
+        "Menyiapkan " + items.length + " QR Code... (bisa " +
+        "beberapa puluh detik untuk data banyak, mohon tunggu)"
+    );
 
     try{
 
         const built =
             await buildAllQrLbxsBlob();
 
-        const file =
-            new File(
-                [built.blob],
-                built.filename,
-                {
-                    type:"application/octet-stream"
-                }
-            );
+        // File proses lama (bisa puluhan detik untuk data banyak).
+        // Web Share API mengharuskan dipanggil dekat dengan sentuhan
+        // pengguna ("user gesture"), jadi file yang sudah jadi ini
+        // disimpan dulu, lalu ditawarkan lewat TOMBOL BARU di bawah.
+        // Begitu tombol itu ditekan, itu jadi sentuhan baru yang masih
+        // "segar" sehingga menu Bagikan tidak ditolak sistem.
+        pendingPrintFile = {
 
+            blob:built.blob,
+
+            filename:built.filename
+
+        };
 
         progress.classList.remove("show");
+
+        $("shareReadyText").textContent =
+            "File " + built.filename + " (" + items.length +
+            " QR Code) sudah siap.";
+
+        openModal("shareReadyModal");
+
+    }
+    catch(error){
+        console.error("PRINT ALL QR ERROR:", error);
+        progress.classList.remove("show");
+        showMessage(
+            "Gagal menyiapkan file cetak: " + error.message,
+            "error"
+        );
+    }
+
+}
+
+
+let pendingPrintFile = null;
+
+
+function downloadPendingPrintFile(reasonMessage){
+
+    if(!pendingPrintFile){
+        return;
+    }
+
+    const url =
+        URL.createObjectURL(pendingPrintFile.blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+    a.download = pendingPrintFile.filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(function(){
+        URL.revokeObjectURL(url);
+    },5000);
+
+    showMessage(
+        reasonMessage +
+        " File " + pendingPrintFile.filename + " sudah " +
+        "didownload - silakan buka manual lewat aplikasi " +
+        "Pro Label Tool (folder Download) untuk mencetak."
+    );
+
+}
+
+
+$("shareNowButton")
+.addEventListener(
+    "click",
+    async function(){
+
+        closeModal("shareReadyModal");
+
+        if(!pendingPrintFile){
+
+            showMessage(
+                "File belum siap, coba klik Print lagi.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const file =
+            new File(
+                [pendingPrintFile.blob],
+                pendingPrintFile.filename,
+                {
+                    type:"application/zip"
+                }
+            );
 
 
         // Web Share API dengan file: membuka menu "Bagikan/Buka dengan"
@@ -12007,17 +12147,16 @@ async function printAllQR(){
             }
             catch(shareError){
 
-                // Pengguna membatalkan share, atau share gagal -> tidak dianggap error fatal.
+                // Pengguna membatalkan share sendiri -> tidak dianggap error.
                 if(shareError && shareError.name === "AbortError"){
                     return;
                 }
 
                 console.error("SHARE ERROR:", shareError);
 
-                showMessage(
-                    "Gagal membuka menu bagikan: " +
-                    shareError.message,
-                    "error"
+                downloadPendingPrintFile(
+                    "Menu bagikan HP ini menolak berbagi file " +
+                    "(" + shareError.message + ")."
                 );
 
             }
@@ -12025,38 +12164,29 @@ async function printAllQR(){
         }
         else{
 
-            // Fallback untuk browser/HP yang belum mendukung Web Share API file.
-            const url = URL.createObjectURL(built.blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = built.filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-
-            setTimeout(function(){
-                URL.revokeObjectURL(url);
-            },5000);
-
-            showMessage(
-                "Browser ini belum mendukung kirim langsung ke aplikasi. " +
-                "File " + built.filename + " sudah didownload - silakan " +
-                "buka manual lewat aplikasi Pro Label Tool untuk mencetak."
+            downloadPendingPrintFile(
+                "Browser ini belum mendukung kirim langsung ke aplikasi."
             );
 
         }
 
     }
-    catch(error){
-        console.error("PRINT ALL QR ERROR:", error);
-        progress.classList.remove("show");
-        showMessage(
-            "Gagal menyiapkan file cetak: " + error.message,
-            "error"
-        );
-    }
+);
 
-}
+
+$("shareDownloadInsteadButton")
+.addEventListener(
+    "click",
+    function(){
+
+        closeModal("shareReadyModal");
+
+        downloadPendingPrintFile(
+            "Anda memilih download langsung."
+        );
+
+    }
+);
 
 
 </script>
