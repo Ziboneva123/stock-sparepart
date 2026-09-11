@@ -605,6 +605,90 @@ td{
 }
 
 /* =====================================================
+   WORKSHEET (TULIS LANGSUNG SEPERTI EXCEL)
+===================================================== */
+
+.worksheet-wrap{
+    overflow-x:auto;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    margin:12px 0;
+}
+
+.worksheet-table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:720px;
+}
+
+.worksheet-table th{
+    background:#f1f5f9;
+    padding:8px;
+    font-size:12px;
+    text-align:left;
+    border:1px solid #e2e8f0;
+    white-space:nowrap;
+    position:sticky;
+    top:0;
+}
+
+.worksheet-table td{
+    border:1px solid #e2e8f0;
+    padding:0;
+    vertical-align:top;
+}
+
+.worksheet-table input{
+    width:100%;
+    border:none;
+    padding:8px;
+    font-size:13px;
+    box-sizing:border-box;
+    background:transparent;
+    font-family:inherit;
+}
+
+.worksheet-table input:focus{
+    outline:2px solid #3b82f6;
+    outline-offset:-2px;
+    background:#eff6ff;
+}
+
+.worksheet-row-error input{
+    background:#fef2f2;
+}
+
+.worksheet-status{
+    font-size:12px;
+    padding:8px;
+    line-height:1.4;
+}
+
+.worksheet-status.ok{
+    color:#16a34a;
+}
+
+.worksheet-status.error{
+    color:#dc2626;
+}
+
+.worksheet-del-cell{
+    text-align:center;
+    padding:4px !important;
+}
+
+.worksheet-del-btn{
+    background:#fee2e2;
+    color:#dc2626;
+    border:none;
+    border-radius:6px;
+    padding:4px 8px;
+    font-size:12px;
+    cursor:pointer;
+    width:auto !important;
+}
+
+/* =====================================================
    HISTORY
 ===================================================== */
 
@@ -2592,9 +2676,102 @@ footer{
 <button
     class="btn-light"
     id="openAddImport"
-    style="width:auto;padding:10px 18px;">
+    style="width:auto;padding:10px 18px;margin-right:8px;">
 
     Import Banyak Data dari Excel
+
+</button>
+
+<button
+    class="btn-light"
+    id="openAddWorksheet"
+    style="width:auto;padding:10px 18px;">
+
+    Worksheet (Tulis Langsung)
+
+</button>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- =====================================================
+     TAMBAH SPAREPART VIA WORKSHEET (TULIS LANGSUNG)
+===================================================== -->
+
+<div
+    class="modal"
+    id="addWorksheetModal">
+
+<div class="modal-card">
+
+<h2>
+    Worksheet Tambah Sparepart
+</h2>
+
+<div class="import-info">
+
+Tulis data langsung di tabel bawah ini, seperti di Excel.
+Bisa juga <strong>copy-paste</strong> dari Excel/Spreadsheet
+langsung ke tabel ini.
+
+<br><br>
+
+Menu ini khusus barang <strong>baru</strong>. Kode yang sudah
+ada di database akan ditolak saat disimpan (gunakan Worksheet
+Edit Data untuk barang yang sudah ada).
+
+</div>
+
+<div class="worksheet-wrap">
+
+<table class="worksheet-table" id="addWorksheetTable">
+
+<thead>
+<tr>
+    <th style="width:110px;">Kode</th>
+    <th style="width:180px;">Nama Sparepart</th>
+    <th style="width:100px;">Lokasi</th>
+    <th style="width:80px;">Stock</th>
+    <th style="width:80px;">Min. Stock</th>
+    <th style="width:180px;">Keterangan</th>
+    <th style="width:40px;"></th>
+</tr>
+</thead>
+
+<tbody id="addWorksheetBody">
+</tbody>
+
+</table>
+
+</div>
+
+<button
+    class="btn-light"
+    id="addWorksheetAddRow"
+    style="width:auto;padding:8px 14px;font-size:13px;">
+
+    + Tambah Baris
+
+</button>
+
+<div class="modal-actions">
+
+<button
+    class="btn-light"
+    id="cancelAddWorksheet">
+
+    Batal
+
+</button>
+
+<button
+    class="btn-success"
+    id="saveAddWorksheet">
+
+    Simpan
 
 </button>
 
@@ -3149,6 +3326,109 @@ dan ditambahkan lengkap dengan seluruh datanya.
     disabled>
 
     Simpan Perubahan
+
+</button>
+
+</div>
+
+
+<div style="text-align:center;margin-top:14px;">
+
+<button
+    class="btn-light"
+    id="openEditWorksheet"
+    style="width:auto;padding:10px 18px;">
+
+    Worksheet (Tulis Langsung)
+
+</button>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- =====================================================
+     EDIT DATA VIA WORKSHEET (TULIS LANGSUNG)
+===================================================== -->
+
+<div
+    class="modal"
+    id="editWorksheetModal">
+
+<div class="modal-card">
+
+<h2>
+    Worksheet Edit Data (Update Qty)
+</h2>
+
+<div class="import-info">
+
+Tulis data langsung di tabel bawah ini, seperti di Excel.
+Bisa juga <strong>copy-paste</strong> dari Excel/Spreadsheet
+langsung ke tabel ini.
+
+<br><br>
+
+Kode yang <strong>sudah ada</strong> di database: hanya kolom
+<strong>Stock</strong>-nya yang diperbarui (Nama, Lokasi, Min.
+Stock tidak berubah).
+
+<br>
+
+Kode yang <strong>belum ada</strong>: dianggap barang baru,
+seluruh datanya disimpan.
+
+</div>
+
+<div class="worksheet-wrap">
+
+<table class="worksheet-table" id="editWorksheetTable">
+
+<thead>
+<tr>
+    <th style="width:110px;">Kode</th>
+    <th style="width:180px;">Nama Sparepart</th>
+    <th style="width:100px;">Lokasi</th>
+    <th style="width:80px;">Stock</th>
+    <th style="width:80px;">Min. Stock</th>
+    <th style="width:180px;">Keterangan</th>
+    <th style="width:40px;"></th>
+</tr>
+</thead>
+
+<tbody id="editWorksheetBody">
+</tbody>
+
+</table>
+
+</div>
+
+<button
+    class="btn-light"
+    id="editWorksheetAddRow"
+    style="width:auto;padding:8px 14px;font-size:13px;">
+
+    + Tambah Baris
+
+</button>
+
+<div class="modal-actions">
+
+<button
+    class="btn-light"
+    id="cancelEditWorksheet">
+
+    Batal
+
+</button>
+
+<button
+    class="btn-success"
+    id="saveEditWorksheet">
+
+    Simpan
 
 </button>
 
@@ -5753,6 +6033,1076 @@ $("addImportButton")
             showMessage(
                 "Import gagal: " +
                 error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   WORKSHEET (TULIS LANGSUNG SEPERTI EXCEL)
+===================================================== */
+
+const WORKSHEET_COLUMNS = ["code","name","lokasi","qty","minqty"];
+
+
+function createWorksheetRowHtml(values){
+
+    values = values || {};
+
+    return `
+    <tr>
+        <td><input type="text" data-col="code" value="${escapeHtml(values.code || "")}"></td>
+        <td><input type="text" data-col="name" value="${escapeHtml(values.name || "")}"></td>
+        <td><input type="text" data-col="lokasi" value="${escapeHtml(values.lokasi || "")}"></td>
+        <td><input type="text" inputmode="decimal" data-col="qty" value="${escapeHtml(values.qty != null ? values.qty : "")}"></td>
+        <td><input type="text" inputmode="decimal" data-col="minqty" value="${escapeHtml(values.minqty != null ? values.minqty : "")}"></td>
+        <td class="worksheet-status" data-col="status"></td>
+        <td class="worksheet-del-cell">
+            <button type="button" class="worksheet-del-btn" data-action="delrow">&times;</button>
+        </td>
+    </tr>
+    `;
+
+}
+
+
+function resetWorksheet(tbodyId, rowCount){
+
+    const tbody = $(tbodyId);
+
+    let html = "";
+
+    for(let i = 0; i < rowCount; i++){
+        html += createWorksheetRowHtml({});
+    }
+
+    tbody.innerHTML = html;
+
+}
+
+
+function addWorksheetRow(tbodyId){
+
+    $(tbodyId).insertAdjacentHTML(
+        "beforeend",
+        createWorksheetRowHtml({})
+    );
+
+}
+
+
+function attachWorksheetDeleteHandler(tbodyId){
+
+    $(tbodyId).addEventListener(
+        "click",
+        function(event){
+
+            const btn =
+                event.target.closest(
+                    '[data-action="delrow"]'
+                );
+
+            if(!btn){
+                return;
+            }
+
+            const tr =
+                btn.closest("tr");
+
+            if(tr){
+                tr.remove();
+            }
+
+        }
+    );
+
+}
+
+
+function attachWorksheetInputClearHandler(tbodyId){
+
+    $(tbodyId).addEventListener(
+        "input",
+        function(event){
+
+            if(
+                !event.target ||
+                event.target.tagName !== "INPUT"
+            ){
+                return;
+            }
+
+            const tr =
+                event.target.closest("tr");
+
+            if(tr){
+                clearWorksheetRowStatus(tr);
+            }
+
+        }
+    );
+
+}
+
+
+function attachWorksheetPasteHandler(tbodyId){
+
+    const tbody = $(tbodyId);
+
+    tbody.addEventListener(
+        "paste",
+        function(event){
+
+            const target = event.target;
+
+            if(
+                !target ||
+                target.tagName !== "INPUT"
+            ){
+                return;
+            }
+
+            const clipboard =
+                event.clipboardData ||
+                window.clipboardData;
+
+            const text =
+                clipboard ? clipboard.getData("text") : "";
+
+            if(!text){
+                return;
+            }
+
+            // Kalau cuma paste 1 nilai biasa (tanpa tab/enter),
+            // biarkan perilaku paste input normal.
+            if(!/[\t\r\n]/.test(text)){
+                return;
+            }
+
+            event.preventDefault();
+
+            const pastedRows =
+                text
+                    .replace(/\r/g, "")
+                    .split("\n")
+                    .filter(
+                        function(line, idx, arr){
+                            return !(
+                                idx === arr.length - 1 &&
+                                line === ""
+                            );
+                        }
+                    );
+
+            const startTr =
+                target.closest("tr");
+
+            const trList =
+                Array.from(tbody.children);
+
+            const startRowIndex =
+                trList.indexOf(startTr);
+
+            const startColIndex =
+                WORKSHEET_COLUMNS.indexOf(
+                    target.dataset.col
+                );
+
+            pastedRows.forEach(
+                function(rowText, rOffset){
+
+                    const cells =
+                        rowText.split("\t");
+
+                    let tr =
+                        tbody.children[
+                            startRowIndex + rOffset
+                        ];
+
+                    if(!tr){
+
+                        tbody.insertAdjacentHTML(
+                            "beforeend",
+                            createWorksheetRowHtml({})
+                        );
+
+                        tr = tbody.lastElementChild;
+
+                    }
+
+                    cells.forEach(
+                        function(cellText, cOffset){
+
+                            const colIdx =
+                                startColIndex + cOffset;
+
+                            if(
+                                colIdx < 0 ||
+                                colIdx >= WORKSHEET_COLUMNS.length
+                            ){
+                                return;
+                            }
+
+                            const col =
+                                WORKSHEET_COLUMNS[colIdx];
+
+                            const input =
+                                tr.querySelector(
+                                    '[data-col="' + col + '"]'
+                                );
+
+                            if(input){
+                                input.value = cellText.trim();
+                            }
+
+                        }
+                    );
+
+                    clearWorksheetRowStatus(tr);
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+function readWorksheetRows(tbodyId){
+
+    const trs =
+        Array.from(
+            $(tbodyId).querySelectorAll("tr")
+        );
+
+    const rows = [];
+
+    trs.forEach(
+        function(tr, idx){
+
+            const code =
+                tr.querySelector('[data-col="code"]')
+                    .value.trim();
+
+            const name =
+                tr.querySelector('[data-col="name"]')
+                    .value.trim();
+
+            const lokasi =
+                tr.querySelector('[data-col="lokasi"]')
+                    .value.trim();
+
+            const qtyRaw =
+                tr.querySelector('[data-col="qty"]')
+                    .value.trim();
+
+            const minqtyRaw =
+                tr.querySelector('[data-col="minqty"]')
+                    .value.trim();
+
+            if(
+                code === "" &&
+                name === "" &&
+                lokasi === "" &&
+                qtyRaw === "" &&
+                minqtyRaw === ""
+            ){
+                return;
+            }
+
+            rows.push({
+
+                rowNumber:idx + 1,
+
+                tr:tr,
+
+                code:code,
+
+                name:name,
+
+                lokasi:lokasi,
+
+                qtyRaw:qtyRaw,
+
+                minqtyRaw:minqtyRaw
+
+            });
+
+        }
+    );
+
+    return rows;
+
+}
+
+
+function parseWorksheetNumber(raw){
+
+    if(raw === ""){
+        return {ok:true, value:0};
+    }
+
+    const normalized =
+        raw.replace(",", ".");
+
+    const num = Number(normalized);
+
+    if(isNaN(num)){
+        return {ok:false, value:0};
+    }
+
+    return {ok:true, value:num};
+
+}
+
+
+function setWorksheetRowStatus(tr, messages){
+
+    const statusCell =
+        tr.querySelector('[data-col="status"]');
+
+    if(messages && messages.length > 0){
+
+        tr.classList.add("worksheet-row-error");
+
+        statusCell.className = "worksheet-status error";
+
+        statusCell.textContent =
+            messages.join(" | ");
+
+    }
+    else{
+
+        tr.classList.remove("worksheet-row-error");
+
+        statusCell.className = "worksheet-status ok";
+
+        statusCell.textContent = "OK";
+
+    }
+
+}
+
+
+function clearWorksheetRowStatus(tr){
+
+    tr.classList.remove("worksheet-row-error");
+
+    const statusCell =
+        tr.querySelector('[data-col="status"]');
+
+    statusCell.className = "worksheet-status";
+
+    statusCell.textContent = "";
+
+}
+
+
+function validateAndAnnotateAddWorksheet(rows){
+
+    let hasError = false;
+
+    const seenInSheet = new Map();
+
+    const prefixGroups = new Map();
+
+
+    rows.forEach(
+        function(row){
+
+            const messages = [];
+
+            const qtyParsed =
+                parseWorksheetNumber(row.qtyRaw);
+
+            const minqtyParsed =
+                parseWorksheetNumber(row.minqtyRaw);
+
+            if(row.code === ""){
+                messages.push("Kode wajib diisi.");
+            }
+
+            if(!qtyParsed.ok){
+                messages.push(
+                    "Stock harus berupa angka."
+                );
+            }
+            else if(qtyParsed.value < 0){
+                messages.push(
+                    "Stock tidak boleh negatif."
+                );
+            }
+
+            if(!minqtyParsed.ok){
+                messages.push(
+                    "Min. Stock harus berupa angka."
+                );
+            }
+            else if(minqtyParsed.value < 0){
+                messages.push(
+                    "Min. Stock tidak boleh negatif."
+                );
+            }
+
+            row.qty =
+                qtyParsed.ok ? qtyParsed.value : 0;
+
+            row.minqty =
+                minqtyParsed.ok ? minqtyParsed.value : 0;
+
+
+            const normCode =
+                normalizeCodeForCheck(row.code);
+
+            if(normCode !== ""){
+
+                if(seenInSheet.has(normCode)){
+
+                    messages.push(
+                        "Kode ini duplikat dengan baris " +
+                        seenInSheet.get(normCode) +
+                        " di worksheet ini."
+                    );
+
+                }
+                else{
+
+                    seenInSheet.set(
+                        normCode,
+                        row.rowNumber
+                    );
+
+                }
+
+
+                const existing =
+                    items.find(
+                        function(it){
+                            return normalizeCodeForCheck(it.code)
+                                === normCode;
+                        }
+                    );
+
+                if(existing){
+
+                    messages.push(
+                        "Kode ini sudah terdaftar di database " +
+                        "(Stock saat ini: " + existing.qty +
+                        "). Gunakan Worksheet Edit Data."
+                    );
+
+                }
+
+
+                const match =
+                    normCode.match(/^([A-Z]+)(\d+)$/);
+
+                if(match){
+
+                    const prefix = match[1];
+
+                    const number =
+                        parseInt(match[2], 10);
+
+                    const numLength =
+                        match[2].length;
+
+                    if(!prefixGroups.has(prefix)){
+                        prefixGroups.set(prefix, []);
+                    }
+
+                    prefixGroups.get(prefix).push(
+                        {
+                            row:row,
+                            number:number,
+                            numLength:numLength
+                        }
+                    );
+
+                }
+
+            }
+
+            row.messages = messages;
+
+        }
+    );
+
+
+    prefixGroups.forEach(
+        function(list, prefix){
+
+            let existingMax = 0;
+
+            const pattern =
+                new RegExp("^" + prefix + "(\\d+)$");
+
+            items.forEach(
+                function(it){
+
+                    const m =
+                        normalizeCodeForCheck(it.code)
+                            .match(pattern);
+
+                    if(m){
+
+                        const n =
+                            parseInt(m[1], 10);
+
+                        if(n > existingMax){
+                            existingMax = n;
+                        }
+
+                    }
+
+                }
+            );
+
+
+            const sorted =
+                [...list].sort(
+                    (a, b) => a.number - b.number
+                );
+
+
+            const seenNumbers = new Set();
+
+            sorted.forEach(
+                function(entry){
+
+                    if(seenNumbers.has(entry.number)){
+
+                        entry.row.messages.push(
+                            "Nomor urut " + prefix +
+                            String(entry.number)
+                                .padStart(entry.numLength, "0") +
+                            " dipakai lebih dari sekali untuk " +
+                            "rak " + prefix + " di worksheet ini."
+                        );
+
+                    }
+                    else{
+
+                        seenNumbers.add(entry.number);
+
+                    }
+
+                }
+            );
+
+
+            let expected =
+                existingMax + 1;
+
+            sorted.forEach(
+                function(entry){
+
+                    if(entry.number !== expected){
+
+                        entry.row.messages.push(
+                            "Urutan kode rak " + prefix +
+                            " salah: seharusnya lanjut " +
+                            prefix +
+                            String(expected)
+                                .padStart(entry.numLength, "0") +
+                            ", tapi tertulis " +
+                            entry.row.code + "."
+                        );
+
+                    }
+
+                    expected = entry.number + 1;
+
+                }
+            );
+
+        }
+    );
+
+
+    rows.forEach(
+        function(row){
+
+            setWorksheetRowStatus(
+                row.tr,
+                row.messages
+            );
+
+            if(row.messages.length > 0){
+                hasError = true;
+            }
+
+        }
+    );
+
+
+    return !hasError;
+
+}
+
+
+function validateAndAnnotateEditWorksheet(rows){
+
+    let hasError = false;
+
+    const seenInSheet = new Map();
+
+
+    rows.forEach(
+        function(row){
+
+            const messages = [];
+
+            const qtyParsed =
+                parseWorksheetNumber(row.qtyRaw);
+
+            const minqtyParsed =
+                parseWorksheetNumber(row.minqtyRaw);
+
+            if(row.code === ""){
+                messages.push("Kode wajib diisi.");
+            }
+
+            if(!qtyParsed.ok){
+                messages.push(
+                    "Stock harus berupa angka."
+                );
+            }
+            else if(qtyParsed.value < 0){
+                messages.push(
+                    "Stock tidak boleh negatif."
+                );
+            }
+
+            if(!minqtyParsed.ok){
+                messages.push(
+                    "Min. Stock harus berupa angka."
+                );
+            }
+            else if(minqtyParsed.value < 0){
+                messages.push(
+                    "Min. Stock tidak boleh negatif."
+                );
+            }
+
+            row.qty =
+                qtyParsed.ok ? qtyParsed.value : 0;
+
+            row.minqty =
+                minqtyParsed.ok ? minqtyParsed.value : 0;
+
+
+            const normCode =
+                normalizeCodeForCheck(row.code);
+
+            if(normCode !== ""){
+
+                if(seenInSheet.has(normCode)){
+
+                    messages.push(
+                        "Kode ini duplikat dengan baris " +
+                        seenInSheet.get(normCode) +
+                        " di worksheet ini."
+                    );
+
+                }
+                else{
+
+                    seenInSheet.set(
+                        normCode,
+                        row.rowNumber
+                    );
+
+                }
+
+            }
+
+            row.messages = messages;
+
+        }
+    );
+
+
+    rows.forEach(
+        function(row){
+
+            setWorksheetRowStatus(
+                row.tr,
+                row.messages
+            );
+
+            if(row.messages.length > 0){
+                hasError = true;
+            }
+
+        }
+    );
+
+
+    return !hasError;
+
+}
+
+
+/* ---- Worksheet Tambah Sparepart ---- */
+
+resetWorksheet("addWorksheetBody", 8);
+
+attachWorksheetDeleteHandler("addWorksheetBody");
+
+attachWorksheetPasteHandler("addWorksheetBody");
+
+attachWorksheetInputClearHandler("addWorksheetBody");
+
+
+$("openAddWorksheet")
+.addEventListener(
+    "click",
+    function(){
+
+        closeModal("itemModal");
+
+        resetWorksheet("addWorksheetBody", 8);
+
+        openModal("addWorksheetModal");
+
+    }
+);
+
+
+$("cancelAddWorksheet")
+.addEventListener(
+    "click",
+    function(){
+        closeModal("addWorksheetModal");
+    }
+);
+
+
+$("addWorksheetAddRow")
+.addEventListener(
+    "click",
+    function(){
+        addWorksheetRow("addWorksheetBody");
+    }
+);
+
+
+$("saveAddWorksheet")
+.addEventListener(
+    "click",
+    async function(){
+
+        const rows =
+            readWorksheetRows("addWorksheetBody");
+
+        if(rows.length === 0){
+
+            showMessage(
+                "Tidak ada data untuk disimpan. Isi minimal 1 baris.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const button = this;
+
+        try{
+
+            button.disabled = true;
+
+            button.textContent = "Memeriksa...";
+
+            await loadItems();
+
+            const valid =
+                validateAndAnnotateAddWorksheet(rows);
+
+            if(!valid){
+
+                button.disabled = false;
+
+                button.textContent = "Simpan";
+
+                showMessage(
+                    "Ada baris yang belum valid. Perbaiki " +
+                    "sesuai catatan di kolom Keterangan.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            button.textContent = "Menyimpan...";
+
+            for(
+                const row
+                of rows
+            ){
+
+                const safeId =
+                    firestoreKey(row.code);
+
+                await setDoc(
+                    doc(
+                        db,
+                        "spareparts",
+                        safeId
+                    ),
+                    {
+
+                        code:row.code,
+
+                        name:row.name,
+
+                        lokasi:row.lokasi,
+
+                        qty:Number(row.qty || 0),
+
+                        minqty:Number(row.minqty || 0),
+
+                        createdAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+            }
+
+
+            showMessage(
+                rows.length +
+                " sparepart baru berhasil ditambahkan."
+            );
+
+            resetWorksheet("addWorksheetBody", 8);
+
+            button.disabled = false;
+
+            button.textContent = "Simpan";
+
+            closeModal("addWorksheetModal");
+
+            await loadItems();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            button.disabled = false;
+
+            button.textContent = "Simpan";
+
+            showMessage(
+                "Gagal menyimpan: " + error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* ---- Worksheet Edit Data (Update Qty) ---- */
+
+resetWorksheet("editWorksheetBody", 8);
+
+attachWorksheetDeleteHandler("editWorksheetBody");
+
+attachWorksheetPasteHandler("editWorksheetBody");
+
+attachWorksheetInputClearHandler("editWorksheetBody");
+
+
+$("openEditWorksheet")
+.addEventListener(
+    "click",
+    function(){
+
+        closeModal("editDataModal");
+
+        resetWorksheet("editWorksheetBody", 8);
+
+        openModal("editWorksheetModal");
+
+    }
+);
+
+
+$("cancelEditWorksheet")
+.addEventListener(
+    "click",
+    function(){
+        closeModal("editWorksheetModal");
+    }
+);
+
+
+$("editWorksheetAddRow")
+.addEventListener(
+    "click",
+    function(){
+        addWorksheetRow("editWorksheetBody");
+    }
+);
+
+
+$("saveEditWorksheet")
+.addEventListener(
+    "click",
+    async function(){
+
+        const rows =
+            readWorksheetRows("editWorksheetBody");
+
+        if(rows.length === 0){
+
+            showMessage(
+                "Tidak ada data untuk disimpan.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const button = this;
+
+        try{
+
+            button.disabled = true;
+
+            button.textContent = "Memeriksa...";
+
+            await loadItems();
+
+            const valid =
+                validateAndAnnotateEditWorksheet(rows);
+
+            if(!valid){
+
+                button.disabled = false;
+
+                button.textContent = "Simpan";
+
+                showMessage(
+                    "Ada baris yang belum valid. Perbaiki " +
+                    "sesuai catatan di kolom Keterangan.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            button.textContent = "Menyimpan...";
+
+            let updatedCount = 0;
+
+            let newCount = 0;
+
+            for(
+                const row
+                of rows
+            ){
+
+                const safeId =
+                    firestoreKey(row.code);
+
+                const ref =
+                    doc(
+                        db,
+                        "spareparts",
+                        safeId
+                    );
+
+                const existing =
+                    await getDoc(ref);
+
+                if(existing.exists()){
+
+                    await updateDoc(
+                        ref,
+                        {
+
+                            qty:Number(row.qty || 0),
+
+                            updatedAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+                    updatedCount++;
+
+                }
+                else{
+
+                    await setDoc(
+                        ref,
+                        {
+
+                            code:row.code,
+
+                            name:row.name,
+
+                            lokasi:row.lokasi,
+
+                            qty:Number(row.qty || 0),
+
+                            minqty:Number(row.minqty || 0),
+
+                            createdAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+                    newCount++;
+
+                }
+
+            }
+
+
+            showMessage(
+                updatedCount + " qty diperbarui, " +
+                newCount + " barang baru ditambahkan."
+            );
+
+            resetWorksheet("editWorksheetBody", 8);
+
+            button.disabled = false;
+
+            button.textContent = "Simpan";
+
+            closeModal("editWorksheetModal");
+
+            await loadItems();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            button.disabled = false;
+
+            button.textContent = "Simpan";
+
+            showMessage(
+                "Gagal menyimpan: " + error.message,
                 "error"
             );
 
