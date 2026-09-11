@@ -2115,6 +2115,14 @@ footer{
 
     </button>
 
+    <button
+        class="menu-item"
+        data-menu="downloadQrCsv">
+
+        Download CSV QR (Pro Label Tool)
+
+    </button>
+
     <button class="menu-item" data-menu="in">
         Barang Masuk
     </button>
@@ -11197,6 +11205,13 @@ document
                 }
 
 
+                if(menu === "downloadQrCsv"){
+
+                    downloadQrCsv();
+
+                }
+
+
                 if(menu === "in"){
 
                     openTransaction("in");
@@ -11816,9 +11831,110 @@ async function downloadAllQR(){
 }
 
 
-async function buildAllQrLbxsBlob(){
+/* =========================================================
+   DOWNLOAD CSV QR (UNTUK MERGE DI PRO LABEL TOOL)
+========================================================= */
 
-    // Format yang dibuat mengikuti file contoh QR_SparepartMTC.lbxs:
+function getQrUrlForItem(item){
+
+    if(item && item.url){
+        return String(item.url);
+    }
+
+    const code =
+        String((item && item.code) || "").trim();
+
+    return (
+        "https://ziboneva123.github.io/stock-sparepart/user.html?code=" +
+        encodeURIComponent(code)
+    );
+
+}
+
+
+function csvEscapeValue(value){
+
+    return (
+        '"' +
+        String(value == null ? "" : value)
+            .replace(/"/g, '""') +
+        '"'
+    );
+
+}
+
+
+function downloadQrCsv(){
+
+    if(typeof items === "undefined" || items.length === 0){
+        showMessage("Tidak ada data sparepart.","error");
+        return;
+    }
+
+    const csvRows = [
+        ["Kode", "Nama Barang", "Lokasi", "URL QR"]
+    ];
+
+    for(let i = 0; i < items.length; i++){
+
+        const item = items[i] || {};
+
+        csvRows.push([
+            item.code || "",
+            item.name || "",
+            item.lokasi || "",
+            getQrUrlForItem(item)
+        ]);
+
+    }
+
+    // \uFEFF (BOM) di depan supaya Excel/Android membaca UTF-8 dengan
+    // benar (nama barang berhuruf non-standar tidak jadi aneh).
+    const csvText =
+        "\uFEFF" +
+        csvRows
+            .map(
+                row => row.map(csvEscapeValue).join(",")
+            )
+            .join("\r\n");
+
+    const blob =
+        new Blob(
+            [csvText],
+            {
+                type:"text/csv;charset=utf-8"
+            }
+        );
+
+    const filename =
+        "QR_SparepartMTC.csv";
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(function(){
+        URL.revokeObjectURL(url);
+    },5000);
+
+    showMessage(
+        "CSV berhasil dibuat (" + items.length + " data). " +
+        "Buka Pro Label Tool, hubungkan template label Anda ke " +
+        "file CSV ini untuk mencetak massal."
+    );
+
+}
+
+
+async function buildAllQrLbxsBlob(){
     // LBXS = ZIP berisi config.json, CSV dan LBX.
     // LBX sendiri = ZIP berisi label.xml dan prop.xml.
     const baseName = "QR_SparepartMTC";
