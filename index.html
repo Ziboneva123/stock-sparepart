@@ -2056,6 +2056,14 @@ footer{
 
     </button>
 
+    <button
+        class="menu-item"
+        data-menu="printAllQR">
+
+        Print Semua QR (Pro Label Tool)
+
+    </button>
+
     <button class="menu-item" data-menu="in">
         Barang Masuk
     </button>
@@ -11131,6 +11139,13 @@ document
                 }
 
 
+                if(menu === "printAllQR"){
+
+                    printAllQR();
+
+                }
+
+
                 if(menu === "in"){
 
                     openTransaction("in");
@@ -11713,14 +11728,49 @@ async function downloadAllQR(){
     }
 
     progress.classList.add("show");
-    setQrPdfProgress("Menyiapkan file LBXS untuk " + items.length + " QR Code...");
 
     try{
 
-        // Format yang dibuat mengikuti file contoh QR_SparepartMTC.lbxs:
-        // LBXS = ZIP berisi config.json, CSV dan LBX.
-        // LBX sendiri = ZIP berisi label.xml dan prop.xml.
-        const baseName = "QR_SparepartMTC";
+        const built =
+            await buildAllQrLbxsBlob();
+
+        const url = URL.createObjectURL(built.blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = built.filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        setTimeout(function(){
+            URL.revokeObjectURL(url);
+        },5000);
+
+        progress.classList.remove("show");
+
+        showMessage(
+            items.length + " QR Code berhasil dibuat menjadi " + built.filename
+        );
+
+    }
+    catch(error){
+        console.error("DOWNLOAD ALL QR LBXS ERROR:", error);
+        progress.classList.remove("show");
+        showMessage(
+            "Gagal membuat LBXS: " + error.message,
+            "error"
+        );
+    }
+
+}
+
+
+async function buildAllQrLbxsBlob(){
+
+    // Format yang dibuat mengikuti file contoh QR_SparepartMTC.lbxs:
+    // LBXS = ZIP berisi config.json, CSV dan LBX.
+    // LBX sendiri = ZIP berisi label.xml dan prop.xml.
+    const baseName = "QR_SparepartMTC";
 
         function csvEscape(value){
             return '"' + String(value == null ? "" : value)
@@ -11868,33 +11918,144 @@ async function downloadAllQR(){
             }
         );
 
-        const url = URL.createObjectURL(finalBlob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = baseName + ".lbxs";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        return {
+            blob:finalBlob,
+            filename:baseName + ".lbxs"
+        };
 
-        setTimeout(function(){
-            URL.revokeObjectURL(url);
-        },5000);
+}
+
+
+/* =========================================================
+   PRINT SEMUA QR (KIRIM KE APLIKASI PRO LABEL TOOL)
+========================================================= */
+
+async function printAllQR(){
+
+    if(typeof items === "undefined" || items.length === 0){
+        showMessage("Tidak ada data sparepart.","error");
+        return;
+    }
+
+    if(typeof JSZip === "undefined"){
+        try{
+            await loadJSZip();
+        }
+        catch(error){
+            console.error("JSZIP LOAD ERROR:",error);
+            showMessage(
+                "Library ZIP tidak dapat dimuat. Pastikan internet aktif lalu refresh.",
+                "error"
+            );
+            return;
+        }
+    }
+
+    const progress = document.getElementById("qrPdfProgress");
+
+    if(!progress){
+        showMessage("Komponen proses download belum siap. Refresh halaman.","error");
+        return;
+    }
+
+    progress.classList.add("show");
+    setQrPdfProgress("Menyiapkan file untuk dikirim ke Pro Label Tool...");
+
+    try{
+
+        const built =
+            await buildAllQrLbxsBlob();
+
+        const file =
+            new File(
+                [built.blob],
+                built.filename,
+                {
+                    type:"application/octet-stream"
+                }
+            );
+
 
         progress.classList.remove("show");
 
-        showMessage(
-            items.length + " QR Code berhasil dibuat menjadi " + baseName + ".lbxs"
-        );
+
+        // Web Share API dengan file: membuka menu "Bagikan/Buka dengan"
+        // bawaan Android, sehingga pengguna tinggal memilih aplikasi
+        // Pro Label Tool. Setelah file terbuka di aplikasi tersebut,
+        // proses pencarian & sambungan printer PT-900W via WiFi serta
+        // proses cetaknya sepenuhnya ditangani oleh aplikasi Pro Label
+        // Tool itu sendiri (situs web tidak bisa mengakses langsung
+        // koneksi WiFi ke printer).
+        if(
+            navigator.canShare &&
+            navigator.canShare({files:[file]})
+        ){
+
+            try{
+
+                await navigator.share({
+                    files:[file],
+                    title:"QR Sparepart",
+                    text:"Buka dengan Pro Label Tool untuk mencetak ke printer PT-900W."
+                });
+
+                showMessage(
+                    "File dikirim. Pilih aplikasi Pro Label Tool " +
+                    "pada menu yang muncul untuk mulai mencetak."
+                );
+
+            }
+            catch(shareError){
+
+                // Pengguna membatalkan share, atau share gagal -> tidak dianggap error fatal.
+                if(shareError && shareError.name === "AbortError"){
+                    return;
+                }
+
+                console.error("SHARE ERROR:", shareError);
+
+                showMessage(
+                    "Gagal membuka menu bagikan: " +
+                    shareError.message,
+                    "error"
+                );
+
+            }
+
+        }
+        else{
+
+            // Fallback untuk browser/HP yang belum mendukung Web Share API file.
+            const url = URL.createObjectURL(built.blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = built.filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            setTimeout(function(){
+                URL.revokeObjectURL(url);
+            },5000);
+
+            showMessage(
+                "Browser ini belum mendukung kirim langsung ke aplikasi. " +
+                "File " + built.filename + " sudah didownload - silakan " +
+                "buka manual lewat aplikasi Pro Label Tool untuk mencetak."
+            );
+
+        }
 
     }
     catch(error){
-        console.error("DOWNLOAD ALL QR LBXS ERROR:", error);
+        console.error("PRINT ALL QR ERROR:", error);
         progress.classList.remove("show");
         showMessage(
-            "Gagal membuat LBXS: " + error.message,
+            "Gagal menyiapkan file cetak: " + error.message,
             "error"
         );
     }
+
 }
 
 
